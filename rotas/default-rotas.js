@@ -1,6 +1,6 @@
 const express = require('express');
 const roteador = express.Router();
-const Usuario = require('../src/entidades/Usuario');
+const Usuario = require('../publico/src/entidades/Usuario');
 
 roteador.get('/', (req, res, next)=>{
     usr = new Usuario('andre','wer',123);

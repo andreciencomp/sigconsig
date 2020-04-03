@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const c = require('../config');
 const authService = require('../servicos/auth_service');
-const FachadaNegocio = require('../src/negocio/FachadaNegocio');
+const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const jwt = require('jsonwebtoken');
 
 router.get('/login', async (req, res, next)=>{

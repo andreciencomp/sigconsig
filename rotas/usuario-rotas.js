@@ -1,7 +1,7 @@
 const express = require('express');
 const roteador = express.Router();
-const Usuario = require('../src/entidades/Usuario')
-const FachadaNegocio = require('../src/negocio/FachadaNegocio');
+const Usuario = require('../publico/src/entidades/Usuario')
+const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 
 roteador.post('/usuario/cadastrar', (req, res, next)=>{
     let fachada = new FachadaNegocio();
