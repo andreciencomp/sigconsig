@@ -24,9 +24,9 @@ class FachadaNegocio{
         return usuario;
     }
 
-    cadastrarUsuario(nomeUsuario, senha, tipo){
-
-        return "Não implementado ainda";
+    async cadastrarUsuario(nomeUsuario, senha, tipo){
+        
+        await this.gerenciaUsuarios.cadastrarUsuario(nomeUsuario,senha,tipo);
 
 
     }

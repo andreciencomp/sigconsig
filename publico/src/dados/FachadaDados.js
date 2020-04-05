@@ -61,7 +61,25 @@ class FachadaDados{
         return usr;
     }
 
+    async salvarUsuarioSuper(usuario){
+        const dao = await DAOFactory.getUsuarioSuperDAO();
+        await dao.salvar(usuario);
+    }
 
+    async salvarUsuarioAdmin(usuario){
+        const dao = await DAOFactory.getUsuarioAdmDAO();
+        await dao.salvar(usuario);
+    }
+
+    async salvarUsuarioFinanceiro(usuario){
+        const dao = await DAOFactory.getUsuarioFinanceiroDAO();
+        await dao.salvar(usuario);
+    }
+
+    async salvarUsuarioCadastro(usuario){
+        const dao = await DAOFactory.getUsuarioCadastroDAO();
+        await dao.salvar(usuario);
+    }
 
 }
 

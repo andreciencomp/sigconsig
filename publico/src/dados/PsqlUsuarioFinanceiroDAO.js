@@ -35,6 +35,18 @@ class PsqlUsuarioFinanceiroDAO{
             return null;
         }
 
+        async salvar(usuario){
+            let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3)";
+            try{
+                const {rows} = await pool.query(strQuery, 
+                    [usuario.nomeUsuario, usuario.senha,UsuarioFinanceiro.USUARIO_FINANCEIRO]);
+            }catch(e){
+                throw 'BD_EXCEPTION';
+
+            }
+
+        }
+
 
 }
 
