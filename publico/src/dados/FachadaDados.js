@@ -81,6 +81,11 @@ class FachadaDados{
         await dao.salvar(usuario);
     }
 
+    async obterBancoPorCodigo(codigo){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.obterPorCodigo(codigo);
+    }
+
 }
 
 module.exports = FachadaDados;

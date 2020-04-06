@@ -1,5 +1,6 @@
 
 const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
+const GerenciaBancos = require('./GerenciaBancos');
 
 class FachadaNegocio{
 
@@ -29,6 +30,13 @@ class FachadaNegocio{
         await this.gerenciaUsuarios.cadastrarUsuario(nomeUsuario,senha,tipo);
 
 
+    }
+
+    async obterBancoPorCodigo(codigo){
+
+        let gerenciaBancos = await new GerenciaBancos();
+        let banco = await gerenciaBancos.obterBancoPorCodigo(codigo);
+        return await banco;
     }
 }
 
