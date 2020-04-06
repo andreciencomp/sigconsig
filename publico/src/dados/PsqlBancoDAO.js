@@ -29,6 +29,17 @@ class PsqlBancoDAO{
     
         
     }
+
+    async salvar(banco){
+
+        let strQuery = "insert into bancos(codigo,nome) values ($1, $2)";
+        try{
+            await pool.query(strQuery, [banco.codigo, banco.nome]);
+        }catch(e){
+            console.log(e);
+            throw 'BD_EXCEPTION';
+        }
+    }
 }
 
 module.exports = PsqlBancoDAO;
