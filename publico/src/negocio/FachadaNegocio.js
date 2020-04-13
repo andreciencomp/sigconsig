@@ -2,6 +2,7 @@
 const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
 const GerenciaBancos = require('./GerenciaBancos');
 const Banco = require('../entidades/Banco');
+const GerenciaOrgaos = require('./GerenciaOrgaos');
 
 class FachadaNegocio{
 
@@ -52,6 +53,13 @@ class FachadaNegocio{
         let gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.listarBancos();
     }
+
+    async cadastrarOrgao(sigla, nome){
+        let gerenciaOrgaos = new GerenciaOrgaos();
+        await gerenciaOrgaos.cadastrarOrgao(sigla, nome);
+    }
 }
+
+module.exports.fachada = new FachadaNegocio();
 
 module.exports = FachadaNegocio;

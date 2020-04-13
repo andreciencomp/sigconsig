@@ -96,6 +96,12 @@ class FachadaDados{
         return await dao.listar();
     }
 
+    async salvarOrgao(orgao){
+
+        const dao = await DAOFactory.getOrgaoDAO();
+        await dao.salvar(orgao);
+    }
+
 }
 
 module.exports = FachadaDados;
