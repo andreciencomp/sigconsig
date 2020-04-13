@@ -22,6 +22,11 @@ class GerenciaBancos{
         console.log(banco);
         return  await this.fachada.salvarBanco(banco);
     }
+
+    async listarBancos(){
+        
+        return await this.fachada.listarBancos();
+    }
 }
 
 module.exports = GerenciaBancos;

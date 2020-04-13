@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
 app.use('/', roteadorDefault);
 app.use('/api', roteadorUsuario);
 app.use('/api',roteadorAuth);

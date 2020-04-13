@@ -1,5 +1,6 @@
 const {pool} = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
+const PgUtil = require('./PgUtil');
 
 class PsqlBancoDAO{
     static instancia = new PsqlBancoDAO();
@@ -22,8 +23,8 @@ class PsqlBancoDAO{
                 
             }
         }catch(e){
-            console.log(e);
-            throw 'BD_EXCEPTION';
+            
+            PgUtil.checkError(e);
 
         }
     
@@ -36,10 +37,39 @@ class PsqlBancoDAO{
         try{
             await pool.query(strQuery, [banco.codigo, banco.nome]);
         }catch(e){
+            switch(e.codigo){
+                case '23505':
+                    throw 'CHAVE_REPETIDA_EXCEPTION';
+                default:
+                    throw 'BD_EXCEPTION';
+
+            }
+        }
+    }
+
+    async listar(){
+
+        let strQuery = "select * from bancos";
+        try{
+            const {rows} = await pool.query(strQuery);
+            let lista = [];
+            for(var i=0;i < (await rows.length);i++){
+                let banco = new Banco();
+                banco.id = await rows[i].id;
+                banco.codigo = await rows[i].codigo;
+                banco.nome = await rows[i].nome;
+                lista.push(banco);
+            }
+            return lista
+        }catch(e){
             console.log(e);
             throw 'BD_EXCEPTION';
         }
+
     }
+    
+
+
 }
 
 module.exports = PsqlBancoDAO;

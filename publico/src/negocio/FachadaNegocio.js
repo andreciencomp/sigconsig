@@ -46,6 +46,12 @@ class FachadaNegocio{
         await gerenciaBancos.cadastrarBanco(codigo, nome);
 
     }
+
+    async listarBancos(){
+
+        let gerenciaBancos = new GerenciaBancos();
+        return await gerenciaBancos.listarBancos();
+    }
 }
 
 module.exports = FachadaNegocio;

@@ -3,7 +3,7 @@ const roteadorBancos = express.Router();
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 
-roteadorBancos.get('/bancos/:codigo',async (req, res, next)=>{
+roteadorBancos.get('/bancos/obter/:codigo',async (req, res, next)=>{
 
     try{
 
@@ -47,6 +47,28 @@ roteadorBancos.post('/bancos/cadastrar',
 
 
 });
+
+roteadorBancos.get('/bancos/listar', async(req, res, next)=>{
+    
+    let fachada = FachadaNegocio.instancia;
+    try{
+        let bancos = await fachada.listarBancos();
+        res.status(200).send(authService.criarPayload(null,bancos,null,null));
+        return;
+
+    }catch(e){
+        switch(e){
+            case 'BD_EXCEPTION':
+                res.status(400).send(authService.criarPayload(null,null,e,'ERRO_BD'));
+            default:
+                res.status(500).send(authService.criarPayload(null,null,'ERRO','Erro desconhecido'));
+                console.log("Erro desconhecido");
+        }
+
+    }
+});
+
+
 
 module.exports = roteadorBancos;
 

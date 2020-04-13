@@ -91,6 +91,11 @@ class FachadaDados{
         await dao.salvar(banco);
     }
 
+    async listarBancos(){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.listar();
+    }
+
 }
 
 module.exports = FachadaDados;
