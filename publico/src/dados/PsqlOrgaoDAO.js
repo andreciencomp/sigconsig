@@ -1,5 +1,6 @@
 const PgUtil = require('./PgUtil');
 const {pool} = require('../../../servicos/database_service');
+const Orgao = require('../entidades/Orgao');
 
 class PsqlOrgaoDAO{
         
@@ -13,6 +14,28 @@ class PsqlOrgaoDAO{
         }catch(e){
 
             PgUtil.checkError(e);
+        }
+    }
+
+    async listar(){
+        let orgaos = [];
+        try{
+            let {rows} = await pool.query('select * from orgaos');
+            for(var i=0;i< rows.length;i++){
+                let orgao = new Orgao();
+                orgao.id = rows[0];
+                orgao.sigla = rows[1];
+                orgao.nome = rows[2];
+                console.log(orgao);
+                orgaos.push(orgao);
+
+            }
+            return orgaos;
+
+        }catch(e){
+
+            PgUtil.checkError(e);
+
         }
     }
 

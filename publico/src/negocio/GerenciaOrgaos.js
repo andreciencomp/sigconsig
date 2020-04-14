@@ -14,6 +14,12 @@ class GerenciaOrgaos{
         
     }
 
+    async listarOrgaos(){
+        let fachada = FachadaDados.instancia;
+        let orgaos = await fachada.listarOrgaos();
+        return orgaos;
+    }
+
 }
 
 module.exports = GerenciaOrgaos;

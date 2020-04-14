@@ -58,6 +58,13 @@ class FachadaNegocio{
         let gerenciaOrgaos = new GerenciaOrgaos();
         await gerenciaOrgaos.cadastrarOrgao(sigla, nome);
     }
+
+    async listarOrgaos(){
+
+        let gerenciaOrgaos = new GerenciaOrgaos();
+        let orgaos = await gerenciaOrgaos.listarOrgaos();
+        return orgaos;
+    }
 }
 
 module.exports.fachada = new FachadaNegocio();
