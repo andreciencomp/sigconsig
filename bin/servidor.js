@@ -2,7 +2,6 @@
 
 const app = require('../app');
 const http = require('http');
-const porta = 8080;
-
+const porta = process.env.PORTA;
 const servidor = http.createServer(app);
 servidor.listen(porta);

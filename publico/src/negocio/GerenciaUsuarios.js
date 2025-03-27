@@ -5,28 +5,27 @@ const UsuarioCadastro = require('../entidades/UsuarioCadastro');
 
 class GerenciaUsuarios{
 
-    obterUsuarioPorId(id){
+    async obterUsuarioPorId(id){
         let fachada =  FachadaDados.getInstancia;
-        let usuario =  fachada.obterUsuarioPorId(id);
+        let usuario =  await fachada.obterUsuarioPorId(id);
         return  usuario;
     }
 
      async login(nomeUsuario, senha){
-
         let fachada =  FachadaDados.instancia;
         let usuario =  await fachada.obterUsuarioSuperPorNome(nomeUsuario) ||
                         await fachada.obterUsuarioAdmPorNome(nomeUsuario) ||
-                        await fachada.obterUsuarioFinanceiroPorNome(nomeUsuario)||
+                        await fachada.obterUsuarioFinanceiroPorNome(nomeUsuario) ||
                         await fachada.obterUsuarioCadastroPorNome(nomeUsuario);
-        
+    
         if (usuario){
             if (usuario.senha === senha){
                 usuario.senha = '';
                 return usuario;
             }
-            throw "SENHA_INCORRETA";
+            throw "SENHA_INCORRETA_EXCEPTION";
         }else{
-            throw "USUARIO_INEXISTENTE";
+            throw "USUARIO_INEXISTENTE_EXCEPTION";
         }
         
 
@@ -57,7 +56,7 @@ class GerenciaUsuarios{
                 usuario.tipo = tipo;
                 await dao.salvarUsuarioCadastro(usuario);
             }else{
-                throw 'TIPO_INVALIDO';
+                throw 'DADOS_INVALIDOS_EXCEPTION';
             }
         }catch(e){
 

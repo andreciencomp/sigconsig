@@ -6,7 +6,7 @@ const GerenciaOrgaos = require('./GerenciaOrgaos');
 
 class FachadaNegocio{
 
-    static instancia=new FachadaNegocio();
+    static instancia = new FachadaNegocio();
 
     constructor(){
 
@@ -21,9 +21,8 @@ class FachadaNegocio{
         return  usuario;
     }
 
-    login(nomeUsuario, senha){
-
-        let usuario = this.gerenciaUsuarios.login(nomeUsuario, senha);
+    async login(nomeUsuario, senha){
+        let usuario = await this.gerenciaUsuarios.login(nomeUsuario, senha);
         return usuario;
     }
 
@@ -38,7 +37,7 @@ class FachadaNegocio{
 
         let gerenciaBancos = await new GerenciaBancos();
         let banco = await gerenciaBancos.obterBancoPorCodigo(codigo);
-        return await banco;
+        return  banco;
     }
 
     async cadastrarBanco(codigo, nome){

@@ -5,6 +5,7 @@ const PsqlUsuarioFinanceiroDAO = require('./PsqlUsuarioFinanceiroDAO');
 const PsqlUsuarioCadastroDAO = require('./PsqlUsuarioCadastroDAO');
 const PsqlBancoDAO = require('./PsqlBancoDAO');
 const PsqlOrgaoDAO = require('./PsqlOrgaoDAO');
+const PsqlEstadoDAO = require('./PsqlEstadoDAO');
 
 
 class DAOFactory{
@@ -65,6 +66,16 @@ class DAOFactory{
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
                 let dao = await PsqlOrgaoDAO.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
+
+    static async getEstadoDAO(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlEstadoDAO.instancia;
                 return dao;
             default:
                 return null;

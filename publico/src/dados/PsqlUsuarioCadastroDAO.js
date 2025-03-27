@@ -1,5 +1,7 @@
 const UsuarioCadastro = require('../entidades/UsuarioCadastro');
-const {pool} = require('../../../servicos/database_service');
+//const {pool} = require('../../../servicos/database_service');
+const {Pool} = require('pg');
+
 
 class PsqlUsuarioCadastroDAO{
 
@@ -21,9 +23,16 @@ class PsqlUsuarioCadastroDAO{
         }
 
         async obterPorNome(nomeUsuario){
+            const pool = new Pool({
+                database: 'sigconsigdb',
+                user: 'postgres',
+                password: '12345',
+                host: 'localhost',
+                port: '5432',
+            });
             let tipo = UsuarioCadastro.USUARIO_CADASTRO;
             let strQuery = 'select * from usuarios where nome_usuario=$1 and tipo=$2';
-            const {rows} = await pool.query(strQuery,[nomeUsuario, tipo]);
+            const q = {rows} = await pool.query(strQuery,[nomeUsuario, tipo]);
             let data =  rows[0];
             if(data){
                 let usuario = new UsuarioCadastro();
@@ -32,7 +41,9 @@ class PsqlUsuarioCadastroDAO{
                 usuario.senha = data.senha;
                 return usuario;
             }
-            return null;
+            return null; 
+
+
         }
 
         async salvar(usuario){

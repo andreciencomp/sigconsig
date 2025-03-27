@@ -35,7 +35,7 @@ class FachadaDados{
     }
 
     async obterUsuarioSuperPorNome(nomeUsuario){
-        let fac = new DAOFactory()
+        let fac = await new DAOFactory()
         const dao = await DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
@@ -106,6 +106,11 @@ class FachadaDados{
 
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.listar();
+    }
+
+    async obterEstadoPorId(id){
+        const dao = await DAOFactory.getEstadoDAO();
+        return await dao.obter(id);
     }
 
 }

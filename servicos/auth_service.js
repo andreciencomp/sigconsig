@@ -2,6 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const ExceptionService = require('./ExceptionService');
 
 module.exports.gerarToken= (dado)=>{
     let token = jwt.sign(dado, config.SECURE_KEY, {expiresIn:'1d'});
@@ -10,13 +11,18 @@ module.exports.gerarToken= (dado)=>{
 
 module.exports.decodificarToken = async (token)=>{
 
-    try{
-        let dado = await jwt.decode(token, config.SECURE_KEY);
-        return dado;
-    }catch(e){
-        console.log("Em decodificar");
-        throw e;
-    }
+    let dado = null;
+    await jwt.verify(token,config.SECURE_KEY,async (err, decoded)=>{
+
+    
+            if(err){
+                throw 'TOKEN_INVALIDO_EXCEPTION';
+            }
+            dado = decoded;
+      
+
+    });
+    return dado;
     
 
 }
@@ -25,7 +31,7 @@ module.exports.decodificarToken = async (token)=>{
   Basic e retorna um objeto contendo o nome de usuário e senha desse cabeçalho */
 module.exports.obterBasicLoginInfo = (request)=>{
     if(!request.headers.authorization){
-        return null;
+        throw 'HEADER_N_ENCONTRADO_EXCEPTION';
     }
     let credencial64 = request.headers.authorization.split(' ')[1];
     let credencial = Buffer.from(credencial64,'base64').toString('ascii');
@@ -46,134 +52,99 @@ module.exports.criarPayload = (token=null,dados=null,excessao=null, msg=null)=>{
 
 module.exports.obterBearerToken = (req)=>{
     if (!req.headers.authorization){
-        return null
+        throw 'TOKEN_N_ENCONTRADO_EXCEPTION';
     }
     let [tipo, token] = req.headers.authorization.split(' ');
     if(tipo != 'Bearer'){
-        return null
+        throw 'METODO_AUTH_INVALIDO_EXCEPTION';
     }
     return token;
-}
+};
 
 
 
 module.exports.usuarioSuperFiltro = async (req, res, next)=>{
+    try{
+        let token = await this.obterBearerToken(req);
+        let dado = await this.decodificarToken(token);
 
+        if (dado.tipo != 'USUARIO_SUPER'){
+
+            throw 'USUARIO_N_AUTORIZADO_EXCEPTION';
+        }
+        next();
     
-    let token = await this.obterBearerToken(req);
-    if(!token){
-        res.status(401).send(this.criarPayload(null,null,
-            'FORMATO_TOKEN_INVALIDO','Token inválido'));
-        return;
-    }
-    let dado = await this.decodificarToken(token);
+        }catch(e){
+            ExceptionService.checkError(e,res);
+    
+        }
 
-    if (!dado){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTENTICADO','Você não está autenticado'));
-    }
-
-    if (dado.tipo != 'USUARIO_SUPER'){
-
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTORIZADO','Você não tem a permissão para executar a operação'));
-        return;
-    }
-
-    next();
-}
+};
 
 module.exports.usuarioAdminFiltro = async (req, res, next)=>{
+    try{
+        let token = await this.obterBearerToken(req);
+        let dado = await this.decodificarToken(token);
 
+        if (dado.tipo != 'USUARIO_ADMIN' || dado.tipo != 'USUARIO_SUPER'){
+
+            throw 'USUARIO_N_AUTORIZADO_EXCEPTION';
+        }
+        next();
     
-    let token = await this.obterBearerToken(req);
-    if(!token){
-        res.status(401).send(this.criarPayload(null,null,
-            'FORMATO_TOKEN_INVALIDO','Token inválido'));
-        return;
-    }
-    let dado = await this.decodificarToken(token);
+        }catch(e){
+            ExceptionService.checkError(e,res);
+    
+        }
 
-    if (!dado){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTENTICADO','Você não está autenticado'));
-    }
-    if (dado.tipo != 'USUARIO_ADMIN' && dado.tipo != 'USUARIO_SUPER'){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTORIZADO','Você não tem a permissão para executar a operação'));
-        return;
-    }
-
-    next();
-}
+};
 
 module.exports.usuarioFinanceiroFiltro = async (req, res, next)=>{
+    try{
+        let token = await this.obterBearerToken(req);
+        let dado = await this.decodificarToken(token);
 
+        if (dado.tipo != 'USUARIO_FINANCEIRO' || dado.tipo != 'USUARIO_SUPER'){
+
+            throw 'USUARIO_N_AUTORIZADO_EXCEPTION';
+        }
+        next();
     
-    let token = await this.obterBearerToken(req);
-    if(!token){
-        res.status(401).send(this.criarPayload(null,null,
-            'FORMATO_TOKEN_INVALIDO','Token inválido'));
-        return;
-    }
-    let dado = await this.decodificarToken(token);
-    if (!dado){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTENTICADO','Você não está autenticado'));
-    }
+        }catch(e){
+            ExceptionService.checkError(e,res);
+    
+        }
 
-    if (dado.tipo!= 'USUARIO_FINACEIRO' &&
-            dado.tipo != 'USUARIO_ADMIN' && dado.tipo && 'USUARIO_SUPER'){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTORIZADO','Você não tem a permissão para executar a operação'));
-        return;
-    }
-
-    next();
-}
+};
 
 module.exports.usuarioCadastroFiltro = async (req, res, next)=>{
+    try{
+        let token = await this.obterBearerToken(req);
+        let dado = await this.decodificarToken(token);
 
+        if (dado.tipo != 'USUARIO_CADASTRO' || dado.tipo != 'USUARIO_ADMIN' || 
+                        dado.tipo != 'USUARIO_SUPER'){
+
+            throw 'USUARIO_N_AUTORIZADO_EXCEPTION';
+        }
+        next();
     
-    let token = await this.obterBearerToken(req);
-    if(!token){
-        res.status(401).send(this.criarPayload(null,null,
-            'FORMATO_TOKEN_INVALIDO','Token inválido'));
-        return;
-    }
-    let dado = await this.decodificarToken(token);
-    if (!dado){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTENTICADO','Você não está autenticado'));
-    }
-    if (dado.tipo!= 'USUARIO_CADASTRO' && 
-            dado.tipo && 'USUARIO_ADMIN' && dado.tipo != 'USUARIO_SUPER'){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTORIZADO','Você não tem a permissão para executar a operação'));
-        return;
-    }
+        }catch(e){
+            ExceptionService.checkError(e,res);
+    
+        }
 
-    next();
-}
+};
 
 module.exports.usuarioAutenticadoFiltro = async (req, res, next)=>{
+    try{
+        let token = await this.obterBearerToken(req);
+        let dado = await this.decodificarToken(token);
+        next();
+        
+        }catch(e){
+            ExceptionService.checkError(e,res);
+    
+        }
 
-    
-    let token = await this.obterBearerToken(req);
-    
-    if(!token){
-        res.status(401).send(this.criarPayload(null,null,
-            'FORMATO_TOKEN_INVALIDO','Token inválido'));
-        return;
-    }
-    
-    let dado = await this.decodificarToken(token);
-    
-    if (!dado){
-        res.status(401).send(this.criarPayload(null,null,
-            'USUARIO_N_AUTENTICADO','Você não está autenticado'));
-        return;
-    }
-
-    next();
-}
+};

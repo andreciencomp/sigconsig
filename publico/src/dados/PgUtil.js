@@ -7,6 +7,7 @@ class PgUtil{
             case '23505':
                 throw 'CHAVE_REPETIDA_EXCEPTION';
             default:
+                console.log(e);
                 throw 'BD_EXCEPTION';
         }
     }
