@@ -11,7 +11,6 @@ router.get('/login', async (req, res)=>{
     
     try{
         let infoLogin =  await authService.obterBasicLoginInfo(req);
-        console.log(infoLogin);
         fachada =  FachadaNegocio.instancia;
         
         let usuario =   await fachada.login(infoLogin.nomeUsuario, infoLogin.senha);
@@ -23,7 +22,6 @@ router.get('/login', async (req, res)=>{
         res.status(200).send({token: token, dados: usuario});
 
     }catch(e){
-        console.log('error');
         ExceptionService.checkError(e,res);
     }
 

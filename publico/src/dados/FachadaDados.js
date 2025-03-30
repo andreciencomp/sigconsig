@@ -35,21 +35,18 @@ class FachadaDados{
     }
 
     async obterUsuarioSuperPorNome(nomeUsuario){
-        let fac = await new DAOFactory()
         const dao = await DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
     async obterUsuarioAdmPorNome(nomeUsuario){
-        //let fac = new DAOFactory();
         const dao = await DAOFactory.getUsuarioAdmDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
     async obterUsuarioFinanceiroPorNome(nomeUsuario){
-        //let fac = new DAOFactory();
         const dao = await DAOFactory.getUsuarioFinanceiroDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;

@@ -22,7 +22,6 @@ class PsqlUsuarioSuperDAO{
         }
 
         async obterPorNome(nomeUsuario){
-
             const tipo = UsuarioSuper.USUARIO_SUPER;
             const strQuery = 'select * from usuarios where nome_usuario=$1 and tipo=$2';
             try{

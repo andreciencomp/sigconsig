@@ -16,7 +16,7 @@ class GerenciaUsuarios{
         let usuario =  await fachada.obterUsuarioSuperPorNome(nomeUsuario) ||
                         await fachada.obterUsuarioAdmPorNome(nomeUsuario) ||
                         await fachada.obterUsuarioFinanceiroPorNome(nomeUsuario) ||
-                        await fachada.obterUsuarioCadastroPorNome(nomeUsuario);
+                        await fachada.obterUsuarioCadastroPorNome(nomeUsuario); 
     
         if (usuario){
             if (usuario.senha === senha){

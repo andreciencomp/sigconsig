@@ -1,6 +1,6 @@
 const UsuarioCadastro = require('../entidades/UsuarioCadastro');
-//const {pool} = require('../../../servicos/database_service');
-const {Pool} = require('pg');
+const {pool} = require('../../../servicos/database_service');
+const PgUtil = require('./PgUtil');
 
 
 class PsqlUsuarioCadastroDAO{
@@ -23,27 +23,22 @@ class PsqlUsuarioCadastroDAO{
         }
 
         async obterPorNome(nomeUsuario){
-            const pool = new Pool({
-                database: 'sigconsigdb',
-                user: 'postgres',
-                password: '12345',
-                host: 'localhost',
-                port: '5432',
-            });
             let tipo = UsuarioCadastro.USUARIO_CADASTRO;
-            let strQuery = 'select * from usuarios where nome_usuario=$1 and tipo=$2';
-            const q = {rows} = await pool.query(strQuery,[nomeUsuario, tipo]);
-            let data =  rows[0];
-            if(data){
-                let usuario = new UsuarioCadastro();
-                usuario.id = data.id;
-                usuario.nomeUsuario = data.nome_usuario;
-                usuario.senha = data.senha;
-                return usuario;
-            }
-            return null; 
-
-
+            const strQuery = 'select * from usuarios where nome_usuario=$1 and tipo=$2';
+            try{
+                const {rows} = await pool.query(strQuery,[nomeUsuario,tipo]);
+                let data =  await rows[0];
+                if(data){
+                    let usuario = new UsuarioSuper();
+                    usuario.id = data.id;
+                    usuario.nomeUsuario = data.nome_usuario;
+                    usuario.senha = data.senha;
+                    return usuario;
+                }
+                return null;
+            }catch(e){
+                PgUtil.checkError(e);
+            } 
         }
 
         async salvar(usuario){
@@ -57,8 +52,6 @@ class PsqlUsuarioCadastroDAO{
             }
 
         }
-
-
 }
 
 module.exports = PsqlUsuarioCadastroDAO;

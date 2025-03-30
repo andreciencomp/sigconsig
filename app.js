@@ -7,10 +7,12 @@ const roteadorAuth = require('./rotas/auth-rotas');
 const roteadorBanco = require('./rotas/banco-rotas');
 const roteadorOrgaos = require('./rotas/orgaos-rotas');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cors());
 
 app.use(bodyParser.json());
 
