@@ -1,3 +1,6 @@
+const BDException = require("../excessoes/BDException");
+const ChaveRepetidaException = require("../excessoes/ChaveRepetidaException");
+
 class PgUtil{
 
     static checkError(e){
@@ -5,10 +8,10 @@ class PgUtil{
         switch(e.code){
 
             case '23505':
-                throw 'CHAVE_REPETIDA_EXCEPTION';
+                throw new ChaveRepetidaException(e.detail);
             default:
                 console.log(e);
-                throw 'BD_EXCEPTION';
+                throw new BDException("Erro desconhecido no banco de dados");
         }
     }
 }

@@ -22,6 +22,7 @@ router.get('/login', async (req, res)=>{
         res.status(200).send({token: token, dados: usuario});
 
     }catch(e){
+        
         ExceptionService.checkError(e,res);
     }
 

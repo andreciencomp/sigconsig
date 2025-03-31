@@ -43,7 +43,7 @@ class FachadaNegocio{
     async cadastrarBanco(codigo, nome){
 
         let gerenciaBancos = new GerenciaBancos();
-        await gerenciaBancos.cadastrarBanco(codigo, nome);
+        return await gerenciaBancos.cadastrarBanco(codigo, nome);
 
     }
 

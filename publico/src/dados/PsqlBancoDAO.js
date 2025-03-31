@@ -1,5 +1,6 @@
 const {pool} = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
+const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 const PgUtil = require('./PgUtil');
 
 class PsqlBancoDAO{
@@ -35,15 +36,10 @@ class PsqlBancoDAO{
 
         let strQuery = "insert into bancos(codigo,nome) values ($1, $2)";
         try{
-            await pool.query(strQuery, [banco.codigo, banco.nome]);
+            await  pool.query(strQuery, [banco.codigo, banco.nome]);
+            return true;
         }catch(e){
-            switch(e.codigo){
-                case '23505':
-                    throw 'CHAVE_REPETIDA_EXCEPTION';
-                default:
-                    throw 'BD_EXCEPTION';
-
-            }
+            PgUtil.checkError(e);
         }
     }
 

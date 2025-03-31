@@ -2,22 +2,18 @@ const express = require('express');
 const roteadorBancos = express.Router();
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
+const ExceptionService = require('../servicos/ExceptionService');
 
 roteadorBancos.get('/bancos/obter/:codigo',async (req, res, next)=>{
 
     try{
-
         let fachada = await FachadaNegocio.instancia;
         let banco = await fachada.obterBancoPorCodigo(req.params.codigo);
         res.status(200).send(banco);
         return;
     }catch(e){
-
-        console.log(e);
-        res.status(500).send(authService.criarPayload(null,null,e,"Erro"));
+        ExceptionService.checkError(e,res);
     }
-
-
 
 });
 
@@ -25,26 +21,12 @@ roteadorBancos.post('/bancos/cadastrar',
             authService.usuarioAdminFiltro, async(req, res, next)=>{
         
         try{
-
             let fachada = FachadaNegocio.instancia;
-            await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
-            res.status(201).send(authService.criarPayload(null,null,null,'OK'));
+            let bancoCadastrado = await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
+            res.status(201).send(authService.criarPayload(null,bancoCadastrado,null,'OK'));
         }catch(e){
-            if (e == 'BD_EXCEPTION'){
-                res.status(400).send(authService.criarPayload(null,null,e,'Erro no Banco de dados'));
-                return;
-            }
-            else if(e == 'DADOS_INVALIDOS'){
-                res.status(400).send(authService.criarPayload(null,null,e,'Dados inválidos'));
-                return;
-            }else{
-                res.status(400).send(authService.criarPayload(null,null,e,'Erro desconhecido'));
-                return;
-            }
-            
-
+            ExceptionService.checkError(e,res);
         }
-
 
 });
 
@@ -57,18 +39,10 @@ roteadorBancos.get('/bancos/listar', async(req, res, next)=>{
         return;
 
     }catch(e){
-        switch(e){
-            case 'BD_EXCEPTION':
-                res.status(400).send(authService.criarPayload(null,null,e,'ERRO_BD'));
-            default:
-                res.status(500).send(authService.criarPayload(null,null,'ERRO','Erro desconhecido'));
-                console.log("Erro desconhecido");
-        }
+        ExceptionService.checkError(e,res);
 
     }
 });
-
-
 
 module.exports = roteadorBancos;
 

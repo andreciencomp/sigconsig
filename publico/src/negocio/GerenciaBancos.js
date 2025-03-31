@@ -19,7 +19,6 @@ class GerenciaBancos{
         let banco = new Banco();
         banco.codigo = codigo;
         banco.nome = nome;
-        console.log(banco);
         return  await this.fachada.salvarBanco(banco);
     }
 

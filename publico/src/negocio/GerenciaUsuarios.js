@@ -2,6 +2,9 @@ const FachadaDados = require('../dados/FachadaDados');
 const UsuarioAdm = require('../entidades/UsuarioAdm');
 const UsuarioFinanceiro = require('../entidades/UsuarioFinanceiro');
 const UsuarioCadastro = require('../entidades/UsuarioCadastro');
+const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
+const SenhaIncorretaException = require('../excessoes/SenhaIncorretaException');
+const UsuarioInexistenteException = require('../excessoes/UsuarioInexistenteException');
 
 class GerenciaUsuarios{
 
@@ -23,9 +26,9 @@ class GerenciaUsuarios{
                 usuario.senha = '';
                 return usuario;
             }
-            throw "SENHA_INCORRETA_EXCEPTION";
+            throw new SenhaIncorretaException("A senha está incorreta");
         }else{
-            throw "USUARIO_INEXISTENTE_EXCEPTION";
+            throw new UsuarioInexistenteException("Usuário não encontrado");
         }
         
 
@@ -33,7 +36,7 @@ class GerenciaUsuarios{
 
     async cadastrarUsuario(nomeUsuario, senha, tipo){
         let dao = FachadaDados.instancia;
-        try{
+        
             if(tipo == 'USUARIO_ADMIN'){
                 let usuario = new UsuarioAdm();
                 usuario.nomeUsuario = nomeUsuario;
@@ -55,14 +58,10 @@ class GerenciaUsuarios{
                 usuario.senha = senha;
                 usuario.tipo = tipo;
                 await dao.salvarUsuarioCadastro(usuario);
+
             }else{
-                throw 'DADOS_INVALIDOS_EXCEPTION';
+                throw new DadosInvalidosException("Tipo de usuário inválido");
             }
-        }catch(e){
-
-            throw e;
-
-        } 
 
     }
 

@@ -7,13 +7,8 @@ const ExceptionService = require('../servicos/ExceptionService');
 roteador.post('/usuarios/cadastrar/admin',
         authService.usuarioSuperFiltro, async (req, res,next)=>{
     let fachada = FachadaNegocio.instancia;
-    console.log(req.body);
     try{
-        if(req.body.tipo != 'USUARIO_ADMIN'){
-
-            throw 'DADOS_INVALIDOS_EXCEPTION';
-        }
-        await fachada.cadastrarUsuario(req.body.nomeUsuario, req.body.senha, req.body.tipo);
+        await fachada.cadastrarUsuario(req.body.nomeUsuario, req.body.senha, 'USUARIO_ADMIN');
         res.status(201).send({dados:'OK'});
         
     }catch(e){

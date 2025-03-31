@@ -85,7 +85,7 @@ class FachadaDados{
 
     async salvarBanco(banco){
         const dao = await DAOFactory.getBancoDAO();
-        await dao.salvar(banco);
+        return await dao.salvar(banco);
     }
 
     async listarBancos(){
