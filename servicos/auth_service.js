@@ -83,7 +83,6 @@ module.exports.usuarioAdminFiltro = async (req, res, next) => {
     try {
         let token = await this.obterBearerToken(req);
         let dado = await this.decodificarToken(token);
-
         if (dado.tipo == 'USUARIO_ADMIN' || dado.tipo == 'USUARIO_SUPER') {
             next();
         } 

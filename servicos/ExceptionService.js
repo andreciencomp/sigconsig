@@ -1,12 +1,14 @@
 const BDException = require("../publico/src/excessoes/BDException");
 const ChaveRepetidaException = require("../publico/src/excessoes/ChaveRepetidaException");
 const DadosInvalidosException = require("../publico/src/excessoes/DadosInvalidosException");
+const DadosNulosException = require("../publico/src/excessoes/DadosNulosException");
 const HeaderNaoEncontradoException = require("../publico/src/excessoes/HeaderNaoEncontradoException");
 const MetodoAuthInvalidoException = require("../publico/src/excessoes/MetodoAuthInvalidoException");
 const SenhaIncorretaException = require("../publico/src/excessoes/SenhaIncorretaException");
 const TokenInvalidoException = require("../publico/src/excessoes/TokenInvalidoException");
 const TokenNaoEncontradoException = require("../publico/src/excessoes/TokenNaoEncontradoException");
 const UsuarioInexistenteException = require("../publico/src/excessoes/UsuarioInexistenteException");
+const UsuarioNaoAutenticadoException = require("../publico/src/excessoes/UsuarioNaoAutenticadoException");
 const UsuarioNaoAutorizadoException = require("../publico/src/excessoes/UsuarioNaoAutorizadoException");
 
 /* Classe responsável por retornar a mensagem de excessão para a API */
@@ -15,7 +17,7 @@ class ExceptionService{
     static checkError(e, res){
         switch(e.name){
             case new UsuarioInexistenteException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(404).send({excessao: e.name, msg: e.message});
                 break;
 
             case new SenhaIncorretaException().name:
@@ -28,7 +30,11 @@ class ExceptionService{
                 
 
             case new ChaveRepetidaException().name:
-                res.status(401).send({excessao:e.name, msg:e.message});
+                res.status(400).send({excessao:e.name, msg:e.message});
+                break;
+
+            case new DadosNulosException().name:
+                res.status(400).send({excessao:e.name, msg:e.message});
                 break;
             
             case new BDException().name:
@@ -36,7 +42,7 @@ class ExceptionService{
                 break;
 
             case new DadosInvalidosException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(400).send({excessao: e.name, msg: e.message});
                 break;
 
             case new HeaderNaoEncontradoException().name:
