@@ -30,7 +30,7 @@ roteadorBancos.post('/bancos/cadastrar',
 
 });
 
-roteadorBancos.get('/bancos/listar', async(req, res, next)=>{
+roteadorBancos.get('/bancos', async(req, res, next)=>{
     
     let fachada = FachadaNegocio.instancia;
     try{
