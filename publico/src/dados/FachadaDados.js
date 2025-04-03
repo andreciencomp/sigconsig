@@ -93,6 +93,16 @@ class FachadaDados{
         return await dao.listar();
     }
 
+    async existeOrgaoPorSigla(sigla){
+        const dao= await DAOFactory.getOrgaoDAO();
+        return await dao.existePorSigla(sigla);
+    }
+
+    async existeOrgaoPorNome(nome){
+        const dao= await DAOFactory.getOrgaoDAO();
+        return await dao.existePorNome(nome);
+    }
+
     async salvarOrgao(orgao){
 
         const dao = await DAOFactory.getOrgaoDAO();

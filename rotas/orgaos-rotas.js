@@ -5,12 +5,11 @@ const ExceptionService = require('../servicos/ExceptionService');
 
 const roteador = express.Router();
 
-
-roteador.post('/orgaos/cadastrar/:sigla/:nome',authService.usuarioAdminFiltro, async (req, res, next)=>{
+roteador.post('/orgaos/cadastrar',authService.usuarioAdminFiltro, async (req, res, next)=>{
 
     let fachada = FachadaNegocio.instancia;
-    let sigla = req.params.sigla;
-    let nome = req.params.nome;
+    let sigla = req.body.sigla;
+    let nome = req.body.nome;
     try{
         await fachada.cadastrarOrgao(sigla, nome);
         return res.status(201).send({excessao:null, msg:'OK'});
@@ -18,11 +17,9 @@ roteador.post('/orgaos/cadastrar/:sigla/:nome',authService.usuarioAdminFiltro, a
 
         ExceptionService.checkError(e, res);
     }
-
-
 });
 
-roteador.get('/orgaos/listar', authService.usuarioAutenticadoFiltro,async(req,res,next)=>{
+roteador.get('/orgaos', authService.usuarioAutenticadoFiltro,async(req,res,next)=>{
 
     let fachada = FachadaNegocio.instancia;
     try{
