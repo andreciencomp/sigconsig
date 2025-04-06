@@ -125,6 +125,11 @@ class FachadaDados{
         return await dao.listar();
     }
 
+    async obterCidadePorId(id){
+        const dao = await DAOFactory.getCidadeDao();
+        return await dao.obterPorId(id);
+    }
+
 }
 
 module.exports = FachadaDados;

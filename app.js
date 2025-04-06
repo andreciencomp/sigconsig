@@ -7,6 +7,7 @@ const roteadorAuth = require('./rotas/auth-rotas');
 const roteadorBanco = require('./rotas/banco-rotas');
 const roteadorOrgaos = require('./rotas/orgaos-rotas');
 const roteadorEstado = require('./rotas/estado-rotas');
+const roteadorCidade = require('./rotas/cidade-rotas');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api',roteadorAuth);
 app.use('/api', roteadorBanco);
 app.use('/api', roteadorOrgaos);
 app.use('/api', roteadorEstado);
+app.use('/api',roteadorCidade);
 
 module.exports = app;
 

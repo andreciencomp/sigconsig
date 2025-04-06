@@ -1,4 +1,5 @@
 const FachadaDados = require('../dados/FachadaDados');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 
 class GerenciaEstadosCidades{
 
@@ -11,6 +12,15 @@ class GerenciaEstadosCidades{
     async listarEstados(){
         let fachada = FachadaDados.instancia;
         return await fachada.listarEstados();
+    }
+
+    async obterCidadePorId(id){
+        let fachada = FachadaDados.instancia;
+        let cidade = await fachada.obterCidadePorId(id);
+        if(!cidade){
+            throw new EntidadeNaoEncontradaException("Entidade não encontrada");
+        }
+        return cidade;
     }
     
 }

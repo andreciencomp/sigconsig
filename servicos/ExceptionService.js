@@ -2,6 +2,7 @@ const BDException = require("../publico/src/excessoes/BDException");
 const ChaveRepetidaException = require("../publico/src/excessoes/ChaveRepetidaException");
 const DadosInvalidosException = require("../publico/src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../publico/src/excessoes/DadosNulosException");
+const EntidadeNaoEncontradaException = require("../publico/src/excessoes/EntidadeNaoEncontrada");
 const HeaderNaoEncontradoException = require("../publico/src/excessoes/HeaderNaoEncontradoException");
 const MetodoAuthInvalidoException = require("../publico/src/excessoes/MetodoAuthInvalidoException");
 const SenhaIncorretaException = require("../publico/src/excessoes/SenhaIncorretaException");
@@ -60,6 +61,9 @@ class ExceptionService{
             case new TokenInvalidoException().name:
                 res.status(401).send({excessao: e.name, msg: e.message});
                 break;
+
+            case new EntidadeNaoEncontradaException().name:
+                return res.status(404).send({excessao: e.name, msg: e.message});
 
             case new TokenNaoEncontradoException().name:
                 res.status(400).send({excessao: e.name, msg: e.message});

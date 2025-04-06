@@ -71,8 +71,12 @@ class FachadaNegocio{
         let estados = await gerenciaEstadosCidades.listarEstados();
         return estados;
     }
+
+    async obterCidadePorId(id){
+        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return gerenciaEstadosCidades.obterCidadePorId(id); 
+    }
 }
 
-//module.exports.fachada = new FachadaNegocio();
 
 module.exports = FachadaNegocio;

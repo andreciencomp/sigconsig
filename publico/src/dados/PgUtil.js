@@ -4,6 +4,18 @@ const DadosNulosException = require("../excessoes/DadosNulosException");
 
 class PgUtil{
 
+    static errorCodes = ['23502','23505']
+    
+
+    static isPgError(e){
+        for(var i=0;i < PgUtil.errorCodes.length ; i++){
+            if(PgUtil.errorCodes[i] == e.code){
+                return true;
+            }
+        }
+        return false;
+    }
+
     static checkError(e){
 
         switch(e.code){
