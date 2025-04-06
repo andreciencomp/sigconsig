@@ -27,6 +27,12 @@ class GerenciaEstadosCidades{
         let cidades = await fachada.listarCidades();
         return cidades;
     }
+
+    async listarCidadesPorEstado(estado_id){
+        let fachada = FachadaDados.instancia;
+        let cidades = await fachada.listarCidadesPorEstado(estado_id);
+        return cidades;
+    }
     
 }
 

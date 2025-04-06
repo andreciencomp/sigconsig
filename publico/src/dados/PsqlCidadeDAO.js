@@ -51,6 +51,26 @@ class PsqlCidadeDao {
             PgUtil.checkError(e);
         }
     }
+
+    async listarPorEstado(estado_id){
+        const strQuery = 'select * from cidades where estado_id = $1';
+        try{
+            let cidades = []
+            const {rows} = await pool.query(strQuery,[estado_id]);
+            for(var i = 0; i < rows.length ; i++){
+                let cidade = new Cidade();
+                cidade.id = rows[i].id;
+                cidade.nome = rows[i].nome;
+                let estadoDao = new PsqlEstadoDAO();
+                let estado = await estadoDao.obter(estado_id);
+                cidade.estado = estado;
+                cidades.push(cidade);
+            }
+            return cidades;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 }
 
 module.exports = PsqlCidadeDao;

@@ -26,4 +26,14 @@ router.get('/cidades/:id', async function(req, res){
     
 });
 
+router.get('/cidades/estado/:estado_id',async function(req,res){
+    let fachada = fachadaNegocio.instancia;
+    try{
+        let cidades = await fachada.listarCidadesPorEstado(req.params.estado_id);
+        return res.status(200).send({dado: cidades});
+    }catch(e){
+        ExceptionService.checkError(e);
+    }
+});
+
 module.exports = router;

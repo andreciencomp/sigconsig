@@ -82,6 +82,12 @@ class FachadaNegocio{
         let cidades = await gerenciaEstadosCidades.listarCidades();
         return cidades;
     }
+
+    async listarCidadesPorEstado(estado_id){
+        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        let cidades = await gerenciaEstadosCidades.listarCidadesPorEstado(estado_id);
+        return cidades;
+    }
 }
 
 

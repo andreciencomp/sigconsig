@@ -135,6 +135,11 @@ class FachadaDados{
         return await dao.listarTodos();
     }
 
+    async listarCidadesPorEstado(estado_id){
+        const dao = await DAOFactory.getCidadeDao();
+        return await dao.listarPorEstado(estado_id);
+    }
+
 }
 
 module.exports = FachadaDados;
