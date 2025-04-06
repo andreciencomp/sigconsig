@@ -3,6 +3,17 @@ const fachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
 const router = express.Router();
 
+router.get('/cidades',async function(req,res){
+    let fachada = fachadaNegocio.instancia;
+    try{
+        let cidades = await fachada.listarCidades();
+        return res.status(200).send({dado: cidades});
+
+    }catch(e){
+        ExceptionService.checkError(e,res);
+    }
+});
+
 router.get('/cidades/:id', async function(req, res){
     let fachada = fachadaNegocio.instancia;
     try{

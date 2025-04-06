@@ -6,7 +6,6 @@ class GerenciaEstadosCidades{
     async obterEstadoPorId(id){
         let fachada = FachadaDados.instancia;
         return await fachada.obterEstadoPorId();
-
     }
 
     async listarEstados(){
@@ -21,6 +20,12 @@ class GerenciaEstadosCidades{
             throw new EntidadeNaoEncontradaException("Entidade não encontrada");
         }
         return cidade;
+    }
+
+    async listarCidades(){
+        let fachada = FachadaDados.instancia;
+        let cidades = await fachada.listarCidades();
+        return cidades;
     }
     
 }
