@@ -21,9 +21,6 @@ class GerenciaOrgaos{
             throw new ChaveRepetidaException("Já existe um orgão com este nome.");
         }
         await fachada.salvarOrgao(orgao);
-
-
-        
     }
 
     async listarOrgaos(){
@@ -31,7 +28,6 @@ class GerenciaOrgaos{
         let orgaos = await fachada.listarOrgaos();
         return orgaos;
     }
-
 }
 
 module.exports = GerenciaOrgaos;

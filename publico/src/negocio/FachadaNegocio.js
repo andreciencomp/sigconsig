@@ -3,6 +3,7 @@ const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
 const GerenciaBancos = require('./GerenciaBancos');
 const Banco = require('../entidades/Banco');
 const GerenciaOrgaos = require('./GerenciaOrgaos');
+const GerenciaEstadosCidades = require('../negocio/GerenciaEstadosCidades');
 
 class FachadaNegocio{
 
@@ -64,8 +65,14 @@ class FachadaNegocio{
         let orgaos = await gerenciaOrgaos.listarOrgaos();
         return orgaos;
     }
+
+    async listarEstados(){
+        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        let estados = await gerenciaEstadosCidades.listarEstados();
+        return estados;
+    }
 }
 
-module.exports.fachada = new FachadaNegocio();
+//module.exports.fachada = new FachadaNegocio();
 
 module.exports = FachadaNegocio;

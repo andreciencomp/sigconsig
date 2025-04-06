@@ -120,6 +120,11 @@ class FachadaDados{
         return await dao.obter(id);
     }
 
+    async listarEstados(){
+        const dao = await DAOFactory.getEstadoDAO();
+        return await dao.listar();
+    }
+
 }
 
 module.exports = FachadaDados;
