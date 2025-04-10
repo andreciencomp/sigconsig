@@ -54,7 +54,6 @@ class PsqlEstadoDAO {
                 estado.id = rows[i].id;
                 estado.sigla = rows[i].sigla;
                 estado.nome = rows[i].nome;
-                console.log(estado);
                 lista.push(estado);
             }
             return lista;

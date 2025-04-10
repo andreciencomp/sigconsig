@@ -140,6 +140,15 @@ class FachadaDados{
         return await dao.listarPorEstado(estado_id);
     }
 
+    async salvarCorretor(corretor){
+        const dao = await DAOFactory.getCorretorDao();
+        return await dao.salvar(corretor);
+    }
+
+    
+
+
+
 }
 
 module.exports = FachadaDados;

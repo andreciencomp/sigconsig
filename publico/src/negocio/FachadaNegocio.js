@@ -4,6 +4,7 @@ const GerenciaBancos = require('./GerenciaBancos');
 const Banco = require('../entidades/Banco');
 const GerenciaOrgaos = require('./GerenciaOrgaos');
 const GerenciaEstadosCidades = require('../negocio/GerenciaEstadosCidades');
+const GerenciaCorretores = require('./GerenciaCorretores');
 
 class FachadaNegocio{
 
@@ -13,8 +14,6 @@ class FachadaNegocio{
 
         this.gerenciaUsuarios = new GerenciaUsuarios();
     }
-
-
 
     async obterUsuarioPorId(id){
         
@@ -30,8 +29,6 @@ class FachadaNegocio{
     async cadastrarUsuario(nomeUsuario, senha, tipo){
         
         await this.gerenciaUsuarios.cadastrarUsuario(nomeUsuario,senha,tipo);
-
-
     }
 
     async obterBancoPorCodigo(codigo){
@@ -88,7 +85,11 @@ class FachadaNegocio{
         let cidades = await gerenciaEstadosCidades.listarCidadesPorEstado(estado_id);
         return cidades;
     }
-}
 
+    async cadastrarCorretor(corretor){
+        let gerenciaCorretores = new GerenciaCorretores();
+        return gerenciaCorretores.cadastrar(corretor);
+    }
+}
 
 module.exports = FachadaNegocio;

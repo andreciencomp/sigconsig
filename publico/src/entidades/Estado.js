@@ -1,6 +1,6 @@
 class Estado{
     
-    constructor (id=0, sigla="", nome=""){
+    constructor (id=null, sigla=null, nome=null){
         this.id = id;
         this.sigla = sigla;
         this.nome = nome;

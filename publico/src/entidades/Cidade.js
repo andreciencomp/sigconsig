@@ -1,6 +1,6 @@
 class Cidade{
 
-    constructor(id=0,nome="", estado=null){
+    constructor(id=null,nome=null, estado=null){
         this.id = id;
         this.nome = nome;
         this.estado = estado;

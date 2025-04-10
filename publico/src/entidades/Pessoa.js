@@ -1,10 +1,11 @@
 class Pessoa{
     
-    constructor(){
-        this.id = 0;
-        this.nome = "";
-        this.dt_nasc = null;
-        this.endereco = null;
+    constructor(id=null, cpf=null, nome=null, dtNascimento=null, endereco=null){
+        this.id = id;
+        this.cpf = cpf;
+        this.nome = nome;
+        this.dtNascimento = dtNascimento;
+        this.endereco = endereco;
     }
 }
 

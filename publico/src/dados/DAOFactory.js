@@ -7,7 +7,9 @@ const PsqlBancoDAO = require('./PsqlBancoDAO');
 const PsqlOrgaoDAO = require('./PsqlOrgaoDAO');
 const PsqlEstadoDAO = require('./PsqlEstadoDAO');
 const PsqlCidadeDao = require('./PsqlCidadeDAO');
-
+const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
+const PsqlContaBancariaDAO = require('./PsqlContaBancariaDao');
+const PsqlCorretorDAO = require('./PsqlCorretorDAO');
 
 class DAOFactory{
 
@@ -93,7 +95,34 @@ class DAOFactory{
         }
     }
 
-    
+    static async getEnderecoDao(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlEnderecoDAO.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
+    static async getContaBancariaDao(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlContaBancariaDAO.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
+
+    static async getCorretorDao(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlCorretorDAO.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
 }
 
 module.exports = DAOFactory;
