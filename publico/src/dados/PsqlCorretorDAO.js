@@ -1,5 +1,11 @@
 const { pool } = require('../../../servicos/database_service')
 const PgUtil = require('../dados/PgUtil');
+const Corretor = require('../entidades/Corretor');
+const Endereco = require('../entidades/Endereco');
+const ContaBancaria = require('../entidades/ContaBancaria');
+const Banco = require('../entidades/Banco');
+const Estado = require('../entidades/Estado');
+const Cidade = require('../entidades/Cidade');
 
 class PsqlCorretorDAO{
     static instancia = new PsqlCorretorDAO();
@@ -35,6 +41,84 @@ class PsqlCorretorDAO{
             
         }catch(e){
             await pool.query('ROLLBACK');
+            PgUtil.checkError(e);
+        }
+    }
+
+    async listarTodos(){
+        try{
+            let corretores = [];
+            const{rows} = await pool.query("select * from corretores");
+            for(var i=0; i < rows.length ; i++){
+                let corretor = new Corretor();
+                corretor.id = rows[i].id;
+                corretor.codigo = rows[i].codigo;
+                corretor.nome = rows[i].nome;
+                corretor.cpf = rows[i].cpf;
+                corretor.dtNascimento = rows[i].dt_nascimento;
+                if(rows[i].endereco_id){
+                    const queryEndereco = "select * from enderecos where id=$1";
+                    const resEndereco = await pool.query(queryEndereco,[rows[i].endereco_id]);
+                    let rowEndereco = resEndereco.rows[0];
+                    let endereco = new Endereco();
+                    endereco.id = rowEndereco.id;
+                    endereco.cep = rowEndereco.cep;
+                    endereco.rua = rowEndereco.rua;
+                    endereco.numero = rowEndereco.numero;
+                    endereco.bairro = rowEndereco.bairro;
+                    endereco.telefone = rowEndereco.telefone;
+                    
+                    if(rowEndereco.estado_id){
+                        const queryEstado = "select * from estados where id=$1";
+                        const resEstado = await pool.query(queryEstado,[rowEndereco.estado_id]);
+                        const rowEstado = resEstado.rows[0];
+                        let estado = new Estado(rowEstado.id, rowEstado.sigla,rowEstado.nome);
+                        endereco.estado = estado;
+                    }
+
+                    if(resEndereco.rows[0].cidade_id){
+                        const queryCidade = "select * from cidades where id=$1";
+                        const resCidade = await pool.query(queryCidade,[resEndereco.rows[0].cidade_id]);
+                        let rowCidade = resCidade.rows[0];
+                        let cidade = new Cidade();
+                        cidade.id = rowCidade.id;
+                        cidade.nome = rowCidade.nome;
+                        if(endereco.estado){
+                            cidade.estado = endereco.estado;
+                        }
+                        endereco.cidade = cidade;
+                    }
+
+                    corretor.endereco = endereco;
+                    corretores.endereco = endereco;
+                    
+                }
+
+                if(rows[i].conta_bancaria_id){
+                    const queryConta = "select * from contas_bancarias where id=$1";
+                    const resConta = await pool.query(queryConta,[rows[i].conta_bancaria_id]);
+                    const rowConta = resConta.rows[0];
+                    let contaBancaria = new ContaBancaria();
+                    contaBancaria.id = rowConta.id;
+                    contaBancaria.numAgencia = rowConta.num_agencia;
+                    contaBancaria.numConta = rowConta.numConta; 
+                    contaBancaria.digito = rowConta.digito;
+                    if(rowConta.banco_id){
+                        const queryBanco = "select * from bancos where id=$1";
+                        const resBanco = await pool.query(queryBanco, [rowConta.banco_id]);
+                        const rowBanco = resBanco.rows[0];
+                        let banco = new Banco(rowBanco.id, rowBanco.codigo, rowBanco.nome);
+                        contaBancaria.banco = banco;
+                    }
+                    corretor.contaBancaria = contaBancaria;
+                }
+
+                corretores.push(corretor);
+            }
+            return corretores;
+
+
+        }catch(e){
             PgUtil.checkError(e);
         }
     }

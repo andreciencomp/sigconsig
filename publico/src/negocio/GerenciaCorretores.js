@@ -6,6 +6,11 @@ class GerenciaCorretores{
         const fachadaDados = FachadaDados.instancia;
         return await fachadaDados.salvarCorretor(corretor);
     }
+
+    async listarTodos(){
+        const fachadaDados = FachadaDados.instancia;
+        return await fachadaDados.listarTodosCorretores();
+    }
     
 }
 

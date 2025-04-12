@@ -145,6 +145,11 @@ class FachadaDados{
         return await dao.salvar(corretor);
     }
 
+    async listarTodosCorretores(){
+        const dao = await DAOFactory.getCorretorDao();
+        return await dao.listarTodos();
+    }
+
     
 
 

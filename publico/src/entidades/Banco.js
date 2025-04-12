@@ -1,9 +1,9 @@
 class Banco{
 
-    constructor(){
-        this.id = 0;
-        this.codigo = "";
-        this.nome = "";
+    constructor(id=null, codigo=null, nome=null){
+        this.id = id;
+        this.codigo = codigo;
+        this.nome = nome;
 
     }
 }

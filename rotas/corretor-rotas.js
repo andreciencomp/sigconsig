@@ -20,4 +20,15 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
     }
 });
 
+router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res) => {
+    let fachada = FachadaNegocio.instancia;
+    try {
+        let corretores = await fachada.listarTodosCorretores();
+        return res.status(200).send({ dado: corretores });
+    } catch (e) {
+        ExceptionService.checkError(e, res);
+    }
+
+});
+
 module.exports = router;

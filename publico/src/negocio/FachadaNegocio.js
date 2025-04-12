@@ -88,7 +88,12 @@ class FachadaNegocio{
 
     async cadastrarCorretor(corretor){
         let gerenciaCorretores = new GerenciaCorretores();
-        return gerenciaCorretores.cadastrar(corretor);
+        return await gerenciaCorretores.cadastrar(corretor);
+    }
+
+    async listarTodosCorretores(){
+        let gerenciaCorretores = new GerenciaCorretores();
+        return await gerenciaCorretores.listarTodos();
     }
 }
 
