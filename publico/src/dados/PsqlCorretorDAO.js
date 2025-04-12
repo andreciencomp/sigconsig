@@ -56,6 +56,7 @@ class PsqlCorretorDAO{
                 corretor.nome = rows[i].nome;
                 corretor.cpf = rows[i].cpf;
                 corretor.dtNascimento = rows[i].dt_nascimento;
+                corretor.ativo = rows[i].ativo;
                 if(rows[i].endereco_id){
                     const queryEndereco = "select * from enderecos where id=$1";
                     const resEndereco = await pool.query(queryEndereco,[rows[i].endereco_id]);
