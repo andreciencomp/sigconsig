@@ -150,6 +150,11 @@ class FachadaDados{
         return await dao.listarTodos();
     }
 
+    async salvarCliente(cliente){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.salvar(cliente);
+    }
+
     
 
 

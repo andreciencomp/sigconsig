@@ -5,6 +5,7 @@ const Banco = require('../entidades/Banco');
 const GerenciaOrgaos = require('./GerenciaOrgaos');
 const GerenciaEstadosCidades = require('../negocio/GerenciaEstadosCidades');
 const GerenciaCorretores = require('./GerenciaCorretores');
+const GerenciaClientes = require('./GerenciaClientes');
 
 class FachadaNegocio{
 
@@ -94,6 +95,11 @@ class FachadaNegocio{
     async listarTodosCorretores(){
         let gerenciaCorretores = new GerenciaCorretores();
         return await gerenciaCorretores.listarTodos();
+    }
+
+    async cadastrarCliente(cliente){
+        let gerenciaClientes = new GerenciaClientes();
+        return await gerenciaClientes.cadastrar(cliente);
     }
 }
 

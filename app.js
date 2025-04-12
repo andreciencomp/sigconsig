@@ -9,6 +9,7 @@ const roteadorOrgaos = require('./rotas/orgaos-rotas');
 const roteadorEstado = require('./rotas/estado-rotas');
 const roteadorCidade = require('./rotas/cidade-rotas');
 const roteadorCorretor = require('./rotas/corretor-rotas');
+const roteadorCliente = require('./rotas/cliente-rotas');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api', roteadorOrgaos);
 app.use('/api', roteadorEstado);
 app.use('/api',roteadorCidade);
 app.use('/api',roteadorCorretor);
+app.use('/api',roteadorCliente);
 
 module.exports = app;
 
