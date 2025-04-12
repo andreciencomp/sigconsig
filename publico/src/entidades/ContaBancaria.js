@@ -1,7 +1,8 @@
 class ContaBancaria{
     
-    constructor(id=null, numAgencia=null, numConta=null, digito=null){
+    constructor(id=null, banco=null, numAgencia=null, numConta=null, digito=null){
         this.id = id;
+        this.banco = banco;
         this.numAgencia = numAgencia;
         this.numConta = numConta;
         this.digito = digito;

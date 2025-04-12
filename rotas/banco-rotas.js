@@ -35,8 +35,7 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
     let fachada = FachadaNegocio.instancia;
     try{
         let bancos = await fachada.listarBancos();
-        res.status(200).send(authService.criarPayload(null,bancos,null,null));
-        return;
+        return res.status(200).send({dado: bancos});
 
     }catch(e){
         ExceptionService.checkError(e,res);
