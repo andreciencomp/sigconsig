@@ -9,7 +9,7 @@ router.post('/clientes/cadastrar', async (req, res)=>{
     try{
         validarCliente(req.body);
         const retorno = await fachadaNegocio.cadastrarCliente(req.body);
-        return res.status(200).send({dado:{id:retorno}});
+        return res.status(201).send({dado:{id:retorno}});
     }catch(e){
         ExceptionService.checkError(e, res);
     }
