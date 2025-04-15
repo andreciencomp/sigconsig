@@ -155,6 +155,16 @@ class FachadaDados{
         return await dao.salvar(cliente);
     }
 
+    async salvarProduto(produto){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.salvar(produto);
+    }
+
+    async existeProduto(produto){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.existe(produto);
+    }
+
     
 
 

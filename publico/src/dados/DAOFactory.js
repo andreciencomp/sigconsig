@@ -11,6 +11,7 @@ const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
 const PsqlContaBancariaDAO = require('./PsqlContaBancariaDao');
 const PsqlCorretorDAO = require('./PsqlCorretorDAO');
 const PsqlClienteDao = require('./PsqlClienteDAO');
+const PsqlProdutoDAO = require('./PsqlProdutoDAO');
 
 class DAOFactory{
 
@@ -129,6 +130,16 @@ class DAOFactory{
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
                 let dao = await PsqlClienteDao.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
+
+    static async getProdutoDAO(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlProdutoDAO.instancia;
                 return dao;
             default:
                 return null;
