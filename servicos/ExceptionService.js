@@ -1,5 +1,7 @@
 const BDException = require("../publico/src/excessoes/BDException");
 const ChaveRepetidaException = require("../publico/src/excessoes/ChaveRepetidaException");
+const ComissaoNaoCadastradaException = require("../publico/src/excessoes/ComissaoNaoCadastradaException");
+const ComissionamentoInvalidoException = require("../publico/src/excessoes/ComissionamentoInvalidoException");
 const DadosInvalidosException = require("../publico/src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../publico/src/excessoes/DadosNulosException");
 const EntidadeNaoEncontradaException = require("../publico/src/excessoes/EntidadeNaoEncontrada");
@@ -13,66 +15,74 @@ const UsuarioNaoAutenticadoException = require("../publico/src/excessoes/Usuario
 const UsuarioNaoAutorizadoException = require("../publico/src/excessoes/UsuarioNaoAutorizadoException");
 
 /* Classe responsável por retornar a mensagem de excessão para a API */
-class ExceptionService{
+class ExceptionService {
 
-    static checkError(e, res){
-        switch(e.name){
+    static checkError(e, res) {
+        switch (e.name) {
             case new UsuarioInexistenteException().name:
-                res.status(404).send({excessao: e.name, msg: e.message});
+                res.status(404).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new SenhaIncorretaException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(401).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new UsuarioNaoAutorizadoException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(401).send({ excessao: e.name, msg: e.message });
                 break;
-                
+
 
             case new ChaveRepetidaException().name:
-                res.status(400).send({excessao:e.name, msg:e.message});
+                res.status(400).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new DadosNulosException().name:
-                res.status(400).send({excessao:e.name, msg:e.message});
+                res.status(400).send({ excessao: e.name, msg: e.message });
                 break;
-            
+
             case new BDException().name:
-                res.status(500).send({excessao:e.name,msg:e.message});
+                res.status(500).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new DadosInvalidosException().name:
-                res.status(400).send({excessao: e.name, msg: e.message});
+                res.status(400).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new HeaderNaoEncontradoException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(401).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new MetodoAuthInvalidoException().name:
-                res.status(400).send({excessao: e.name, msg: e.message});
+                res.status(400).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new UsuarioNaoAutenticadoException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(401).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new TokenInvalidoException().name:
-                res.status(401).send({excessao: e.name, msg: e.message});
+                res.status(401).send({ excessao: e.name, msg: e.message });
                 break;
 
             case new EntidadeNaoEncontradaException().name:
-                return res.status(404).send({excessao: e.name, msg: e.message});
+                return res.status(404).send({ excessao: e.name, msg: e.message });
 
             case new TokenNaoEncontradoException().name:
-                res.status(400).send({excessao: e.name, msg: e.message});
+                res.status(400).send({ excessao: e.name, msg: e.message });
+                break;
+
+            case new ComissionamentoInvalidoException().name:
+                res.status(400).send({excessao:e.name, msg:e.message});
+                break;
+                
+            case new ComissaoNaoCadastradaException().name:
+                res.status(404).send({ excessao: e.name, msg: e.message });
                 break;
 
             default:
                 console.log(e);
-                res.status(500).send({excessao:'ERRO_DE_SERVIDOR', msg:'Erro no servidor'});
-                break;    
+                res.status(500).send({ excessao: 'ERRO_DE_SERVIDOR', msg: 'Erro no servidor' });
+                break;
         }
     }
 }

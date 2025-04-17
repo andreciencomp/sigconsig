@@ -17,4 +17,14 @@ router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFilt
     }
 });
 
+router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
+    try{
+        const fachadaNegocio = FachadaNegocio.instancia;
+        const idComissionamento = await fachadaNegocio.cadastrarComissionamentoCorretor(req.body);
+        return res.status(201).send(idComissionamento);
+    }catch(e){
+        ExceptionService.checkError(e,res);
+    }
+});
+
 module.exports = router;

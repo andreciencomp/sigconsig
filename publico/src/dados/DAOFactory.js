@@ -13,6 +13,7 @@ const PsqlCorretorDAO = require('./PsqlCorretorDAO');
 const PsqlClienteDao = require('./PsqlClienteDAO');
 const PsqlProdutoDAO = require('./PsqlProdutoDAO');
 const PsqlComissionamentoPromotoraDAO = require('./PsqlComissionamentoPromotoraDAO');
+const PsqlComissionamentoCorretorDAO = require('./PsqlComissionamentoCorretorDAO');
 
 class DAOFactory{
 
@@ -151,6 +152,16 @@ class DAOFactory{
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
                 let dao = await PsqlComissionamentoPromotoraDAO.instancia;
+                return dao;
+            default:
+                return null;
+        }
+    }
+
+    static async getComissionamentoCorretorDAO(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                let dao = await PsqlComissionamentoCorretorDAO.getInstancia();
                 return dao;
             default:
                 return null;

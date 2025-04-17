@@ -165,6 +165,16 @@ class FachadaDados{
         return await dao.existe(produto);
     }
 
+    async obterComissionamentoPromotoraPorId(id){
+        let dao = await DAOFactory.getComissionamentoPromotoraDAO();
+        return await dao.obterPorId(id);
+    }
+
+    async obterComissionamentoPromotora(produtoId, bancoId){
+        let dao  = await DAOFactory.getComissionamentoPromotoraDAO();
+        return await dao.obterPorProdutoEBanco(produtoId, bancoId);
+    }
+
     async salvarComissionamentoPromotora(comissionamento){
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.salvar(comissionamento); 
@@ -174,6 +184,18 @@ class FachadaDados{
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.existe(comissionamento);
     }
+
+    async salvarComissionamentoCorretor(comissionamento){
+        let dao = await DAOFactory.getComissionamentoCorretorDAO();
+        return await dao.salvar(comissionamento);
+    }
+
+    async existeComissionamentoCorretor(comissionamento){
+        let dao = await DAOFactory.getComissionamentoCorretorDAO();
+        return await dao.existe(comissionamento);
+    }
+
+    
 
     
 

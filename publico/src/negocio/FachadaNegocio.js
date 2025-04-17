@@ -113,6 +113,11 @@ class FachadaNegocio{
         const gerenciaComissionamento = new GerenciaComissionamento();
         return await gerenciaComissionamento.cadastrarComissionamentoPromotora(comissionamento);
     }
+
+    async cadastrarComissionamentoCorretor(comissionamento){
+        const gerenciaComissionamento = new GerenciaComissionamento();
+        return await gerenciaComissionamento.cadastrarComissionamentoCorretor(comissionamento);
+    }
 }
 
 module.exports = FachadaNegocio;
