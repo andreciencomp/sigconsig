@@ -1,9 +1,10 @@
 class Comissionamento{
 
-    constructor(){
-        this.id = 0;
-        this.porcentagem = 0.0;
-        this.banco = null;
+    constructor(id=null, produto=null, percentagem=null, banco=null,){
+        this.id = id;
+        this.produto = produto;
+        this.percentagem = percentagem;
+        this.banco = banco;
     }
 }
 

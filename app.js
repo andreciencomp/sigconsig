@@ -11,6 +11,7 @@ const roteadorCidade = require('./rotas/cidade-rotas');
 const roteadorCorretor = require('./rotas/corretor-rotas');
 const roteadorCliente = require('./rotas/cliente-rotas');
 const roteadorProduto = require('./rotas/produto-rotas');
+const roteadorComissionamento = require('./rotas/comissionamento-rotas');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -23,14 +24,15 @@ app.use(bodyParser.json());
 
 app.use('/', roteadorDefault);
 app.use('/api', roteadorUsuario);
-app.use('/api',roteadorAuth);
+app.use('/api', roteadorAuth);
 app.use('/api', roteadorBanco);
 app.use('/api', roteadorOrgaos);
 app.use('/api', roteadorEstado);
-app.use('/api',roteadorCidade);
-app.use('/api',roteadorCorretor);
-app.use('/api',roteadorCliente);
-app.use('/api',roteadorProduto);
+app.use('/api', roteadorCidade);
+app.use('/api', roteadorCorretor);
+app.use('/api', roteadorCliente);
+app.use('/api', roteadorProduto);
+app.use('/api', roteadorComissionamento);
 
 module.exports = app;
 

@@ -165,6 +165,16 @@ class FachadaDados{
         return await dao.existe(produto);
     }
 
+    async salvarComissionamentoPromotora(comissionamento){
+        let dao = await DAOFactory.getComissionamentoPromotoraDAO();
+        return await dao.salvar(comissionamento); 
+    }
+
+    async existeComissionamentoPromotora(comissionamento){
+        let dao = await DAOFactory.getComissionamentoPromotoraDAO();
+        return await dao.existe(comissionamento);
+    }
+
     
 
 
