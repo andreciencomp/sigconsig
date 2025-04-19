@@ -1,10 +1,28 @@
 const {pool} = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PgUtil = require('./PgUtil');
 
 class PsqlBancoDAO{
     static instancia = new PsqlBancoDAO();
+
+    async obterPorId(id){ 
+        try{
+            const query = "select * from bancos where id=$1";
+            const res = await pool.query(query,[id]);
+            if(res.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("O banco não existe.");
+            }
+            let banco = new Banco();
+            banco.id = res.rows[0].id;
+            banco.codigo = res.rows[0].codigo;
+            banco.nome = res.rows[0].nome;
+            return banco;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 
     async obterPorCodigo(codigo){
 

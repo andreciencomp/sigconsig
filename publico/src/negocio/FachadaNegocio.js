@@ -8,6 +8,7 @@ const GerenciaCorretores = require('./GerenciaCorretores');
 const GerenciaClientes = require('./GerenciaClientes');
 const GerenciaProdutos = require('./GerenciaProdutos');
 const GerenciaComissionamento = require('./GerenciaComissionamento');
+const GerenciaContratos = require('./GerenciaContratos');
 
 class FachadaNegocio{
 
@@ -117,6 +118,11 @@ class FachadaNegocio{
     async cadastrarComissionamentoCorretor(comissionamento){
         const gerenciaComissionamento = new GerenciaComissionamento();
         return await gerenciaComissionamento.cadastrarComissionamentoCorretor(comissionamento);
+    }
+
+    async cadastrarContrato(contrato){
+        const gerenciaContratos = new GerenciaContratos();
+        return await gerenciaContratos.cadastrar(contrato);
     }
 }
 

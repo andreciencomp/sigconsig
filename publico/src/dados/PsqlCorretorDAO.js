@@ -6,9 +6,42 @@ const ContaBancaria = require('../entidades/ContaBancaria');
 const Banco = require('../entidades/Banco');
 const Estado = require('../entidades/Estado');
 const Cidade = require('../entidades/Cidade');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
+const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
+const FachadaDados = require('./FachadaDados');
+const PsqlContaBancariaDAO = require('./PsqlContaBancariaDao');
 
 class PsqlCorretorDAO{
     static instancia = new PsqlCorretorDAO();
+
+    async obterPorId(id){
+        try{
+            const corretorQuery = "select * from corretores where id=$1";
+            const resCorretor = await pool.query(corretorQuery,[id]);
+            if(resCorretor.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("O corretor não existe");
+            }
+            let corretor = new Corretor();
+            corretor.id = resCorretor.rows[0].id;
+            corretor.codigo = resCorretor.rows[0].codigo;
+            corretor.cpf = resCorretor.rows[0].cpf;
+            corretor.nome = resCorretor.rows[0].cpf;
+            corretor.dtNascimento = resCorretor.rows[0].dt_nascimento;
+            corretor.ativo = resCorretor.rows[0].ativo;
+            if(resCorretor.rows[0].endereco_id){
+                const enderecoDAO = new PsqlEnderecoDAO();
+                let endereco = await enderecoDAO.obterPorId(resCorretor.rows[0].endereco_id);
+                corretor.endereco = endereco;
+            }
+            if(resCorretor.rows[0].conta_bancaria_id){
+                let daoContaBancaria = new PsqlContaBancariaDAO();
+                corretor.contaBancaria = await daoContaBancaria.obterPorId(resCorretor.rows[0].conta_bancaria_id);
+            }
+            return corretor;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 
     async salvar(corretor){
         try{

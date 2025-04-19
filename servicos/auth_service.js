@@ -71,6 +71,7 @@ module.exports.usuarioSuperFiltro = async (req, res, next) => {
             throw new UsuarioNaoAutorizadoException("É necessário ser usuário super para realizar esta operação.");
         }
         next();
+        return;
 
     } catch (e) {
         ExceptionService.checkError(e, res);
@@ -85,7 +86,8 @@ module.exports.usuarioAdminFiltro = async (req, res, next) => {
         let dado = await this.decodificarToken(token);
         if (dado.tipo == 'USUARIO_ADMIN' || dado.tipo == 'USUARIO_SUPER') {
             next();
-        } 
+            return;
+        }
         else {
             throw new UsuarioNaoAutorizadoException("Você não tem autorização para realizar esta operação.");
         }
@@ -118,12 +120,12 @@ module.exports.usuarioCadastroFiltro = async (req, res, next) => {
         let token = await this.obterBearerToken(req);
         let dado = await this.decodificarToken(token);
 
-        if (dado.tipo != 'USUARIO_CADASTRO' || dado.tipo != 'USUARIO_ADMIN' ||
-            dado.tipo != 'USUARIO_SUPER') {
-
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
+        if (dado.tipo == 'USUARIO_CADASTRO' || dado.tipo == 'USUARIO_ADMIN' ||
+            dado.tipo == 'USUARIO_SUPER') {
+            next();
+            return;
         }
-        next();
+        throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
 
     } catch (e) {
         ExceptionService.checkError(e, res);
@@ -137,6 +139,7 @@ module.exports.usuarioAutenticadoFiltro = async (req, res, next) => {
         let token = await this.obterBearerToken(req);
         let dado = await this.decodificarToken(token);
         next();
+        return;
 
     } catch (e) {
         ExceptionService.checkError(e, res);

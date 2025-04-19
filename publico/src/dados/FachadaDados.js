@@ -1,6 +1,3 @@
-const UsuarioSuperDAOFactory = require('./UsuarioSuperDAOFactory');
-const UsuarioSuper = require('../entidades/UsuarioSuper');
-const PsqlUsuarioDao = require('../dados/PsqlUsuarioSuperDAO');
 const DAOFactory = require('./DAOFactory');
 
 class FachadaDados{
@@ -140,6 +137,11 @@ class FachadaDados{
         return await dao.listarPorEstado(estado_id);
     }
 
+    async obterCorretorPorId(id){
+        const dao = await DAOFactory.getCorretorDao();
+        return await dao.obterPorId(id);
+    }
+
     async salvarCorretor(corretor){
         const dao = await DAOFactory.getCorretorDao();
         return await dao.salvar(corretor);
@@ -148,6 +150,11 @@ class FachadaDados{
     async listarTodosCorretores(){
         const dao = await DAOFactory.getCorretorDao();
         return await dao.listarTodos();
+    }
+
+    async obterClientePorId(id){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.obterPorId(id);
     }
 
     async salvarCliente(cliente){
@@ -195,11 +202,15 @@ class FachadaDados{
         return await dao.existe(comissionamento);
     }
 
-    
+    async obterContaBancariaPorId(id){
+        let dao = await DAOFactory.getContaBancariaDao();
+        return await dao.obterPorId(id);
+    }
 
-    
-
-
+    async salvarContrato(contrato){
+        let dao = await DAOFactory.getContratoDAO();
+        return await dao.salvar(contrato);
+    }
 
 }
 
