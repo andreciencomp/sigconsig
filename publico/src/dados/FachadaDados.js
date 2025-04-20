@@ -157,6 +157,11 @@ class FachadaDados{
         return await dao.obterPorId(id);
     }
 
+    async atualizarCliente(cliente){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.atualizar(cliente);
+    }
+
     async salvarCliente(cliente){
         const dao = await DAOFactory.getClienteDao();
         return await dao.salvar(cliente);
@@ -210,6 +215,11 @@ class FachadaDados{
     async salvarContrato(contrato){
         let dao = await DAOFactory.getContratoDAO();
         return await dao.salvar(contrato);
+    }
+
+    async atualizarContrato(contrato){
+        let dao = await DAOFactory.getContratoDAO();
+        return await dao.atualizar(contrato);
     }
 
 }

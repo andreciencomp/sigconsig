@@ -1,6 +1,6 @@
 class Endereco{
 
-    constructor(id=null, rua=null, numero=0, bairro=null,
+    constructor(id=null, rua=null, numero=null, bairro=null,
         cep=null, telefone=null, estado=null, cidade=null){
             this.id = id;
             this.rua = rua;

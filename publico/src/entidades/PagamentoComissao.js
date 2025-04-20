@@ -1,13 +1,17 @@
 class PagamentoComissao{
 
-    constructor(){
-        this.id = 0;
-        this.valor = 0.0;
-        this.efetivado = false;
-        this.dtPagamento = null;
-        this.contrato = null;
-        this.cadastradoPor = null;
-        this.efetivadoPor = null;
+    constructor(id=this.id, contrato=null, valorCorretor=null, valorPromotora=null, percentagemCorretor=null,
+         percentagemPromotora=null, efetivado=false, cadastradoPor=null,efetivadoPor=null,dtPagamento=null){
+        this.id = id;
+        this.contrato = contrato;
+        this.valorCorretor = valorCorretor;
+        this.valorPromotora = valorPromotora;
+        this.percentagemCorretor = percentagemCorretor;
+        this.percentagemPromotora = percentagemPromotora;
+        this.efetivado = efetivado;
+        this.cadastradoPor = cadastradoPor;
+        this.efetivadoPor = efetivadoPor;
+        this.dtPagamento = dtPagamento;
     }
 }
 

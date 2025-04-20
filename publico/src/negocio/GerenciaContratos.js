@@ -5,6 +5,11 @@ class GerenciaContratos{
         const fachada = FachadaDados.instancia;
         return await fachada.salvarContrato(contrato);
     }
+
+    async atualizar(contrato){
+        const fachada = FachadaDados.instancia;
+        return await fachada.atualizarContrato(contrato);
+    }
 }
 
 module.exports = GerenciaContratos;

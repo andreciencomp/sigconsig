@@ -63,6 +63,43 @@ class PsqlEnderecoDAO {
         }
     }
 
+    async atualizar(endereco){
+        
+        try{
+            let enderecoSalvo = await this.obterPorId(endereco.id);
+            let estadoId = null;
+            if(endereco.estado && endereco.estado.id){
+                estadoId = endereco.estado.id;
+            }
+            else if(enderecoSalvo.estado && enderecoSalvo.estado.id){
+                estadoId = enderecoSalvo.estado.id;
+            }   
+            let cidadeId = null;
+            if(endereco.cidade && endereco.cidade.id){
+                cidadeId = endereco.cidade.id;
+            }
+            else if(enderecoSalvo.cidade && enderecoSalvo.cidade.id){
+                cidadeId = enderecoSalvo.cidade.id;
+            }
+
+            let cep = endereco.cep ? endereco.cep : enderecoSalvo.cep;
+            let rua = endereco.rua ? endereco.rua : enderecoSalvo.rua;
+            let numero = endereco.numero ? endereco.numero : enderecoSalvo.numero;
+            let bairro = endereco.bairro ? endereco.bairro : enderecoSalvo.bairro;
+            let telefone = endereco.telefone ? endereco.telefone : enderecoSalvo.telefone;
+
+            const query = "update enderecos set estado_id=$1, cidade_id=$2, cep=$3, rua=$4, numero=$5," +
+                "bairro=$6, telefone=$7 where id=$8";
+            const {rows} = await pool.query(query,[estadoId, cidadeId, cep, rua, numero, bairro, telefone, endereco.id]);
+            
+            return endereco;
+
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }
+    }
+
 }
 
 module.exports = PsqlEnderecoDAO;
