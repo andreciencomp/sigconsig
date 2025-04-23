@@ -25,8 +25,8 @@ class PsqlContratoDAO {
             let clienteDAO = new PsqlClienteDao();
 
             pool.query('BEGIN');
-            const queryContrato = "insert into contratos(numero, produto_id, data, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8) returning id";
+            const queryContrato = "insert into contratos(numero, produto_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
+                "values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
             if (clienteId == null) {
@@ -38,7 +38,7 @@ class PsqlContratoDAO {
                         contrato.endereco.rua, contrato.endereco.numero, contrato.endereco.bairro, contrato.endereco.telefone)).id;
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.data,
-                    clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
+                    contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 pool.query('COMMIT');
                 return resContrato.rows[0];
 
@@ -50,7 +50,7 @@ class PsqlContratoDAO {
                 }
 
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.data,
-                contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
+                contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 pool.query('COMMIT');
                 return resContrato.rows[0];
             }
@@ -88,6 +88,5 @@ class PsqlContratoDAO {
         const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";
     }
 }
-
 
 module.exports = PsqlContratoDAO;

@@ -21,6 +21,14 @@ function validarContrato(contrato){
         throw new DadosNulosException("O corretor está nulo.");
     }
 
+    if(!contrato.valor){
+        throw new DadosNulosException("O valor está nulo.");
+    }
+
+    if(contrato.valor <= 0){
+        throw new DadosInvalidosException("O valor tem que ser maior que zero.");
+    }
+
 }
 
 module.exports = validarContrato;
