@@ -56,6 +56,11 @@ class GerenciaContratos {
         return feedbacks;
 
     }
+
+    async listarPorCriterios(criterios){
+        const fachadaDados = FachadaDados.instancia;
+        return await fachadaDados.listarContratosPorCriterios(criterios);
+    }
 }
 
 module.exports = GerenciaContratos;

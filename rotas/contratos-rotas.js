@@ -39,4 +39,14 @@ router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async(req
     
 });
 
+router.get('/contratos', authService.usuarioCadastroFiltro, async (req, res)=>{
+    try{
+        const fachadaNegocio = FachadaNegocio.instancia;
+        const contratos = await fachadaNegocio.listarContratosPorCriterios(req.body);
+        return res.status(200).send({dados: contratos});
+    }catch(e){
+        ExceptionService.checkError(e,res);
+    }
+});
+
 module.exports = router;
