@@ -1,10 +1,29 @@
 const PgUtil = require('./PgUtil');
 const { pool } = require('../../../servicos/database_service');
 const Orgao = require('../entidades/Orgao');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 
 class PsqlOrgaoDAO {
 
     static instancia = new PsqlOrgaoDAO();
+
+    async obterPorId(id){
+        try{
+            const query = "select * from orgaos where id=$1";
+            const res = await pool.query(query,[id]);
+            if(res.rowCount == 0){
+                throw EntidadeNaoEncontradaException("O orgão não existe.");
+            }
+            let orgao = new Orgao();
+            orgao.id = res.rows[0].id;
+            orgao.sigla = res.rows[0].sigla;
+            orgao.nome = res.rows[0].nome;
+            
+            return orgao;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 
     async existePorSigla(sigla) {
         const query = "select sigla from orgaos where sigla = $1";

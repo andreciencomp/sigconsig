@@ -1,6 +1,7 @@
 const { pool } = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
 const ComissionamentoPromotora = require('../entidades/ComissionamentoPromotora');
+const Orgao = require('../entidades/Orgao');
 const Produto = require('../entidades/Produto');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PgUtil = require('./PgUtil');
@@ -40,6 +41,46 @@ class PsqlComissionamentoPromotoraDAO{
             return comissionamento;
 
         }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
+
+    async obter(bancoId, produtoId){
+        try{
+            const query = "select comissionamentos_promotora.id, comissionamentos_promotora.percentagem, " +
+                            "bancos.id as banco_id, bancos.codigo, bancos.nome as banco_nome, "+
+                            "produtos.id as produto_id, produtos.qtd_parcelas, produtos.carencia, " + 
+                            "orgaos.id as orgao_id, orgaos.sigla as orgao_sigla, orgaos.nome as orgao_nome " +
+                            "from comissionamentos_promotora left join bancos on comissionamentos_promotora.banco_id = bancos.id "+
+                            "left join produtos on comissionamentos_promotora.produto_id = produtos.id " +
+                            "left join orgaos on produtos.orgao_id=orgaos.id "+
+                            "where comissionamentos_promotora.banco_id=$1 and comissionamentos_promotora.produto_id=$2";
+            const res = await pool.query(query, [bancoId, produtoId]);
+            if(res.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Comissionamento da promotora não encontrato");
+            }
+            let row = res.rows[0];
+            let comissionamento = new ComissionamentoPromotora();
+            comissionamento.id = row.id;
+            comissionamento.percentagem = row.percentagem;
+            let orgao = new Orgao();
+            orgao.id = row.orgao_id;
+            orgao.sigla = row.orgao_sigla;
+            orgao.nome = row.orgao_nome;
+            let produto = new Produto();
+            produto.id = row.produto_id;
+            produto.qtdParcelas = row.qtd_parcelas;
+            produto.carencia = row.carencia;
+            produto.orgao = orgao;
+            comissionamento.produto = produto;
+            const banco = new Banco();
+            banco.id = row.banco_id;
+            banco.codigo = row.codigo;
+            banco.nome = row.banco_nome;
+            comissionamento.banco = banco;
+            
+            return comissionamento;
+        }catch(e){  
             PgUtil.checkError(e);
         }
     }
@@ -90,10 +131,10 @@ class PsqlComissionamentoPromotoraDAO{
         }
     }
 
-    async existe(comissionamento){
+    async existe(produtoId, bancoId){
         try{
             const query = "select id from comissionamentos_promotora where produto_id=$1 and banco_id=$2";
-            const res = await pool.query(query,[comissionamento.produto.id, comissionamento.banco.id]);
+            const res = await pool.query(query,[produtoId, bancoId]);
             return res.rowCount > 0;
 
         }catch(e){

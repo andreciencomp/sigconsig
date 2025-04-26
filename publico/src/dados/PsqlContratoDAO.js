@@ -1,7 +1,12 @@
 const { pool } = require('../../../servicos/database_service')
 const PgUtil = require('../dados/PgUtil');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PsqlClienteDao = require('./PsqlClienteDAO');
 const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
+const PsqlCorretorDAO = require('./PsqlCorretorDAO');
+const Contrato = require('../entidades/Contrato');
+const PsqlProdutoDAO = require('./PsqlProdutoDAO');
+const PsqlBancoDAO = require('./PsqlBancoDAO');
 
 class PsqlContratoDAO {
 
@@ -19,14 +24,63 @@ class PsqlContratoDAO {
         }
     }
 
+    async  obterPorId(id){
+        try{
+            const queryContrato = "select * from contratos where id=$1";
+            const resContrato = await pool.query(queryContrato, [id]);
+            if(resContrato.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("O contrato não existe.");
+            }
+            const rowContrato = resContrato.rows[0];
+            const contrato = new Contrato();
+            contrato.id = rowContrato.id;
+            contrato.numero = rowContrato.numero;
+            contrato.data = rowContrato.data;
+            contrato.valor = rowContrato.valor;
+            contrato.status = rowContrato.status;
+            contrato.dtLiberacao = rowContrato.dt_liberacao;
+            if(rowContrato.produto_id){
+                const produtoDAO = new PsqlProdutoDAO();
+                const produto = await produtoDAO.obterPorId(rowContrato.produto_id);
+                contrato.produto = produto;
+            }
+            if(rowContrato.banco_id){
+                const bancoDAO = new PsqlBancoDAO();
+                const banco = await bancoDAO.obterPorId(rowContrato.banco_id);
+                contrato.banco = banco;
+            }
+            if(rowContrato.endereco_id){
+                const enderecoDAO = new PsqlEnderecoDAO();
+                const endereco = await enderecoDAO.obterPorId(rowContrato.endereco_id);
+                contrato.endereco = endereco;
+            }
+            if(rowContrato.corretor_id){
+                const corretorDAO = new PsqlCorretorDAO();
+                const corretor = await corretorDAO.obterPorId(rowContrato.corretor_id);
+                contrato.corretor = corretor;
+            }
+            if(rowContrato.cliente_id){
+                const clienteDAO = new PsqlClienteDao();
+                const cliente  = await clienteDAO.obterPorId(rowContrato.cliente_id);
+                contrato.cliente = cliente;
+            }
+            return contrato;
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+        
+
+    }
+
     async salvar(contrato) {
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
 
             pool.query('BEGIN');
-            const queryContrato = "insert into contratos(numero, produto_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id";
+            const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
+                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
             if (clienteId == null) {
@@ -37,7 +91,7 @@ class PsqlContratoDAO {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco.estado.id, contrato.endereco.estado.id, contrato.endereco.cep,
                         contrato.endereco.rua, contrato.endereco.numero, contrato.endereco.bairro, contrato.endereco.telefone)).id;
                 }
-                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.data,
+                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                     contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 pool.query('COMMIT');
                 return resContrato.rows[0];
@@ -63,26 +117,37 @@ class PsqlContratoDAO {
 
     async atualizar(contrato) {
         try {
-            let clienteId = contrato.cliente.id;
-            let clienteDAO = PsqlClienteDao();
-            if (clienteId == null) {
-                let novoCliente = contrato.cliente;
-                novoCliente.endereco = contrato.endereco;
-                clienteId = await clienteDAO.salvar(novoCliente);
-
-            } else {
+            
+            pool.query('BEGIN');
+            let contratoSalvo = await this.obterPorId(contrato.id);
+            if (contrato.cliente && contrato.cliente.id) {
+                const clienteDAO = new PsqlClienteDao();
                 await clienteDAO.atualizar(contrato.cliente);
+
             }
-            let enderecoDAO = new PsqlEnderecoDAO();
-            await endereco.atualizar(contrato.endereco);
-
-
-            let query = "update contratos set numero=$1, produto_id=$2," +
-                "data=$3, cliente_id=$4, endereco_id=$5, status=$6, corretor_id=$6";
-            await pool.query(query, [contrato.numero, contrato.produto.id,
-            contrato.data, clienteId, contrato.endereco.id, contrato.status, contrato.corretor.id]);
+            if(contrato.endereco){
+                let enderecoDAO = new PsqlEnderecoDAO();
+                await enderecoDAO.atualizar(contrato.endereco);
+            }
+            console.log(contrato);
+            const numero= contrato.numero ? contrato.numero : contratoSalvo.numero;
+            const produtoId = contrato.produto && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
+            const bancoId = contrato.banco &&  contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
+            const data = contrato.data ? contrato.data : contratoSalvo.data;
+            const valor = contrato.valor ? contrato.valor : contratoSalvo.valor;
+            const clienteId = contrato.cliente && contrato.cliente.id ? contrato.cliente.id : contratoSalvo.cliente.id;
+            const enderecoId = contrato.endereco &&  contrato.endereco.id ? contrato.endereco.id : contratoSalvo.endereco.id;
+            const status = contrato.status ? contrato.status : contratoSalvo.status;
+            const corretorId = contrato.corretor && contrato.corretor.id ? contrato.corretor.id : contratoSalvo.corretor.id;
+            const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
+            let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3," +
+                            "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10";
+            await pool.query(queryAtualizarContrato, [numero, produtoId, bancoId,
+                                                        data, valor, clienteId, enderecoId, status, corretorId,dtLiberacao]);
+            pool.query('COMMIT');
 
         } catch (e) {
+            pool.query('ROLLBACK');
             PgUtil.checkError(e);
         }
         const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";

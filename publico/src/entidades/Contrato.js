@@ -1,11 +1,12 @@
 class Contrato{
     
-    constructor(id=null, numero=null,produto=null,data=null, valor=null, cliente=null,
-        endereco=null,dtLiberacao=null,status='CADASTRADO', corretor=null){
+    constructor(id=null, numero=null,produto=null, banco=null, data=null, valor=null, cliente=null,
+        endereco=null, dtLiberacao=null,status=null, corretor=null){
             
         this.id = id;
         this.numero = numero;
         this.produto = produto;
+        this.banco = banco;
         this.data = data;
         this.valor = valor;
         this.cliente = cliente;

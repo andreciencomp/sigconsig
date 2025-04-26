@@ -6,7 +6,9 @@ const DadosInvalidosException = require("../publico/src/excessoes/DadosInvalidos
 const DadosNulosException = require("../publico/src/excessoes/DadosNulosException");
 const EntidadeNaoEncontradaException = require("../publico/src/excessoes/EntidadeNaoEncontrada");
 const HeaderNaoEncontradoException = require("../publico/src/excessoes/HeaderNaoEncontradoException");
+const LiberacaoNaoPossivelException = require("../publico/src/excessoes/LiberacaoNaoPossivelException");
 const MetodoAuthInvalidoException = require("../publico/src/excessoes/MetodoAuthInvalidoException");
+const PagamentoJaCadastradoException = require("../publico/src/excessoes/PagamentoJaCadastradoException");
 const SenhaIncorretaException = require("../publico/src/excessoes/SenhaIncorretaException");
 const TokenInvalidoException = require("../publico/src/excessoes/TokenInvalidoException");
 const TokenNaoEncontradoException = require("../publico/src/excessoes/TokenNaoEncontradoException");
@@ -72,6 +74,14 @@ class ExceptionService {
                 break;
 
             case new ComissionamentoInvalidoException().name:
+                res.status(400).send({excessao:e.name, msg:e.message});
+                break;
+
+            case new LiberacaoNaoPossivelException().name:
+                res.status(400).send({excessao:e.name, msg:e.name});
+                break;
+
+            case new PagamentoJaCadastradoException().name:
                 res.status(400).send({excessao:e.name, msg:e.message});
                 break;
                 

@@ -4,10 +4,6 @@ class FachadaDados{
 
     static instancia = new FachadaDados();
 
-    constructor(){
-        this.factory = new DAOFactory();
-    }
-
     static getInstancia(){
 
         if(this.instancia == null){
@@ -25,9 +21,9 @@ class FachadaDados{
 
     async obterUsuarioPorId(id){
 
-        let dao = await this.factory.getUsuarioSuperDAO();  
+        let dao = await DAOFactory.getUsuarioSuperDAO();  
         let usr;
-        usr =  dao.obter(id);
+        usr =  await dao.obter(id);
         return usr;
     }
 
@@ -192,9 +188,14 @@ class FachadaDados{
         return await dao.salvar(comissionamento); 
     }
 
-    async existeComissionamentoPromotora(comissionamento){
+    async existeComissionamentoPromotora(produtoId, bancoId){
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
-        return await dao.existe(comissionamento);
+        return await dao.existe(produtoId, bancoId);
+    }
+
+    async obterComissionamentoCorretor(corretorId, bancoId, produtoId){
+        const dao = await DAOFactory.getComissionamentoCorretorDAO();
+        return dao.obter(corretorId, bancoId, produtoId);
     }
 
     async salvarComissionamentoCorretor(comissionamento){
@@ -212,6 +213,11 @@ class FachadaDados{
         return await dao.obterPorId(id);
     }
 
+    async obterContratoPorId(id){
+        const dao = await DAOFactory.getContratoDAO();
+        return await dao.obterPorId(id);
+    }
+
     async salvarContrato(contrato){
         let dao = await DAOFactory.getContratoDAO();
         return await dao.salvar(contrato);
@@ -220,6 +226,16 @@ class FachadaDados{
     async atualizarContrato(contrato){
         let dao = await DAOFactory.getContratoDAO();
         return await dao.atualizar(contrato);
+    }
+
+    async salvarPagamentoComissao(pagamentoComissao){
+        const dao = await DAOFactory.getPagamentoComissaoDAO();
+        return await dao.salvar(pagamentoComissao);
+    }
+
+    async existePagamentoPorContratoId(contratoId){
+        const dao = await DAOFactory.getPagamentoComissaoDAO();
+        return await dao.existePorContratoId(contratoId);
     }
 
 }
