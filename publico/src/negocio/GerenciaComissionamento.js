@@ -8,7 +8,7 @@ const ComissionamentoInvalidoException = require("../excessoes/ComissionamentoIn
 class GerenciaComissionamento {
     async cadastrarComissionamentoPromotora(comissionamento) {
         const fachadaDados = FachadaDados.instancia;
-        if (await fachadaDados.existeComissionamentoPromotora(comissionamento)) {
+        if (await fachadaDados.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id)) {
             throw new ChaveRepetidaException("Já existe este comissionamento para promotora");
         }
         return await fachadaDados.salvarComissionamentoPromotora(comissionamento);

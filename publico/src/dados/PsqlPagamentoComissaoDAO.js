@@ -3,14 +3,14 @@ const PgUtil = require("./PgUtil");
 
 class PsqlPagamentoComissaoDAO{
 
-    static instancia = null;
+    static #instancia;
 
     static getInstancia(){
-        if(this.instancia == null){
-            this.instancia = new PsqlPagamentoComissaoDAO();
-            return this.instancia;
+        if(this.#instancia == null){
+            this.#instancia = new PsqlPagamentoComissaoDAO();
+            return this.#instancia;
         }
-        return this.instancia;
+        return this.#instancia;
     }
 
     async salvar(pagamentoComissao){

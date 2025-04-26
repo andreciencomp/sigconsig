@@ -134,6 +134,11 @@ class FachadaNegocio{
         const gerenciaContratos = new GerenciaContratos();
         return await gerenciaContratos.liberar(contratoId, nomeUsuario);
     }
+
+    async liberarVariosContratos(arrayContratoId, nomeUsuario){
+        const gerenciaContratos = new GerenciaContratos();
+        return await gerenciaContratos.liberarVarios(arrayContratoId, nomeUsuario);
+    }
 }
 
 module.exports = FachadaNegocio;

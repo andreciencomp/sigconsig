@@ -69,8 +69,6 @@ class PsqlContratoDAO {
         }catch(e){
             PgUtil.checkError(e);
         }
-        
-
     }
 
     async salvar(contrato) {
@@ -129,7 +127,6 @@ class PsqlContratoDAO {
                 let enderecoDAO = new PsqlEnderecoDAO();
                 await enderecoDAO.atualizar(contrato.endereco);
             }
-            console.log(contrato);
             const numero= contrato.numero ? contrato.numero : contratoSalvo.numero;
             const produtoId = contrato.produto && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
             const bancoId = contrato.banco &&  contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
@@ -141,9 +138,9 @@ class PsqlContratoDAO {
             const corretorId = contrato.corretor && contrato.corretor.id ? contrato.corretor.id : contratoSalvo.corretor.id;
             const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
             let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3," +
-                            "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10";
+                            "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10 where id=$11";
             await pool.query(queryAtualizarContrato, [numero, produtoId, bancoId,
-                                                        data, valor, clienteId, enderecoId, status, corretorId,dtLiberacao]);
+                                                        data, valor, clienteId, enderecoId, status, corretorId,dtLiberacao, contrato.id]);
             pool.query('COMMIT');
 
         } catch (e) {
