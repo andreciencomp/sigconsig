@@ -100,6 +100,11 @@ class FachadaNegocio{
         return await gerenciaCorretores.listarTodos();
     }
 
+    async obterClientePorId(id){
+        const gerenciaClientes = new GerenciaClientes();
+        return await gerenciaClientes.obterPorId(id);
+    }
+
     async cadastrarCliente(cliente){
         let gerenciaClientes = new GerenciaClientes();
         return await gerenciaClientes.cadastrar(cliente);
