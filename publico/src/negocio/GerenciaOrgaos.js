@@ -20,7 +20,7 @@ class GerenciaOrgaos{
         if(await fachada.existeOrgaoPorNome(nome) == true){
             throw new ChaveRepetidaException("Já existe um orgão com este nome.");
         }
-        await fachada.salvarOrgao(orgao);
+        return await fachada.salvarOrgao(orgao);
     }
 
     async listarOrgaos(){

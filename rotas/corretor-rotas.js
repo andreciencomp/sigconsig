@@ -11,8 +11,6 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
     try {
         validarCorretor(req.body);
         let resposta = await fachada.cadastrarCorretor(req.body);
-
-
         return res.status(201).send({ dados: resposta });
 
     } catch (e) {
@@ -24,7 +22,7 @@ router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res)
     let fachada = FachadaNegocio.instancia;
     try {
         let corretores = await fachada.listarTodosCorretores();
-        return res.status(200).send({ dado: corretores });
+        return res.status(200).send({ dados: corretores });
     } catch (e) {
         ExceptionService.checkError(e, res);
     }

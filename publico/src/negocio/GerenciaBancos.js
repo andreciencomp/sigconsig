@@ -19,7 +19,7 @@ class GerenciaBancos{
         let banco = new Banco();
         banco.codigo = codigo;
         banco.nome = nome;
-        return  await this.fachada.salvarBanco(banco);
+        return await this.fachada.salvarBanco(banco);
     }
 
     async listarBancos(){

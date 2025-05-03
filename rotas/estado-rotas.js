@@ -9,7 +9,7 @@ estadoRouter.get('/estados',async function(req, res){
     try{
         let fachada = fachadaNegocio.instancia;
         let estados = await fachada.listarEstados();
-        return res.status(200).send({dado: estados});
+        return res.status(200).send({dados: estados});
     }catch(e){
         ExceptionService.checkError(e);
     }

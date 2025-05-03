@@ -9,8 +9,9 @@ router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     try {
         validarProduto(req.body);
         let fachadaNegocio = FachadaNegocio.instancia;
-        let idProduto = await fachadaNegocio.cadastrarProduto(req.body);
-        return res.status(201).send(idProduto);
+        let objetoComId = await fachadaNegocio.cadastrarProduto(req.body);
+        return res.status(201).send({dados:objetoComId});
+
     } catch (e) {
         ExceptionService.checkError(e,res);
     }

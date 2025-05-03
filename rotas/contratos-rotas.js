@@ -21,7 +21,7 @@ router.post('/contratos/liberar/:id', authService.usuarioFinanceiroFiltro, async
     try{
         const fachadaNegocio = FachadaNegocio.instancia;
         const resultado = await fachadaNegocio.liberarContrato(req.params.id, req.dadosUsuario.id);
-        return res.status(200).send(resultado);
+        return res.status(200).send({dados:resultado});
     }catch(e){
         ExceptionService.checkError(e,res);
     }
@@ -32,7 +32,8 @@ router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async(req
     try{
         const fachadaNegocio = FachadaNegocio.instancia;
         const resultado = await fachadaNegocio.liberarVariosContratos(req.body, req.dadosUsuario.id);
-        return res.status(200).send(resultado);
+        return res.status(200).send({dados:resultado});
+        
     }catch(e){
         ExceptionService.checkError(e,res);
     }

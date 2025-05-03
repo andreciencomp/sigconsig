@@ -31,7 +31,7 @@ router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req
     try{
         validarCliente(req.body);
         const retorno = await fachadaNegocio.cadastrarCliente(req.body);
-        return res.status(201).send({dado:{id:retorno}});
+        return res.status(201).send({dados:{id:retorno}});
     }catch(e){
         ExceptionService.checkError(e, res);
     }

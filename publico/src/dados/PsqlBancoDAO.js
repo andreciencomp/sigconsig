@@ -52,10 +52,11 @@ class PsqlBancoDAO{
 
     async salvar(banco){
 
-        let strQuery = "insert into bancos(codigo,nome) values ($1, $2)";
+        let strQuery = "insert into bancos(codigo,nome) values ($1, $2) returning id";
         try{
-            await  pool.query(strQuery, [banco.codigo, banco.nome]);
-            return true;
+            const {rows} = await  pool.query(strQuery, [banco.codigo, banco.nome]);
+            return rows[0];
+            
         }catch(e){
             PgUtil.checkError(e);
         }

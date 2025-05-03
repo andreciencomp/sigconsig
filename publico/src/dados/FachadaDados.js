@@ -99,7 +99,7 @@ class FachadaDados{
     async salvarOrgao(orgao){
 
         const dao = await DAOFactory.getOrgaoDAO();
-        await dao.salvar(orgao);
+        return await dao.salvar(orgao);
     }
 
     async listarOrgaos(){

@@ -40,8 +40,10 @@ class PsqlOrgaoDAO {
 
     async salvar(orgao) {
         try {
-            let strQuery = 'insert into orgaos (sigla, nome) values ($1, $2)';
-            await pool.query(strQuery, [orgao.sigla, orgao.nome]);
+            let strQuery = 'insert into orgaos (sigla, nome) values ($1, $2) returning id';
+            const {rows} = await pool.query(strQuery, [orgao.sigla, orgao.nome]);
+            return rows[0];
+            
         } catch (e) {
 
             PgUtil.checkError(e);
