@@ -105,6 +105,11 @@ class FachadaNegocio{
         return await gerenciaClientes.obterPorId(id);
     }
 
+    async obterClientePorCpf(cpf){
+        const gerenciaClientes = new GerenciaClientes();
+        return await gerenciaClientes.obterPorCpf(cpf);
+    }
+
     async cadastrarCliente(cliente){
         let gerenciaClientes = new GerenciaClientes();
         return await gerenciaClientes.cadastrar(cliente);

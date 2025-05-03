@@ -19,7 +19,32 @@ class PsqlClienteDao {
             let cliente = new Cliente();
             cliente.id = res.rows[0].id;
             cliente.cpf = res.rows[0].cpf;
-            cliente.nome = res.rows[0].cpf;
+            cliente.nome = res.rows[0].nome;
+            cliente.dtNascimento = res.rows[0].dt_nascimento;
+            let enderecoDAO = new PsqlEnderecoDAO();
+            if (res.rows[0].endereco_id) {
+                const endereco = await enderecoDAO.obterPorId(res.rows[0].endereco_id);
+                cliente.endereco = endereco;
+            }
+            return cliente;
+
+
+        } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async obterPorCpf(cpf) {
+        try {
+            const queryCliente = "select * from clientes where cpf=$1";
+            const res = await pool.query(queryCliente, [cpf]);
+            if (res.rowCount == 0) {
+                throw new EntidadeNaoEncontradaException("O cliente não existe.");
+            }
+            let cliente = new Cliente();
+            cliente.id = res.rows[0].id;
+            cliente.cpf = res.rows[0].cpf;
+            cliente.nome = res.rows[0].nome;
             cliente.dtNascimento = res.rows[0].dt_nascimento;
             let enderecoDAO = new PsqlEnderecoDAO();
             if (res.rows[0].endereco_id) {

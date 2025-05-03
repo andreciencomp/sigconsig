@@ -153,6 +153,11 @@ class FachadaDados{
         return await dao.obterPorId(id);
     }
 
+    async obterClientePorCpf(cpf){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.obterPorCpf(cpf);
+    }
+
     async atualizarCliente(cliente){
         const dao = await DAOFactory.getClienteDao();
         return await dao.atualizar(cliente);
