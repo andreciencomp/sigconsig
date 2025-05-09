@@ -19,7 +19,7 @@ class GerenciaContratos {
                 {orgaoId:contrato.produto.orgao.id, carencia:contrato.produto.carencia, qtdParcelas:contrato.produto.qtdParcelas}
             );
             if(produtos.length == 0){
-                throw new EntidadeNaoEncontradaException("O produto não foi encontrado para " + contrato.produto.carencia);
+                throw new EntidadeNaoEncontradaException("O produto não foi encontrado.");
             }
             contrato.produto.id = produtos[0].id;
         }

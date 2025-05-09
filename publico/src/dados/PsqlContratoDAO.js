@@ -101,7 +101,7 @@ class PsqlContratoDAO {
                         contrato.endereco.rua, contrato.endereco.numero, contrato.endereco.bairro, contrato.endereco.telefone)).id;
                 }
 
-                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.data,
+                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 pool.query('COMMIT');
                 return resContrato.rows[0];
@@ -115,7 +115,6 @@ class PsqlContratoDAO {
 
     async atualizar(contrato) {
         try {
-
             pool.query('BEGIN');
             let contratoSalvo = await this.obterPorId(contrato.id);
             if (contrato.cliente && contrato.cliente.id) {

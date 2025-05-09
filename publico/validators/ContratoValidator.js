@@ -25,7 +25,7 @@ function validarContrato(contrato){
     }
 
     if(!contrato.valor){
-        throw new DadosNulosException("O valor está nulo.");
+        throw new DadosNulosException("O valor do contrato está nulo.");
     }
 
     if(contrato.valor <= 0){

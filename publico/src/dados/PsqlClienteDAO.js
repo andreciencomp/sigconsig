@@ -20,7 +20,8 @@ class PsqlClienteDao {
             cliente.id = res.rows[0].id;
             cliente.cpf = res.rows[0].cpf;
             cliente.nome = res.rows[0].nome;
-            cliente.dtNascimento = res.rows[0].dt_nascimento;
+            let dtNasc = res.rows[0].dt_nascimento;
+            cliente.dtNascimento = dtNasc.toISOString().slice(0, 10);
             let enderecoDAO = new PsqlEnderecoDAO();
             if (res.rows[0].endereco_id) {
                 const endereco = await enderecoDAO.obterPorId(res.rows[0].endereco_id);
@@ -41,19 +42,7 @@ class PsqlClienteDao {
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O cliente não existe.");
             }
-            let cliente = new Cliente();
-            cliente.id = res.rows[0].id;
-            cliente.cpf = res.rows[0].cpf;
-            cliente.nome = res.rows[0].nome;
-            cliente.dtNascimento = res.rows[0].dt_nascimento;
-            let enderecoDAO = new PsqlEnderecoDAO();
-            if (res.rows[0].endereco_id) {
-                const endereco = await enderecoDAO.obterPorId(res.rows[0].endereco_id);
-                cliente.endereco = endereco;
-            }
-            return cliente;
-
-
+            return this.criarObjetoCliente(res);
         } catch (e) {
             PgUtil.checkError(e);
         }
@@ -88,10 +77,10 @@ class PsqlClienteDao {
             pool.query('BEGIN');
             let daoEndereco = new PsqlEnderecoDAO();
             let clienteSalvo = await this.obterPorId(cliente.id);
-            if(cliente.endereco){
+            if (cliente.endereco) {
                 await daoEndereco.atualizar(cliente.endereco);
             }
-           
+
             let cpf = cliente.cpf ? cliente.cpf : clienteSalvo.cpf;
             let nome = cliente.nome ? cliente.nome : clienteSalvo.nome;
             let dtNascimento = cliente.dtNascimento ? cliente.dtNascimento : clienteSalvo.dtNascimento;
@@ -104,6 +93,21 @@ class PsqlClienteDao {
             pool.query('ROLLBACK');
             PgUtil.checkError(e);
         }
+    }
+
+    async criarObjetoCliente(result) {
+        let cliente = new Cliente();
+        cliente.id = result.rows[0].id;
+        cliente.cpf = result.rows[0].cpf;
+        cliente.nome = result.rows[0].nome;
+        let dtNasc = result.rows[0].dt_nascimento;
+        cliente.dtNascimento = dtNasc.toISOString().slice(0, 10);
+        let enderecoDAO = new PsqlEnderecoDAO();
+        if (result.rows[0].endereco_id) {
+            const endereco = await enderecoDAO.obterPorId(result.rows[0].endereco_id);
+            cliente.endereco = endereco;
+        }
+        return cliente;
     }
 }
 
