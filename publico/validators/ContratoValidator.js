@@ -1,10 +1,13 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
+const validarProduto = require("./ProdutoValidator");
 const validarCliente = require("./ClienteValidator");
 
 function validarContrato(contrato){
-    if(contrato.produto == null || contrato.produto.id == null){
-        throw new DadosInvalidosException("O produto está nulo");
+    if(!contrato.produto){
+        throw new DadosNulosException("O produto está nulo");
+    }else if(contrato.produto.id == null){
+        validarProduto(contrato.produto);
     }
 
     if(!contrato.cliente){

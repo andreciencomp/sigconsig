@@ -5,6 +5,7 @@ const ComissionamentoCorretor = require("../entidades/ComissionamentoCorretor");
 const Contrato = require("../entidades/Contrato");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
+const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivelException");
 const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 const GerenciaComissionamento = require("./GerenciaComissionamento");
@@ -12,6 +13,16 @@ const GerenciaComissionamento = require("./GerenciaComissionamento");
 class GerenciaContratos {
     async cadastrar(contrato) {
         const fachada = FachadaDados.instancia;
+        if(contrato.produto.id == null){
+            const fachadaDados= new FachadaDados();
+            let produtos = await fachadaDados.listarProdutosPorCriterios(
+                {orgaoId:contrato.produto.orgao.id, carencia:contrato.produto.carencia, qtdParcelas:contrato.produto.qtdParcelas}
+            );
+            if(produtos.length == 0){
+                throw new EntidadeNaoEncontradaException("O produto não foi encontrado para " + contrato.produto.carencia);
+            }
+            contrato.produto.id = produtos[0].id;
+        }
         return await fachada.salvarContrato(contrato);
     }
 

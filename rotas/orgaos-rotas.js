@@ -13,7 +13,7 @@ roteador.post('/orgaos/cadastrar',authService.usuarioAdminFiltro, async (req, re
     try{
         const objetoComId = await fachada.cadastrarOrgao(sigla, nome);
         return res.status(201).send({dados:objetoComId});
-        
+
     }catch(e){
 
         ExceptionService.checkError(e, res);
@@ -25,7 +25,7 @@ roteador.get('/orgaos', authService.usuarioAutenticadoFiltro,async(req,res,next)
     let fachada = FachadaNegocio.instancia;
     try{
         let orgaos = await fachada.listarOrgaos();
-        return res.status(200).send({dados:orgaos, excessao:null});
+        return res.status(200).send({dados:orgaos});
 
     }catch(e){
 

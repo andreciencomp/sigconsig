@@ -9,6 +9,11 @@ class GerenciaProdutos{
         }
         return fachadaDados.salvarProduto(produto);
     }
+
+    async existe(produto){
+        const fachadaDados = new FachadaDados();
+        return await fachadaDados.existeProduto();
+    }
 }
 
 module.exports = GerenciaProdutos;

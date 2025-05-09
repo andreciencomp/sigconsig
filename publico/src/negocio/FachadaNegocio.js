@@ -120,6 +120,11 @@ class FachadaNegocio{
         return await gerenciaProdutos.cadastrar(produto);
     }
 
+    async existeProduto(produto){
+        let gerenciaProdutos = new GerenciaProdutos();
+        return await gerenciaProdutos.existe(produto);
+    }
+
     async cadastrarComissionamentoPromotora(comissionamento){
         const gerenciaComissionamento = new GerenciaComissionamento();
         return await gerenciaComissionamento.cadastrarComissionamentoPromotora(comissionamento);

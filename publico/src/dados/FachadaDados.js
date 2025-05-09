@@ -178,6 +178,11 @@ class FachadaDados{
         return await dao.existe(produto);
     }
 
+    async listarProdutosPorCriterios(criterios){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.listarProdutosPorCriterios(criterios);
+    }
+
     async obterComissionamentoPromotoraPorId(id){
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.obterPorId(id);
