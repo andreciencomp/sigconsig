@@ -48,9 +48,11 @@ class PsqlClienteDao {
         }
     }
 
-    async salvar(cliente) {
+    async salvar(cliente, rollback=false) {
         try {
-            await pool.query('BEGIN');
+            if(rollback){
+                await pool.query('BEGIN');
+            }
             let enderecoId = null;
             if (cliente.endereco) {
                 let endereco = new Endereco();
@@ -63,11 +65,15 @@ class PsqlClienteDao {
             }
             const clienteQuery = "insert into clientes (cpf, nome, dt_nascimento, endereco_id) values ($1, $2, $3, $4) returning id"
             let resCliente = await pool.query(clienteQuery, [cliente.cpf, cliente.nome, cliente.dtNascimento, enderecoId]);
-            await pool.query('COMMIT');
+            if(rollback){
+                await pool.query('COMMIT');
+            }
             return resCliente.rows[0];
 
         } catch (e) {
-            await pool.query('ROLLBACK');
+            if(rollback){
+                await pool.query('ROLLBACK');
+            }
             PgUtil.checkError(e);
         }
     }

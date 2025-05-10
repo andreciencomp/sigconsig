@@ -71,18 +71,22 @@ class PsqlContratoDAO {
         }
     }
 
-    async salvar(contrato) {
+    async salvar(contrato, rollback=false) { 
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
-
-            pool.query('BEGIN');
+            if(rollback){
+                await pool.query('BEGIN');
+            }
+            
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
                 "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
             if (clienteId == null) {
                 contrato.cliente.endereco = contrato.endereco;
+
+
                 clienteId = (await clienteDAO.salvar(contrato.cliente)).id;
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
@@ -90,7 +94,10 @@ class PsqlContratoDAO {
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
-                pool.query('COMMIT');
+                if(rollback){
+                    await pool.query('COMMIT');
+                }
+                
                 return resContrato.rows[0];
 
             } else {
@@ -101,12 +108,16 @@ class PsqlContratoDAO {
 
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
-                pool.query('COMMIT');
+                if(rollback){
+                    await pool.query('COMMIT');
+                }
                 return resContrato.rows[0];
             }
 
         } catch (e) {
-            pool.query('ROLLBACK');
+            if(rollback){
+                await pool.query('ROLLBACK');
+            }
             PgUtil.checkError(e);
         }
     }
@@ -154,8 +165,8 @@ class PsqlContratoDAO {
         let contratos = [];
 
         let query = "select contratos.id,numero,produto_id, data, cliente_id, dt_liberacao,endereco_id,status, corretor_id, valor, banco_id from contratos ";
-        if(criterios["orgaoId"]){
-            query+= " left join produtos on produtos.id = contratos.produto_id "
+        if (criterios["orgaoId"]) {
+            query += " left join produtos on produtos.id = contratos.produto_id "
         }
         if (numCriterios > 0) {
             query += " where ";
@@ -165,28 +176,28 @@ class PsqlContratoDAO {
             for (let i = 0; i < numCriterios; i++) {
                 switch (atributos[i]) {
                     case 'corretorId':
-                        query += 'corretor_id=$' + (i+1);
+                        query += 'corretor_id=$' + (i + 1);
                         valoresQuery.push(criterios['corretorId']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'bancoId':
-                        query += " banco_id=$" + (i+1);
+                        query += " banco_id=$" + (i + 1);
                         valoresQuery.push(criterios['bancoId']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'orgaoId':
-                        query += " orgao_id=$" + (i+1);
+                        query += " orgao_id=$" + (i + 1);
                         valoresQuery.push(criterios['orgaoId']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'dataInicial':
-                        query += " data >= $" + (i+1);
+                        query += " data >= $" + (i + 1);
                         valoresQuery.push(criterios['dataInicial']);
                         if (i < numCriterios - 1) {
                             query += " and ";
@@ -194,49 +205,49 @@ class PsqlContratoDAO {
                         break;
 
                     case 'dataFinal':
-                        query += " data <= $" + (i+1);
+                        query += " data <= $" + (i + 1);
                         valoresQuery.push(criterios['dataFinal']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'dtLiberacaoInicial':
-                        query += " data >= $" + (i+1);
+                        query += " data >= $" + (i + 1);
                         valoresQuery.push(criterios['dtLiberacaoInicial']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'dtLiberacaoFinal':
-                        query += " data <= $" + (i+1);
+                        query += " data <= $" + (i + 1);
                         valoresQuery.push(criterios['dtLiberacaoFinal']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'status':
-                        query += " status = $" + (i+1);
+                        query += " status = $" + (i + 1);
                         valoresQuery.push(criterios['status']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'valorMinimo':
-                        query += " valor >= $" + (i+1);
+                        query += " valor >= $" + (i + 1);
                         valoresQuery.push(criterios['valorMinimo']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'valorMaximo':
-                        query += " valor <= $" + (i+1);
+                        query += " valor <= $" + (i + 1);
                         valoresQuery.push(criterios['valorMaximo']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'clienteId':
-                        query += " cliente_id = $" + (i+1);
+                        query += " cliente_id = $" + (i + 1);
                         valoresQuery.push(criterios['clienteId']);
                         if (i < numCriterios - 1) {
                             query += " and ";
@@ -246,36 +257,36 @@ class PsqlContratoDAO {
                 }
             }
 
-            const res = await pool.query(query,valoresQuery);
+            const res = await pool.query(query, valoresQuery);
             const rowsContrato = res.rows;
             let bancoDAO = new PsqlBancoDAO();
             let produtoDAO = new PsqlProdutoDAO();
             let clienteDAO = new PsqlClienteDao();
             let enderecoDAO = new PsqlEnderecoDAO();
             let corretorDAO = new PsqlCorretorDAO();
-            for(let i=0;i<rowsContrato.length;i++){
+            for (let i = 0; i < rowsContrato.length; i++) {
                 let contrato = new Contrato();
                 contrato.id = rowsContrato[i].id;
                 contrato.numero = rowsContrato[i].numero;
                 contrato.status = rowsContrato[i].status;
                 contrato.valor = rowsContrato[i].valor;
-                if(rowsContrato[i].banco_id){
+                if (rowsContrato[i].banco_id) {
                     let banco = await bancoDAO.obterPorId(rowsContrato[i].banco_id);
                     contrato.banco = banco;
                 }
-                if(rowsContrato[i].produto_id){
+                if (rowsContrato[i].produto_id) {
                     let produto = await produtoDAO.obterPorId(rowsContrato[i].produto_id);
                     contrato.produto = produto;
                 }
-                if(rowsContrato[i].cliente_id){
+                if (rowsContrato[i].cliente_id) {
                     let cliente = await clienteDAO.obterPorId(rowsContrato[i].cliente_id);
                     contrato.cliente = cliente;
                 }
-                if(rowsContrato[i].endereco_id){
+                if (rowsContrato[i].endereco_id) {
                     let endereco = await enderecoDAO.obterPorId(rowsContrato[i].endereco_id);
                     contrato.endereco = endereco;
                 }
-                if(rowsContrato[i].corretor_id){
+                if (rowsContrato[i].corretor_id) {
                     let corretor = await corretorDAO.obterPorId(rowsContrato[i].corretor_id);
                     contrato.corretor = corretor;
                 }
@@ -284,7 +295,7 @@ class PsqlContratoDAO {
                 contratos.push(contrato);
             }
             return contratos;
-            
+
         } catch (e) {
             PgUtil.checkError(e);
         }

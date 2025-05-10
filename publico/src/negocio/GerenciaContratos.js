@@ -22,6 +22,7 @@ class GerenciaContratos {
                 throw new EntidadeNaoEncontradaException("O produto não foi encontrado.");
             }
             contrato.produto.id = produtos[0].id;
+            contrato.status = !contrato.status ? 'CADASTRADO' : contrato.status;
         }
         return await fachada.salvarContrato(contrato);
     }
