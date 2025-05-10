@@ -51,11 +51,12 @@ class PsqlEnderecoDAO {
 
     }
 
-    async salvar(estadoId, cidadeId, cep, rua, numero, bairro, telefone) {
+    async salvar(endereco) {
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
                 "values ($1, $2, $3, $4, $5, $6, $7) returning id";
-            const { rows } = await pool.query(query, [estadoId, cidadeId, cep, rua, numero, bairro, telefone]);
+            const { rows } = await pool.query(query, [endereco.estado.id, endereco.cidade.id,
+                 endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
             return rows[0];
 
         } catch (e) {

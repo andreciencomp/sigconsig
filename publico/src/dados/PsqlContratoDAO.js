@@ -86,8 +86,7 @@ class PsqlContratoDAO {
                 clienteId = (await clienteDAO.salvar(contrato.cliente)).id;
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
-                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco.estado.id, contrato.endereco.estado.id, contrato.endereco.cep,
-                        contrato.endereco.rua, contrato.endereco.numero, contrato.endereco.bairro, contrato.endereco.telefone)).id;
+                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco)).id;
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
@@ -97,8 +96,7 @@ class PsqlContratoDAO {
             } else {
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
-                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco.estado.id, contrato.endereco.cidade.id, contrato.endereco.cep,
-                        contrato.endereco.rua, contrato.endereco.numero, contrato.endereco.bairro, contrato.endereco.telefone)).id;
+                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco)).id;
                 }
 
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
