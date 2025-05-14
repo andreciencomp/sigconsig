@@ -26,6 +26,16 @@ router.get('/clientes/cpf/:cpf', authService.usuarioCadastroFiltro, async (req, 
     }
 });
 
+router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async (req, res)=>{
+    try{
+        const fachadaNegocio = new FachadaNegocio();
+        const clientes = await fachadaNegocio.listarClientesPorNomeLike(req.params.nomeLike);
+        return res.status(200).send({dados:clientes});
+    }catch(e){  
+        ExceptionService.checkError(e, res);
+    } 
+});
+
 router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req, res)=>{
     let fachadaNegocio = FachadaNegocio.instancia;
     try{

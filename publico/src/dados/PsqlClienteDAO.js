@@ -42,7 +42,22 @@ class PsqlClienteDao {
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O cliente não existe.");
             }
-            return this.criarObjetoCliente(res);
+            return this.criarObjetoCliente(res.rows[0]);
+        } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async listarPorNomeLike(nome) {
+        try {
+            let clientes = [];
+            const queryCliente = "select * from clientes where nome like $1";
+            const res = await pool.query(queryCliente, ['%' + nome +'%']);
+            for(let i=0;i < res.rowCount ; i++){
+                let cliente = await this.criarObjetoCliente(res.rows[i]);
+                clientes.push(cliente);
+            }
+            return clientes;
         } catch (e) {
             PgUtil.checkError(e);
         }
@@ -101,16 +116,16 @@ class PsqlClienteDao {
         }
     }
 
-    async criarObjetoCliente(result) {
+    async criarObjetoCliente(row) {
         let cliente = new Cliente();
-        cliente.id = result.rows[0].id;
-        cliente.cpf = result.rows[0].cpf;
-        cliente.nome = result.rows[0].nome;
-        let dtNasc = result.rows[0].dt_nascimento;
+        cliente.id = row.id;
+        cliente.cpf = row.cpf;
+        cliente.nome = row.nome;
+        let dtNasc = row.dt_nascimento;
         cliente.dtNascimento = dtNasc.toISOString().slice(0, 10);
         let enderecoDAO = new PsqlEnderecoDAO();
-        if (result.rows[0].endereco_id) {
-            const endereco = await enderecoDAO.obterPorId(result.rows[0].endereco_id);
+        if (row.endereco_id) {
+            const endereco = await enderecoDAO.obterPorId(row.endereco_id);
             cliente.endereco = endereco;
         }
         return cliente;

@@ -71,14 +71,14 @@ class PsqlContratoDAO {
         }
     }
 
-    async salvar(contrato, rollback=false) { 
+    async salvar(contrato, rollback = false) {
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
-            if(rollback){
+            if (rollback) {
                 await pool.query('BEGIN');
             }
-            
+
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
                 "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
@@ -94,10 +94,10 @@ class PsqlContratoDAO {
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
-                if(rollback){
+                if (rollback) {
                     await pool.query('COMMIT');
                 }
-                
+
                 return resContrato.rows[0];
 
             } else {
@@ -108,14 +108,14 @@ class PsqlContratoDAO {
 
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
-                if(rollback){
+                if (rollback) {
                     await pool.query('COMMIT');
                 }
                 return resContrato.rows[0];
             }
 
         } catch (e) {
-            if(rollback){
+            if (rollback) {
                 await pool.query('ROLLBACK');
             }
             PgUtil.checkError(e);
@@ -259,39 +259,8 @@ class PsqlContratoDAO {
 
             const res = await pool.query(query, valoresQuery);
             const rowsContrato = res.rows;
-            let bancoDAO = new PsqlBancoDAO();
-            let produtoDAO = new PsqlProdutoDAO();
-            let clienteDAO = new PsqlClienteDao();
-            let enderecoDAO = new PsqlEnderecoDAO();
-            let corretorDAO = new PsqlCorretorDAO();
             for (let i = 0; i < rowsContrato.length; i++) {
-                let contrato = new Contrato();
-                contrato.id = rowsContrato[i].id;
-                contrato.numero = rowsContrato[i].numero;
-                contrato.status = rowsContrato[i].status;
-                contrato.valor = rowsContrato[i].valor;
-                if (rowsContrato[i].banco_id) {
-                    let banco = await bancoDAO.obterPorId(rowsContrato[i].banco_id);
-                    contrato.banco = banco;
-                }
-                if (rowsContrato[i].produto_id) {
-                    let produto = await produtoDAO.obterPorId(rowsContrato[i].produto_id);
-                    contrato.produto = produto;
-                }
-                if (rowsContrato[i].cliente_id) {
-                    let cliente = await clienteDAO.obterPorId(rowsContrato[i].cliente_id);
-                    contrato.cliente = cliente;
-                }
-                if (rowsContrato[i].endereco_id) {
-                    let endereco = await enderecoDAO.obterPorId(rowsContrato[i].endereco_id);
-                    contrato.endereco = endereco;
-                }
-                if (rowsContrato[i].corretor_id) {
-                    let corretor = await corretorDAO.obterPorId(rowsContrato[i].corretor_id);
-                    contrato.corretor = corretor;
-                }
-
-
+                let contrato = await this.criarObjetoContrato(rowsContrato[i]);
                 contratos.push(contrato);
             }
             return contratos;
@@ -299,6 +268,42 @@ class PsqlContratoDAO {
         } catch (e) {
             PgUtil.checkError(e);
         }
+    }
+
+    async criarObjetoContrato(row) {
+        let bancoDAO = new PsqlBancoDAO();
+        let produtoDAO = new PsqlProdutoDAO();
+        let clienteDAO = new PsqlClienteDao();
+        let enderecoDAO = new PsqlEnderecoDAO();
+        let corretorDAO = new PsqlCorretorDAO();
+        let contrato = new Contrato();
+        contrato.id = row.id;
+        contrato.numero = row.numero;
+        contrato.data = row.data ? row.data.toISOString().slice(0,10) : row.data;
+        contrato.status = row.status;
+        contrato.dtLiberacao = row.dt_liberacao ? row.dt_liberacao.toISOString().slice(0,10) : row.dt_liberacao;
+        contrato.valor = row.valor;
+        if (row.banco_id) {
+            let banco = await bancoDAO.obterPorId(row.banco_id);
+            contrato.banco = banco;
+        }
+        if (row.produto_id) {
+            let produto = await produtoDAO.obterPorId(row.produto_id);
+            contrato.produto = produto;
+        }
+        if (row.cliente_id) {
+            let cliente = await clienteDAO.obterPorId(row.cliente_id);
+            contrato.cliente = cliente;
+        }
+        if (row.endereco_id) {
+            let endereco = await enderecoDAO.obterPorId(row.endereco_id);
+            contrato.endereco = endereco;
+        }
+        if (row.corretor_id) {
+            let corretor = await corretorDAO.obterPorId(row.corretor_id);
+            contrato.corretor = corretor;
+        }
+        return contrato;
     }
 }
 
