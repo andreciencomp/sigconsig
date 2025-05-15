@@ -79,7 +79,7 @@ class PsqlContratoDAO {
                 await pool.query('BEGIN');
             }
 
-            const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
+            const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, contratos.endereco_id, status, corretor_id) " +
                 "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
@@ -157,17 +157,22 @@ class PsqlContratoDAO {
         }
         const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";
     }
-    // corretorId, bancoId, orgaoId, dataInicial, dataFinal, dtLiberacaoInicial, dtLiberacaoFinal, status, valorMinimo, valorMaximo, clienteId
+    // corretorId, clienteNome, bancoId, orgaoId, dataInicial, dataFinal, dtLiberacaoInicial, dtLiberacaoFinal, status, valorMinimo, valorMaximo, clienteId
     async listarPorCriterios(criterios) {
         let atributos = Object.keys(criterios);
         let numCriterios = atributos.length;
         let valoresQuery = [];
         let contratos = [];
 
-        let query = "select contratos.id,numero,produto_id, data, cliente_id, dt_liberacao,endereco_id,status, corretor_id, valor, banco_id from contratos ";
+        let query = "select contratos.id,numero,produto_id, data, cliente_id, dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
         if (criterios["orgaoId"]) {
             query += " left join produtos on produtos.id = contratos.produto_id "
         }
+
+        if (criterios["clienteNome"]) {
+            query += " left join clientes on clientes.id = contratos.cliente_id "
+        }
+
         if (numCriterios > 0) {
             query += " where ";
         }
@@ -178,6 +183,13 @@ class PsqlContratoDAO {
                     case 'corretorId':
                         query += 'corretor_id=$' + (i + 1);
                         valoresQuery.push(criterios['corretorId']);
+                        if (i < numCriterios - 1) {
+                            query += " and ";
+                        }
+                        break;
+                    case 'clienteNome':
+                        query += 'clientes.nome like $' + (i + 1);
+                        valoresQuery.push('%' + criterios['clienteNome'] + '%');
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
@@ -253,10 +265,9 @@ class PsqlContratoDAO {
                             query += " and ";
                         }
                         break;
-
                 }
             }
-
+            
             const res = await pool.query(query, valoresQuery);
             const rowsContrato = res.rows;
             for (let i = 0; i < rowsContrato.length; i++) {
@@ -279,9 +290,9 @@ class PsqlContratoDAO {
         let contrato = new Contrato();
         contrato.id = row.id;
         contrato.numero = row.numero;
-        contrato.data = row.data ? row.data.toISOString().slice(0,10) : row.data;
+        contrato.data = row.data ? row.data.toISOString().slice(0, 10) : row.data;
         contrato.status = row.status;
-        contrato.dtLiberacao = row.dt_liberacao ? row.dt_liberacao.toISOString().slice(0,10) : row.dt_liberacao;
+        contrato.dtLiberacao = row.dt_liberacao ? row.dt_liberacao.toISOString().slice(0, 10) : row.dt_liberacao;
         contrato.valor = row.valor;
         if (row.banco_id) {
             let banco = await bancoDAO.obterPorId(row.banco_id);
