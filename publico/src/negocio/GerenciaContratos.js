@@ -84,7 +84,7 @@ class GerenciaContratos {
             novosCriterios.cpf = criterios.cpf;
         }
         if(criterios.clienteId){
-            novosCriterios.clieteId = criterios.clienteId;
+            novosCriterios.clienteId = criterios.clienteId;
         }
         if(criterios['clienteNome']){
             novosCriterios.clienteNome = criterios.clienteNome;
