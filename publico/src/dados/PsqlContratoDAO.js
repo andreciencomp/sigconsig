@@ -157,19 +157,23 @@ class PsqlContratoDAO {
         }
         const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";
     }
-    // corretorId, clienteNome, bancoId, orgaoId, dataInicial, dataFinal, dtLiberacaoInicial, dtLiberacaoFinal, status, valorMinimo, valorMaximo, clienteId
+    //"corretorId", "cpf", "clienteNome", "bancoId", "orgaoId", "dataInicial","dataFinal",
+    //  "dtLiberacaoInicial","dtLiberacaoFinal", "status", "valorMinimo", "valorMaximo", "clienteId"
     async listarPorCriterios(criterios) {
+        
         let atributos = Object.keys(criterios);
         let numCriterios = atributos.length;
         let valoresQuery = [];
         let contratos = [];
 
-        let query = "select contratos.id,numero,produto_id, data, cliente_id, dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
+        let query = "select contratos.id,numero,produto_id, data, cliente_id, " +
+             "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
+             
         if (criterios["orgaoId"]) {
             query += " left join produtos on produtos.id = contratos.produto_id "
         }
 
-        if (criterios["clienteNome"]) {
+        if (criterios["cpf"] || criterios["clienteNome"]) {
             query += " left join clientes on clientes.id = contratos.cliente_id "
         }
 
@@ -183,6 +187,20 @@ class PsqlContratoDAO {
                     case 'corretorId':
                         query += 'corretor_id=$' + (i + 1);
                         valoresQuery.push(criterios['corretorId']);
+                        if (i < numCriterios - 1) {
+                            query += " and ";
+                        }
+                        break;
+                    case 'numero':
+                        query += 'numero=$' + (i + 1);
+                        valoresQuery.push(criterios['numero']);
+                        if (i < numCriterios - 1) {
+                            query += " and ";
+                        }
+                        break;
+                    case 'cpf':
+                        query += 'clientes.cpf=$' + (i + 1);
+                        valoresQuery.push(criterios['cpf']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
@@ -224,14 +242,14 @@ class PsqlContratoDAO {
                         }
                         break;
                     case 'dtLiberacaoInicial':
-                        query += " data >= $" + (i + 1);
+                        query += " dt_liberacao >= $" + (i + 1);
                         valoresQuery.push(criterios['dtLiberacaoInicial']);
                         if (i < numCriterios - 1) {
                             query += " and ";
                         }
                         break;
                     case 'dtLiberacaoFinal':
-                        query += " data <= $" + (i + 1);
+                        query += " dt_liberacao <= $" + (i + 1);
                         valoresQuery.push(criterios['dtLiberacaoFinal']);
                         if (i < numCriterios - 1) {
                             query += " and ";
@@ -267,7 +285,6 @@ class PsqlContratoDAO {
                         break;
                 }
             }
-            
             const res = await pool.query(query, valoresQuery);
             const rowsContrato = res.rows;
             for (let i = 0; i < rowsContrato.length; i++) {

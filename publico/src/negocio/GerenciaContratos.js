@@ -70,8 +70,58 @@ class GerenciaContratos {
     }
 
     async listarPorCriterios(criterios){
+
         const fachadaDados = FachadaDados.instancia;
-        return await fachadaDados.listarContratosPorCriterios(criterios);
+        return await fachadaDados.listarContratosPorCriterios(this.filtrarCriterios(criterios));
+    }
+
+    filtrarCriterios(criterios){
+        let novosCriterios = {};
+        if(criterios['numero']){
+            novosCriterios.numero = criterios.numero;
+        }
+        if(criterios['cpf']){
+            novosCriterios.cpf = criterios.cpf;
+        }
+        if(criterios.clienteId){
+            novosCriterios.clieteId = criterios.clienteId;
+        }
+        if(criterios['clienteNome']){
+            novosCriterios.clienteNome = criterios.clienteNome;
+        }
+        if(criterios['dataInicial']){
+            novosCriterios.dataInicial = criterios.dataInicial;
+        }
+        if(criterios['dataFinal']){
+            novosCriterios.dataFinal = criterios.dataFinal;
+        }
+        if(criterios['dtLiberacaoInicial']){
+            novosCriterios.dtLiberacaoInicial = criterios.dtLiberacaoInicial;
+        }
+        if(criterios['dtLiberacaoFinal']){
+            novosCriterios.dtLiberacaoFinal = criterios.dtLiberacaoFinal;
+        }
+        if(criterios['valorMinimo']){
+            novosCriterios.valorMinimo = criterios.valorMinimo;
+        }
+        if(criterios['valorMaximo']){
+            novosCriterios.valorMaximo = criterios.valorMaximo;
+        }
+        if(criterios['corretorId']){
+            novosCriterios.corretorId = criterios.corretorId;
+        }
+        if(criterios['bancoId']){
+            novosCriterios.bancoId = criterios.bancoId;
+        }
+        if(criterios['orgaoId']){
+            novosCriterios.orgaoId = criterios.orgaoId;
+        }
+        if(criterios['status']){
+            novosCriterios.status = criterios.status;
+        }
+
+        return novosCriterios;
+
     }
 }
 

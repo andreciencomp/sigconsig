@@ -40,7 +40,7 @@ router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async(req
     
 });
 
-router.get('/contratos', authService.usuarioCadastroFiltro, async (req, res)=>{
+router.post('/contratos', authService.usuarioCadastroFiltro, async (req, res)=>{
     try{
         const fachadaNegocio = FachadaNegocio.instancia;
         const contratos = await fachadaNegocio.listarContratosPorCriterios(req.body);
