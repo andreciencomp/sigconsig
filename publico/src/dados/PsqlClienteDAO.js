@@ -16,19 +16,7 @@ class PsqlClienteDao {
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O cliente não existe.");
             }
-            let cliente = new Cliente();
-            cliente.id = res.rows[0].id;
-            cliente.cpf = res.rows[0].cpf;
-            cliente.nome = res.rows[0].nome;
-            let dtNasc = res.rows[0].dt_nascimento;
-            cliente.dtNascimento = dtNasc.toISOString().slice(0, 10);
-            let enderecoDAO = new PsqlEnderecoDAO();
-            if (res.rows[0].endereco_id) {
-                const endereco = await enderecoDAO.obterPorId(res.rows[0].endereco_id);
-                cliente.endereco = endereco;
-            }
-            return cliente;
-
+            return  await this.criarObjetoCliente(res.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -121,8 +109,7 @@ class PsqlClienteDao {
         cliente.id = row.id;
         cliente.cpf = row.cpf;
         cliente.nome = row.nome;
-        let dtNasc = row.dt_nascimento;
-        cliente.dtNascimento = dtNasc.toISOString().slice(0, 10);
+        cliente.dtNascimento = row.dt_nascimento ? row.dt_nascimento.toISOString().slice(0, 10) : null;
         let enderecoDAO = new PsqlEnderecoDAO();
         if (row.endereco_id) {
             const endereco = await enderecoDAO.obterPorId(row.endereco_id);
