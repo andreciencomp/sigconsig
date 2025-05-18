@@ -35,10 +35,10 @@ class PsqlContratoDAO {
             const contrato = new Contrato();
             contrato.id = rowContrato.id;
             contrato.numero = rowContrato.numero;
-            contrato.data = rowContrato.data;
+            contrato.data = rowContrato.data ? rowContrato.data.toISOString().slice(0,10) : null;
             contrato.valor = rowContrato.valor;
             contrato.status = rowContrato.status;
-            contrato.dtLiberacao = rowContrato.dt_liberacao;
+            contrato.dtLiberacao = rowContrato.dt_liberacao ? rowContrato.dt_liberacao.toISOString().slice(0,10) : null;
             if (rowContrato.produto_id) {
                 const produtoDAO = new PsqlProdutoDAO();
                 const produto = await produtoDAO.obterPorId(rowContrato.produto_id);
