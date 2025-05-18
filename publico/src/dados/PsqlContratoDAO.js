@@ -79,7 +79,7 @@ class PsqlContratoDAO {
                 await pool.query('BEGIN');
             }
 
-            const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, contratos.endereco_id, status, corretor_id) " +
+            const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
                 "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
@@ -105,7 +105,6 @@ class PsqlContratoDAO {
                 if (contrato.endereco) {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco)).id;
                 }
-
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 if (rollback) {

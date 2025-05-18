@@ -140,6 +140,11 @@ class FachadaNegocio{
         return await gerenciaComissionamento.cadastrarComissionamentoCorretor(comissionamento);
     }
 
+    async obterContratoPorID(id){
+        const gerenciaContratos = new GerenciaContratos();
+        return await gerenciaContratos.obterPorID(id);
+    }
+
     async cadastrarContrato(contrato){
         const gerenciaContratos = new GerenciaContratos();
         return await gerenciaContratos.cadastrar(contrato);

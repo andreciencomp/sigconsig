@@ -36,4 +36,4 @@ router.get('/cidades/estado/:estado_id',async function(req,res){
     }
 });
 
-module.exports = router;
+module.exports = router;    

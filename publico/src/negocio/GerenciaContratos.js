@@ -11,6 +11,12 @@ const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastra
 const GerenciaComissionamento = require("./GerenciaComissionamento");
 
 class GerenciaContratos {
+
+    async obterPorID(id){
+        const fachadaDados = new FachadaDados();
+        return await fachadaDados.obterContratoPorId(id);
+    }
+
     async cadastrar(contrato) {
         const fachada = FachadaDados.instancia;
         if(contrato.produto.id == null){
