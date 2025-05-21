@@ -28,6 +28,16 @@ router.post('/contratos/cadastrar', authService.usuarioCadastroFiltro, async (re
 
 });
 
+router.post('/contratos/atualizar',authService.usuarioCadastroFiltro,async (req,res)=>{
+    try {
+        let fachadaNegocio = FachadaNegocio.instancia;
+        let resposta = await fachadaNegocio.atualizarContrato(req.body);
+        return res.status(200).send({ dados: resposta });
+    } catch (e) {
+        ExceptionService.checkError(e, res);
+    }
+});
+
 router.post('/contratos/liberar/:id', authService.usuarioFinanceiroFiltro, async (req, res) => {
     try {
         const fachadaNegocio = FachadaNegocio.instancia;

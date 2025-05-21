@@ -12,19 +12,19 @@ const GerenciaComissionamento = require("./GerenciaComissionamento");
 
 class GerenciaContratos {
 
-    async obterPorID(id){
+    async obterPorID(id) {
         const fachadaDados = new FachadaDados();
         return await fachadaDados.obterContratoPorId(id);
     }
 
     async cadastrar(contrato) {
         const fachada = FachadaDados.instancia;
-        if(contrato.produto.id == null){
-            const fachadaDados= new FachadaDados();
+        if (contrato.produto.id == null) {
+            const fachadaDados = new FachadaDados();
             let produtos = await fachadaDados.listarProdutosPorCriterios(
-                {orgaoId:contrato.produto.orgao.id, carencia:contrato.produto.carencia, qtdParcelas:contrato.produto.qtdParcelas}
+                { orgaoId: contrato.produto.orgao.id, carencia: contrato.produto.carencia, qtdParcelas: contrato.produto.qtdParcelas }
             );
-            if(produtos.length == 0){
+            if (produtos.length == 0) {
                 throw new EntidadeNaoEncontradaException("O produto não foi encontrado.");
             }
             contrato.produto.id = produtos[0].id;
@@ -35,7 +35,17 @@ class GerenciaContratos {
 
     async atualizar(contrato) {
         const fachada = FachadaDados.instancia;
-        return await fachada.atualizarContrato(contrato);
+        if (contrato.produto) {
+            const existeProduto = await fachada.existeProduto(contrato.produto);
+            if (!existeProduto) {
+                throw new EntidadeNaoEncontradaException("O produto não foi encontrato");
+            }
+            const novoProduto = (await fachada.listarProdutosPorCriterios(contrato.produto))[0];
+
+            contrato.produto = novoProduto;
+        }
+
+        return await fachada.atualizarContrato(contrato, true);
     }
 
     async liberar(contratoId, nomeUsuario) {
@@ -64,65 +74,65 @@ class GerenciaContratos {
     async liberarVarios(arrayContratoId, nomeUsuario) {
         let feedbacks = [];
         for (let i = 0; i < arrayContratoId.length; i++) {
-            try{
+            try {
                 let res = await this.liberar(arrayContratoId[i], nomeUsuario);
-                feedbacks.push({contratoId: arrayContratoId[i],pagamentoId : res.id});
-            }catch(e){
-                feedbacks.push({contratoId:arrayContratoId[i],excessao:e.name, msg:e.message});
+                feedbacks.push({ contratoId: arrayContratoId[i], pagamentoId: res.id });
+            } catch (e) {
+                feedbacks.push({ contratoId: arrayContratoId[i], excessao: e.name, msg: e.message });
             }
         }
         return feedbacks;
 
     }
 
-    async listarPorCriterios(criterios){
+    async listarPorCriterios(criterios) {
 
         const fachadaDados = FachadaDados.instancia;
         return await fachadaDados.listarContratosPorCriterios(this.filtrarCriterios(criterios));
     }
 
-    filtrarCriterios(criterios){
+    filtrarCriterios(criterios) {
         let novosCriterios = {};
-        if(criterios['numero']){
+        if (criterios['numero']) {
             novosCriterios.numero = criterios.numero;
         }
-        if(criterios['cpf']){
+        if (criterios['cpf']) {
             novosCriterios.cpf = criterios.cpf;
         }
-        if(criterios.clienteId){
+        if (criterios.clienteId) {
             novosCriterios.clienteId = criterios.clienteId;
         }
-        if(criterios['clienteNome']){
+        if (criterios['clienteNome']) {
             novosCriterios.clienteNome = criterios.clienteNome;
         }
-        if(criterios['dataInicial']){
+        if (criterios['dataInicial']) {
             novosCriterios.dataInicial = criterios.dataInicial;
         }
-        if(criterios['dataFinal']){
+        if (criterios['dataFinal']) {
             novosCriterios.dataFinal = criterios.dataFinal;
         }
-        if(criterios['dtLiberacaoInicial']){
+        if (criterios['dtLiberacaoInicial']) {
             novosCriterios.dtLiberacaoInicial = criterios.dtLiberacaoInicial;
         }
-        if(criterios['dtLiberacaoFinal']){
+        if (criterios['dtLiberacaoFinal']) {
             novosCriterios.dtLiberacaoFinal = criterios.dtLiberacaoFinal;
         }
-        if(criterios['valorMinimo']){
+        if (criterios['valorMinimo']) {
             novosCriterios.valorMinimo = criterios.valorMinimo;
         }
-        if(criterios['valorMaximo']){
+        if (criterios['valorMaximo']) {
             novosCriterios.valorMaximo = criterios.valorMaximo;
         }
-        if(criterios['corretorId']){
+        if (criterios['corretorId']) {
             novosCriterios.corretorId = criterios.corretorId;
         }
-        if(criterios['bancoId']){
+        if (criterios['bancoId']) {
             novosCriterios.bancoId = criterios.bancoId;
         }
-        if(criterios['orgaoId']){
+        if (criterios['orgaoId']) {
             novosCriterios.orgaoId = criterios.orgaoId;
         }
-        if(criterios['status']){
+        if (criterios['status']) {
             novosCriterios.status = criterios.status;
         }
 

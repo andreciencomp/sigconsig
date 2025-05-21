@@ -121,18 +121,26 @@ class PsqlContratoDAO {
         }
     }
 
-    async atualizar(contrato) {
+    async atualizar(contrato, rollback=false) {
         try {
-            pool.query('BEGIN');
+            if(rollback){
+                pool.query('BEGIN');
+            }
             let contratoSalvo = await this.obterPorId(contrato.id);
             if (contrato.cliente && contrato.cliente.id) {
                 const clienteDAO = new PsqlClienteDao();
                 await clienteDAO.atualizar(contrato.cliente);
 
             }
+            let enderecoDAO = new PsqlEnderecoDAO();
             if (contrato.endereco) {
-                let enderecoDAO = new PsqlEnderecoDAO();
+                contrato.endereco.id = contratoSalvo.endereco.id;
                 await enderecoDAO.atualizar(contrato.endereco);
+
+                
+            }else if(contrato.endereco && !contratoSalvo.endereco){
+                const enderecoID = await enderecoDAO.salvar(contrato.endereco);
+                contrato.endereco.id = enderecoID; 
             }
             const numero = contrato.numero ? contrato.numero : contratoSalvo.numero;
             const produtoId = contrato.produto && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
@@ -144,14 +152,19 @@ class PsqlContratoDAO {
             const status = contrato.status ? contrato.status : contratoSalvo.status;
             const corretorId = contrato.corretor && contrato.corretor.id ? contrato.corretor.id : contratoSalvo.corretor.id;
             const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
-            let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3," +
+            let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
                 "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10 where id=$11";
             await pool.query(queryAtualizarContrato, [numero, produtoId, bancoId,
                 data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, contrato.id]);
-            pool.query('COMMIT');
-
+            if(rollback){
+                pool.query('COMMIT');
+            }
+            
         } catch (e) {
-            pool.query('ROLLBACK');
+            if(rollback){
+                pool.query('ROLLBACK');
+            }
+            
             PgUtil.checkError(e);
         }
         const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";

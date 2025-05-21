@@ -65,7 +65,6 @@ class PsqlEnderecoDAO {
     }
 
     async atualizar(endereco){
-        
         try{
             let enderecoSalvo = await this.obterPorId(endereco.id);
             let estadoId = null;

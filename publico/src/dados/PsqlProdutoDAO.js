@@ -33,19 +33,28 @@ class PsqlProdutoDAO {
     async listarProdutosPorCriterios(criterios) {
         try {
             let colunas = [];
-            let atributos = Object.keys(criterios);
-            const numParametros = atributos.length;
-
+            let indice = 1;
             let strQuery = "select * from produtos where ";
-            for (let i = 0; i < numParametros; i++) {
-                let nomeColuna = await paraSnakeCase(atributos[i]);
-                strQuery += " " + nomeColuna + "=$" + (i + 1);
-                colunas.push(criterios[atributos[i]]);
-                if (i < numParametros - 1) {
-                    strQuery += " and "
+            if(criterios.orgao){
+                strQuery += " orgao_id=$" + indice;
+                colunas.push(criterios.orgao.id);
+                indice++;
+                if ( criterios.carencia || criterios.qtdParcelas){
+                    strQuery += " and ";
                 }
             }
-            
+            if(criterios.carencia){
+                strQuery += " carencia=$" + indice;
+                colunas.push(criterios.carencia);
+                indice ++;
+                if(criterios.qtdParcelas){
+                    strQuery += " and ";
+                }
+            }
+            if(criterios.qtdParcelas){
+                strQuery += " qtd_parcelas=$" + indice;
+                colunas.push(criterios.qtdParcelas);
+            }
             let result = await pool.query(strQuery, colunas);
             let produtos = [];
             for (let i = 0; i < result.rows.length; i++) {
