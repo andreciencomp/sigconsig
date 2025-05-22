@@ -139,6 +139,11 @@ class GerenciaContratos {
         return novosCriterios;
 
     }
+
+    async deletarContrato(id){
+        const fachadaDados = new FachadaDados();
+        return await fachadaDados.deletarContrato(id);
+    }
 }
 
 module.exports = GerenciaContratos;

@@ -133,7 +133,7 @@ class PsqlContratoDAO {
 
             }
             let enderecoDAO = new PsqlEnderecoDAO();
-            if (contrato.endereco) {
+            if (contrato.endereco && contratoSalvo.endereco) {
                 contrato.endereco.id = contratoSalvo.endereco.id;
                 await enderecoDAO.atualizar(contrato.endereco);
 
@@ -306,6 +306,23 @@ class PsqlContratoDAO {
             return contratos;
 
         } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async deletar(id){
+        try{
+            const contrato = await this.obterPorId(id);
+            const enderecoID = contrato.endereco.id;
+            await pool.query("BEGIN"); 
+            await pool.query("delete from contratos where id=$1", [id]);
+           if(enderecoID){
+                await pool.query("delete from enderecos where id=$1",[enderecoID]);
+           }
+           pool.query("COMMIT");
+           return id;
+        }catch(e){
+            await pool.query("ROLLBACK");
             PgUtil.checkError(e);
         }
     }

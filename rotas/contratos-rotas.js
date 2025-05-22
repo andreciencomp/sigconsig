@@ -71,4 +71,15 @@ router.post('/contratos', authService.usuarioCadastroFiltro, async (req, res) =>
     }
 });
 
+router.get('/contratos/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
+    try{
+        const fachadaNegocio = new FachadaNegocio();
+        await fachadaNegocio.deletarContrato(req.params.id);
+        return res.status(200).send({dados:req.params.id});
+        
+    }catch(e){
+        ExceptionService.checkError(e, res);
+    }
+});
+
 module.exports = router;

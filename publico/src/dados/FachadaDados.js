@@ -248,6 +248,11 @@ class FachadaDados{
         return await dao.listarPorCriterios(criterios);
     }
 
+    async deletarContrato(id){
+        const dao = await DAOFactory.getContratoDAO();
+        return await dao.deletar(id);
+    }
+
     async salvarPagamentoComissao(pagamentoComissao){
         const dao = await DAOFactory.getPagamentoComissaoDAO();
         return await dao.salvar(pagamentoComissao);
