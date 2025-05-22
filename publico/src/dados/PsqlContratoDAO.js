@@ -313,7 +313,7 @@ class PsqlContratoDAO {
     async deletar(id){
         try{
             const contrato = await this.obterPorId(id);
-            const enderecoID = contrato.endereco.id;
+            const enderecoID = contrato.endereco ? contrato.endereco.id : null;
             await pool.query("BEGIN"); 
             await pool.query("delete from contratos where id=$1", [id]);
            if(enderecoID){
