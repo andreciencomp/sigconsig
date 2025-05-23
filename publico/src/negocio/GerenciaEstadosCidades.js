@@ -8,6 +8,12 @@ class GerenciaEstadosCidades{
         return await fachada.obterEstadoPorId();
     }
 
+    async cadastrarEstado(estado){
+        const fachadaDados = new FachadaDados();
+        estado.sigla = estado.sigla.toUpperCase();
+        return await fachadaDados.salvarEstado(estado);
+    }
+
     async listarEstados(){
         let fachada = FachadaDados.instancia;
         return await fachada.listarEstados();

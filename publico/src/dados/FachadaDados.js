@@ -113,6 +113,11 @@ class FachadaDados{
         return await dao.obter(id);
     }
 
+    async salvarEstado(estado){
+        const dao = await DAOFactory.getEstadoDAO();
+        return await dao.salvar(estado);
+    }
+
     async listarEstados(){
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.listar();

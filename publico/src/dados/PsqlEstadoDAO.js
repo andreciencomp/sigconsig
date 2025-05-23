@@ -44,6 +44,17 @@ class PsqlEstadoDAO {
         }
     }
 
+    async salvar(estado){
+        const query = "insert into estados(sigla, nome) values($1, $2) returning id";
+        try{
+            const result = await pool.query(query, [estado.sigla, estado.nome]);
+            return result.rows[0].id;
+
+        }catch(e){
+            PgUtil.checkError(e); 
+        }
+    }
+
     async listar() {
         const strQuery = 'select * from estados';
         try{
