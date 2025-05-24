@@ -118,6 +118,11 @@ class FachadaDados{
         return await dao.salvar(estado);
     }
 
+    async deletarEstado(id){
+        const dao = await DAOFactory.getEstadoDAO();
+        return await dao.deletar(id);
+    }
+
     async listarEstados(){
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.listar();

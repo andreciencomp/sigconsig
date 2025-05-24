@@ -73,6 +73,16 @@ class PsqlEstadoDAO {
             PgUtil.checkError(e);
         }
     }
+
+    async deletar(id){
+        try{
+            const deleteQuery = "delete from estados where id=$1";
+            const result = await pool.query(deleteQuery,[id]);
+            return id;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 }
 
 module.exports = PsqlEstadoDAO;

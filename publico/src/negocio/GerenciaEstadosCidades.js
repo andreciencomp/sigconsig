@@ -1,5 +1,6 @@
 const FachadaDados = require('../dados/FachadaDados');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
+const RestricaoChaveEstrangeiraException = require('../excessoes/RestricaoChaveEstrangeiraException');
 
 class GerenciaEstadosCidades{
 
@@ -17,6 +18,15 @@ class GerenciaEstadosCidades{
     async listarEstados(){
         let fachada = FachadaDados.instancia;
         return await fachada.listarEstados();
+    }
+
+    async deletarEstado(id){
+        const fachada = new FachadaDados();
+        const cidades = await fachada.listarCidadesPorEstado(id);
+        if(cidades.length != 0){
+            throw new RestricaoChaveEstrangeiraException("Há cidades associadas a este estado.");
+        }
+        return await fachada.deletarEstado(id);
     }
 
     async obterCidadePorId(id){
