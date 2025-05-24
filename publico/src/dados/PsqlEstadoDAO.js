@@ -1,24 +1,24 @@
 const { pool } = require('../../../servicos/database_service')
 const Estado = require('../entidades/Estado');
 const PgUtil = require('../dados/PgUtil');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 
 class PsqlEstadoDAO {
 
     static instancia = new PsqlEstadoDAO();
 
     async obter(id) {
-
         let strQuery = "select * from estados where id=$1";
         try {
-            const { rows } = await pool.query(strQuery, [id]);
-            if (await rows[0]) {
-                let estado = new Estado();
-                estado.id = rows[0].id;
-                estado.sigla = rows[0].sigla;
-                estado.nome = rows[0].nome;
-                return estado;
+            const result = await pool.query(strQuery, [id]);
+            if (result.rowCount == 0) {
+                throw new EntidadeNaoEncontradaException("Estado não encontrato.");
             }
-            return null;
+            let estado = new Estado();
+            estado.id = result.rows[0].id;
+            estado.sigla = result.rows[0].sigla;
+            estado.nome = result.rows[0].nome;
+            return estado;
 
         } catch (e) {
 
@@ -44,23 +44,23 @@ class PsqlEstadoDAO {
         }
     }
 
-    async salvar(estado){
+    async salvar(estado) {
         const query = "insert into estados(sigla, nome) values($1, $2) returning id";
-        try{
+        try {
             const result = await pool.query(query, [estado.sigla, estado.nome]);
             return result.rows[0].id;
 
-        }catch(e){
-            PgUtil.checkError(e); 
+        } catch (e) {
+            PgUtil.checkError(e);
         }
     }
 
     async listar() {
         const strQuery = 'select * from estados';
-        try{
+        try {
             const { rows } = await pool.query(strQuery);
             let lista = [];
-            for(var i = 0; i < rows.length; i++){
+            for (var i = 0; i < rows.length; i++) {
                 let estado = new Estado();
                 estado.id = rows[i].id;
                 estado.sigla = rows[i].sigla;
@@ -68,18 +68,18 @@ class PsqlEstadoDAO {
                 lista.push(estado);
             }
             return lista;
-                       
-        }catch(e){
+
+        } catch (e) {
             PgUtil.checkError(e);
         }
     }
 
-    async deletar(id){
-        try{
+    async deletar(id) {
+        try {
             const deleteQuery = "delete from estados where id=$1";
-            const result = await pool.query(deleteQuery,[id]);
+            const result = await pool.query(deleteQuery, [id]);
             return id;
-        }catch(e){
+        } catch (e) {
             PgUtil.checkError(e);
         }
     }

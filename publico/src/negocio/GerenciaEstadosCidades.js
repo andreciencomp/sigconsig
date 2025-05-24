@@ -6,7 +6,7 @@ class GerenciaEstadosCidades{
 
     async obterEstadoPorId(id){
         let fachada = FachadaDados.instancia;
-        return await fachada.obterEstadoPorId();
+        return await fachada.obterEstadoPorId(id);
     }
 
     async cadastrarEstado(estado){

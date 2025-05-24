@@ -7,6 +7,17 @@ const EstadoValidator = require('../publico/validators/EstadoValidator');
 
 const estadoRouter = express.Router();
 
+estadoRouter.get('/estados/:id',async (req, res)=>{
+    try{
+        let fachada = new FachadaNegocio();
+        const estado = await fachada.obterEstadoPorID(req.params.id);
+        return res.status(200).send({dados:estado});
+
+    }catch(e){
+        ExceptionService.checkError(e, res);
+    }
+});
+
 estadoRouter.get('/estados',async function(req, res){
     
     try{
