@@ -143,6 +143,11 @@ class FachadaDados{
         return await dao.listarPorEstado(estado_id);
     }
 
+    async deletarCidade(id){
+        const dao = await DAOFactory.getCidadeDao();
+        return await dao.deletar(id);
+    }
+
     async obterCorretorPorId(id){
         const dao = await DAOFactory.getCorretorDao();
         return await dao.obterPorId(id);

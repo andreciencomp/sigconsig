@@ -49,6 +49,11 @@ class GerenciaEstadosCidades{
         let cidades = await fachada.listarCidadesPorEstado(estado_id);
         return cidades;
     }
+
+    async deletarCidade(id){
+        const fachada = new FachadaDados();
+        return await fachada.deletarCidade(id);
+    }
     
 }
 

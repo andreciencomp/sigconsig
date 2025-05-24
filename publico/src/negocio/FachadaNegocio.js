@@ -105,6 +105,11 @@ class FachadaNegocio{
         return cidades;
     }
 
+    async deletarCidade(id){
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return await gerenciaEstadosCidades.deletarCidade(id);
+    }
+
     async cadastrarCorretor(corretor){
         let gerenciaCorretores = new GerenciaCorretores();
         return await gerenciaCorretores.cadastrar(corretor);

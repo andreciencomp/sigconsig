@@ -71,6 +71,15 @@ class PsqlCidadeDao {
             PgUtil.checkError(e);
         }
     }
+
+    async deletar(id){
+        try{
+            await pool.query("delete from cidades where id=$1",[id]);
+            return id;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 }
 
 module.exports = PsqlCidadeDao;
