@@ -1,4 +1,5 @@
 const FachadaDados = require('../dados/FachadaDados');
+const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const RestricaoChaveEstrangeiraException = require('../excessoes/RestricaoChaveEstrangeiraException');
 
@@ -38,6 +39,15 @@ class GerenciaEstadosCidades{
         return cidade;
     }
 
+    async cadastrarCidade(cidade){
+        const fachada = new FachadaDados();
+        const existe = await fachada.existeCidadeNoEstadoPorNome(cidade.nome, cidade.estado.id);
+        if(existe){
+            throw new ChaveRepetidaException("Já existe uma cidade com este nome para este estado");
+        }
+        return await fachada.salvarCidade(cidade);
+    }
+
     async listarCidades(){
         let fachada = FachadaDados.instancia;
         let cidades = await fachada.listarCidades();
@@ -54,9 +64,6 @@ class GerenciaEstadosCidades{
         const fachada = new FachadaDados();
         return await fachada.deletarCidade(id);
     }
-    
 }
-
-
 
 module.exports = GerenciaEstadosCidades;

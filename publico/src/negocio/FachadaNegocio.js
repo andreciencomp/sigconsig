@@ -93,6 +93,11 @@ class FachadaNegocio{
         return gerenciaEstadosCidades.obterCidadePorId(id); 
     }
 
+    async cadastrarCidade(cidade){
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return await gerenciaEstadosCidades.cadastrarCidade(cidade);
+    }
+
     async listarCidades(){
         let gerenciaEstadosCidades = new GerenciaEstadosCidades();
         let cidades = await gerenciaEstadosCidades.listarCidades();

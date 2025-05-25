@@ -26,9 +26,29 @@ class PsqlCidadeDao {
 
         } catch (e) {
             PgUtil.checkError(e);
-
         }
+    }
 
+    async existeNoEstadoPorNome(nome, estadoID) {
+        try {
+            let strQuery = "select * from cidades where nome=$1 and estado_id=$2";
+            const result = await pool.query(strQuery, [nome, estadoID]);
+            return (result.rowCount > 0);
+            
+        } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async salvar(cidade){
+        try{
+            const strQuery = "insert into cidades(nome, estado_id) values ($1, $2) returning id";
+            const result = await pool.query(strQuery, [cidade.nome, cidade.estado.id]);
+            return result.rows[0].id;
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }
     }
 
     async listarTodos(){
