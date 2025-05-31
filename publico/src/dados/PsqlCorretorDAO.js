@@ -25,7 +25,7 @@ class PsqlCorretorDAO{
             corretor.id = resCorretor.rows[0].id;
             corretor.codigo = resCorretor.rows[0].codigo;
             corretor.cpf = resCorretor.rows[0].cpf;
-            corretor.nome = resCorretor.rows[0].cpf;
+            corretor.nome = resCorretor.rows[0].nome;
             corretor.dtNascimento = resCorretor.rows[0].dt_nascimento;
             corretor.ativo = resCorretor.rows[0].ativo;
             if(resCorretor.rows[0].endereco_id){
