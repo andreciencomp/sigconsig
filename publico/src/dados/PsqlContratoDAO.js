@@ -90,7 +90,7 @@ class PsqlContratoDAO {
                 clienteId = (await clienteDAO.salvar(contrato.cliente)).id;
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
-                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco)).id;
+                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco));
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);

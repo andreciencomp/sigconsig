@@ -92,6 +92,9 @@ class GerenciaContratos {
     }
 
     filtrarCriterios(criterios) {
+        if(!criterios){
+            return {}
+        }
         let novosCriterios = {};
         if (criterios['numero']) {
             novosCriterios.numero = criterios.numero;
