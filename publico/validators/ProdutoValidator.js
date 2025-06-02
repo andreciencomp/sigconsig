@@ -1,8 +1,7 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
-const FachadaNegocio = require("../src/negocio/FachadaNegocio");
 
-async function validarProduto(produto) {
+function validarProduto(produto) {
     if (!produto.carencia) {
         throw new DadosNulosException("A carência não pode ser nula.");
     }

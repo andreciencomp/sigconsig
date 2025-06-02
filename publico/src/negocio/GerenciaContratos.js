@@ -18,6 +18,7 @@ class GerenciaContratos {
     }
 
     async cadastrar(contrato) {
+
         const fachada = FachadaDados.instancia;
         if (contrato.produto.id == null) {
             const fachadaDados = new FachadaDados();
