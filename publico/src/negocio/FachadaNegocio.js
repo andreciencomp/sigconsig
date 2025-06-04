@@ -1,7 +1,6 @@
 
 const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
 const GerenciaBancos = require('./GerenciaBancos');
-const Banco = require('../entidades/Banco');
 const GerenciaOrgaos = require('./GerenciaOrgaos');
 const GerenciaEstadosCidades = require('../negocio/GerenciaEstadosCidades');
 const GerenciaCorretores = require('./GerenciaCorretores');
@@ -43,17 +42,21 @@ class FachadaNegocio{
     }
 
     async cadastrarBanco(codigo, nome){
-
         let gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.cadastrarBanco(codigo, nome);
 
     }
 
     async listarBancos(){
-
         let gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.listarBancos();
     }
+
+    async deletarBanco(id){
+        const gerenciaBancos = new GerenciaBancos();
+        return gerenciaBancos.deletarBanco(id);
+    }
+
 
     async cadastrarOrgao(sigla, nome){
         let gerenciaOrgaos = new GerenciaOrgaos();
@@ -61,7 +64,6 @@ class FachadaNegocio{
     }
 
     async listarOrgaos(){
-
         let gerenciaOrgaos = new GerenciaOrgaos();
         let orgaos = await gerenciaOrgaos.listarOrgaos();
         return orgaos;

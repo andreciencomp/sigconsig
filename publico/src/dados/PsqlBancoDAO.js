@@ -1,6 +1,5 @@
 const {pool} = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
-const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PgUtil = require('./PgUtil');
 
@@ -46,8 +45,6 @@ class PsqlBancoDAO{
             PgUtil.checkError(e);
 
         }
-    
-        
     }
 
     async salvar(banco){
@@ -80,11 +77,21 @@ class PsqlBancoDAO{
             console.log(e);
             throw 'BD_EXCEPTION';
         }
-
     }
-    
 
-
+    async deletar(id){
+        try{
+            const result = await pool.query("delete from bancos where id=$1 returning id",[id]);
+           if(result.rows[0]){
+                return id;
+           }
+           else{
+            throw new EntidadeNaoEncontradaException("Este banco não existe.");
+           }
+        }catch(e){
+                PgUtil.checkError(e);
+        }
+    }
 }
 
 module.exports = PsqlBancoDAO;

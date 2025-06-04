@@ -7,10 +7,7 @@ class GerenciaBancos{
         this.fachada = FachadaDados.instancia;
     }
 
-
-
     async obterBancoPorCodigo(codigo){
-
         return await this.fachada.obterBancoPorCodigo(codigo);
 
     }
@@ -23,8 +20,12 @@ class GerenciaBancos{
     }
 
     async listarBancos(){
-        
         return await this.fachada.listarBancos();
+    }
+
+    async deletarBanco(id){
+        const fachadaDados = new FachadaDados();
+        return fachadaDados.deletarBanco(id);
     }
 }
 

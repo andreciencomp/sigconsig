@@ -43,5 +43,16 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
     }
 });
 
+roteadorBancos.delete('/bancos/deletar/:id', authService.usuarioAdminFiltro, async(req, res)=>{
+    try{
+        const fachadaNegocio = new FachadaNegocio();
+        const idDeletado  = await fachadaNegocio.deletarBanco(req.params.id);
+        return res.status(200).send({id: idDeletado});
+        
+    }catch(e){
+        ExceptionService.checkError(e,res);
+    }
+});
+
 module.exports = roteadorBancos;
 

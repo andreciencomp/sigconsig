@@ -86,6 +86,11 @@ class FachadaDados{
         return await dao.listar();
     }
 
+    async deletarBanco(id){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.deletar(id);
+    }
+
     async existeOrgaoPorSigla(sigla){
         const dao= await DAOFactory.getOrgaoDAO();
         return await dao.existePorSigla(sigla);
@@ -287,7 +292,6 @@ class FachadaDados{
         const dao = await DAOFactory.getPagamentoComissaoDAO();
         return await dao.existePorContratoId(contratoId);
     }
-
 }
 
 module.exports = FachadaDados;
