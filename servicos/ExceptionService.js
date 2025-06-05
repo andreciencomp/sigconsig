@@ -10,6 +10,7 @@ const EntidadeNaoEncontradaException = require("../publico/src/excessoes/Entidad
 const HeaderNaoEncontradoException = require("../publico/src/excessoes/HeaderNaoEncontradoException");
 const LiberacaoNaoPossivelException = require("../publico/src/excessoes/LiberacaoNaoPossivelException");
 const MetodoAuthInvalidoException = require("../publico/src/excessoes/MetodoAuthInvalidoException");
+const OperacaoNaoPermitidaException = require("../publico/src/excessoes/OperacaoNaoPermitidaException");
 const PagamentoJaCadastradoException = require("../publico/src/excessoes/PagamentoJaCadastradoException");
 const RestricaoChaveEstrangeiraException = require("../publico/src/excessoes/RestricaoChaveEstrangeiraException");
 const SenhaIncorretaException = require("../publico/src/excessoes/SenhaIncorretaException");
@@ -77,6 +78,9 @@ class ExceptionService {
 
             case new ContratoCanceladoException().name:
                 return res.status(400).send({excessao:e.name, msg:e.message})
+
+            case new OperacaoNaoPermitidaException().name:
+                return res.status(400).send({excessao:e.name, msg:e.message});
                 
             case new ComissaoNaoCadastradaException().name:
                 return res.status(404).send({ excessao: e.name, msg: e.message });

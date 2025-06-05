@@ -3,6 +3,7 @@ const PsqlContratoDAO = require("../dados/PsqlContratoDAO");
 const DadosInvalidosException = require("../excessoes/DadosInvalidosException");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivelException");
+const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
 
 class GerenciaContratos {
 
@@ -137,6 +138,10 @@ class GerenciaContratos {
 
     async deletarContrato(id){
         const fachadaDados = new FachadaDados();
+        const contrato = await fachadaDados.obterContratoPorId(id);
+        if(contrato.status != 'CADASTRADO'){
+            throw new OperacaoNaoPermitidaException("Não foi possível remover. O contrato está com o status: " + contrato.status);
+        }
         return await fachadaDados.deletarContrato(id);
     }
 }
