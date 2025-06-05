@@ -21,38 +21,13 @@ class FachadaDados {
     }
 
     async obterUsuarioPorId(id) {
-        const nomeExcessao = new EntidadeNaoEncontradaException().name;
-        try {
-            const dao = await DAOFactory.getUsuarioSuperDAO();
-            return await dao.obter(id);
-        } catch (e) {
-            if (e.name == nomeExcessao) {
-                try {
-                    const dao = await DAOFactory.getUsuarioAdmDAO();
-                    return await dao.obter(id);
-                } catch (e) {
-                    if (e.name == nomeExcessao) {
-                        try {
-                            const dao = await DAOFactory.getUsuarioFinanceiroDAO();
-                            return await dao.obter(id);
-                        } catch (e) {
-                            if (e.name == nomeExcessao) {
-                                try {
-                                    const dao = await DAOFactory.getUsuarioCadastroDAO();
-                                    return await dao.obter(id);
-                                } catch (e) {
-                                    if (e.name = nomeExcessao) {
-                                        throw e;
-                                    }
-                                }
-                            }
-                        }
+        const dao = await DAOFactory.getUsuarioDAO();
+        return await dao.obter(id);
+    }
 
-                    }
-                }
-
-            }
-        }
+    async obterUsuarioPorNome(nomeUsuario){
+        const dao = await DAOFactory.getUsuarioDAO();
+        return await dao.obterPorNome(nomeUsuario);
     }
 
     async obterUsuarioSuperPorNome(nomeUsuario) {

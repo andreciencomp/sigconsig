@@ -21,9 +21,6 @@ class PsqlUsuarioSuperDAO {
                 usuario.senha = await data.senha;
                 return usuario;
             }
-            else{
-                    console.log("Não encontrado");
-            }
             throw new EntidadeNaoEncontradaException("Super usuário inexistente.");
         } catch (e) {
             PgUtil.checkError(e);

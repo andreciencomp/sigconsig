@@ -16,11 +16,22 @@ const PsqlComissionamentoPromotoraDAO = require('./PsqlComissionamentoPromotoraD
 const PsqlComissionamentoCorretorDAO = require('./PsqlComissionamentoCorretorDAO');
 const PsqlContratoDAO = require('./PsqlContratoDAO');
 const PsqlPagamentoComissaoDAO = require('./PsqlPagamentoComissaoDAO');
+const PsqlUsuarioDAO = require('./PsqlUsuarioDAO');
 
 class DAOFactory{
 
     constructor(){
         
+    }
+    static  async getUsuarioDAO(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                const dao =  new PsqlUsuarioDAO();
+                return   dao;
+
+            default:
+                return null;
+        }
     }
 
     static  async getUsuarioSuperDAO(){
