@@ -12,7 +12,7 @@ class GerenciaProdutos{
 
     async existe(produto){
         const fachadaDados = new FachadaDados();
-        return await fachadaDados.existeProduto();
+        return await fachadaDados.existeProduto(produto);
     }
 }
 
