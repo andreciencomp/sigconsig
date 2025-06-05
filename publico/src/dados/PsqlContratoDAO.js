@@ -40,6 +40,7 @@ class PsqlContratoDAO {
             contrato.valor = rowContrato.valor;
             contrato.status = rowContrato.status;
             contrato.dtLiberacao = rowContrato.dt_liberacao ? rowContrato.dt_liberacao.toISOString().slice(0, 10) : null;
+            contrato.comissaoPaga = rowContrato.comissao_paga;
             if (rowContrato.produto_id) {
                 const produtoDAO = new PsqlProdutoDAO();
                 const produto = await produtoDAO.obterPorId(rowContrato.produto_id);
@@ -65,6 +66,7 @@ class PsqlContratoDAO {
                 const cliente = await clienteDAO.obterPorId(rowContrato.cliente_id);
                 contrato.cliente = cliente;
             }
+
             return contrato;
 
         } catch (e) {
@@ -84,7 +86,7 @@ class PsqlContratoDAO {
             }
 
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id";
+                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
 
             if (clienteId == null) {
@@ -97,7 +99,7 @@ class PsqlContratoDAO {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco));
                 }
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
-                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
+                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
                 if (rollback) {
                     await client.query('COMMIT');
                 }
@@ -155,14 +157,15 @@ class PsqlContratoDAO {
             const data = contrato.data ? contrato.data : contratoSalvo.data;
             const valor = contrato.valor ? contrato.valor : contratoSalvo.valor;
             const clienteId = contrato.cliente && contrato.cliente.id ? contrato.cliente.id : contratoSalvo.cliente.id;
-            const enderecoId = contrato.endereco && contrato.endereco.id ? contrato.endereco.id : contratoSalvo.endereco.id;
+            const enderecoId = contrato.endereco && contrato.endereco.id ? contrato.endereco.id : (contratoSalvo.endereco && contratoSalvo.endereco.id ? contratoSalvo.endereco.id : null);
             const status = contrato.status ? contrato.status : contratoSalvo.status;
             const corretorId = contrato.corretor && contrato.corretor.id ? contrato.corretor.id : contratoSalvo.corretor.id;
             const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
+            const comissaoPaga = contrato.comissaoPaga != null ? contrato.comissaoPaga : contratoSalvo.comissaoPaga;
             let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
-                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10 where id=$11";
+                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10, comissao_paga=$11 where id=$12";
             await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
-                data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, contrato.id]);
+                data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, comissaoPaga, contrato.id]);
             if (rollback) {
                 client.query('COMMIT');
             }
@@ -186,7 +189,7 @@ class PsqlContratoDAO {
         let contratos = [];
 
         let query = "select contratos.id,numero,produto_id, data, cliente_id, " +
-            "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
+            "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id , comissao_paga from contratos ";
 
         if (criterios["orgaoId"]) {
             query += " left join produtos on produtos.id = contratos.produto_id "
@@ -302,6 +305,14 @@ class PsqlContratoDAO {
                             query += " and ";
                         }
                         break;
+
+                    case 'comissaoPaga':
+                        query+= " comissao_paga = $" + (i +1);
+                        valoresQuery.push(criterios['comissaoPaga']);
+                        if (i < numCriterios - 1) {
+                            query += " and ";
+                        }
+                        break;
                 }
             }
             const res = await client.query(query, valoresQuery);
@@ -336,7 +347,7 @@ class PsqlContratoDAO {
                 client.query("COMMIT");
             }
             return id;
-            
+
         } catch (e) {
             await client.query("ROLLBACK");
             PgUtil.checkError(e);
@@ -358,6 +369,7 @@ class PsqlContratoDAO {
         contrato.status = row.status;
         contrato.dtLiberacao = row.dt_liberacao ? row.dt_liberacao.toISOString().slice(0, 10) : row.dt_liberacao;
         contrato.valor = row.valor;
+        contrato.comissaoPaga = row.comissao_paga;
         if (row.banco_id) {
             let banco = await bancoDAO.obterPorId(row.banco_id);
             contrato.banco = banco;

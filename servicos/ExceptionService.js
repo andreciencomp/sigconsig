@@ -2,6 +2,8 @@ const BDException = require("../publico/src/excessoes/BDException");
 const ChaveRepetidaException = require("../publico/src/excessoes/ChaveRepetidaException");
 const ComissaoNaoCadastradaException = require("../publico/src/excessoes/ComissaoNaoCadastradaException");
 const ComissionamentoInvalidoException = require("../publico/src/excessoes/ComissionamentoInvalidoException");
+const ContratoCanceladoException = require("../publico/src/excessoes/ContratoCanceladoException");
+const ContratoNaoLiberadoException = require("../publico/src/excessoes/ContratoNaoLiberadoException");
 const DadosInvalidosException = require("../publico/src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../publico/src/excessoes/DadosNulosException");
 const EntidadeNaoEncontradaException = require("../publico/src/excessoes/EntidadeNaoEncontrada");
@@ -69,6 +71,12 @@ class ExceptionService {
 
             case new PagamentoJaCadastradoException().name:
                 return res.status(400).send({excessao:e.name, msg:e.message});
+
+            case new ContratoNaoLiberadoException().name:
+                return res.status(400).send({excessao:e.name, msg:e.message});
+
+            case new ContratoCanceladoException().name:
+                return res.status(400).send({excessao:e.name, msg:e.message})
                 
             case new ComissaoNaoCadastradaException().name:
                 return res.status(404).send({ excessao: e.name, msg: e.message });

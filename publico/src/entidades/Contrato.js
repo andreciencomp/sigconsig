@@ -1,7 +1,7 @@
 class Contrato{
     
     constructor(id=null, numero=null,produto=null, banco=null, data=null, valor=null, cliente=null,
-        endereco=null, dtLiberacao=null,status=null, corretor=null){
+        endereco=null, dtLiberacao=null,status=null, corretor=null, comissaoPaga = false){
             
         this.id = id;
         this.numero = numero;
@@ -14,6 +14,7 @@ class Contrato{
         this.endereco = endereco;
         this.status = status;
         this.corretor = corretor;
+        this.comissaoPaga = comissaoPaga
     }
 }
 

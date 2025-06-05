@@ -13,6 +13,7 @@ const roteadorCliente = require('./rotas/cliente-rotas');
 const roteadorProduto = require('./rotas/produto-rotas');
 const roteadorComissionamento = require('./rotas/comissionamento-rotas');
 const roteadorContratos = require('./rotas/contratos-rotas');
+const roteadorPagamentoComissao = require('./rotas/pagamentos-comissoes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api', roteadorCliente);
 app.use('/api', roteadorProduto);
 app.use('/api', roteadorComissionamento);
 app.use('/api', roteadorContratos);
+app.use('/api', roteadorPagamentoComissao);
 
 module.exports = app;
 

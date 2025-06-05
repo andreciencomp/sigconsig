@@ -1,12 +1,13 @@
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const DAOFactory = require('./DAOFactory');
 
-class FachadaDados{
+class FachadaDados {
 
     static instancia = new FachadaDados();
 
-    static getInstancia(){
+    static getInstancia() {
 
-        if(this.instancia == null){
+        if (this.instancia == null) {
             this.instancia = new FachadaDados();
             return this.instancia;
         }
@@ -14,281 +15,308 @@ class FachadaDados{
         return this.instancia;
     }
 
-    salvarUsuario(usuario){
+    salvarUsuario(usuario) {
 
         console.log("Não implementado ainda");
     }
 
-    async obterUsuarioPorId(id){
+    async obterUsuarioPorId(id) {
+        const nomeExcessao = new EntidadeNaoEncontradaException().name;
+        try {
+            const dao = await DAOFactory.getUsuarioSuperDAO();
+            return await dao.obter(id);
+        } catch (e) {
+            if (e.name == nomeExcessao) {
+                try {
+                    const dao = await DAOFactory.getUsuarioAdmDAO();
+                    return await dao.obter(id);
+                } catch (e) {
+                    if (e.name == nomeExcessao) {
+                        try {
+                            const dao = await DAOFactory.getUsuarioFinanceiroDAO();
+                            return await dao.obter(id);
+                        } catch (e) {
+                            if (e.name == nomeExcessao) {
+                                try {
+                                    const dao = await DAOFactory.getUsuarioCadastroDAO();
+                                    return await dao.obter(id);
+                                } catch (e) {
+                                    if (e.name = nomeExcessao) {
+                                        throw e;
+                                    }
+                                }
+                            }
+                        }
 
-        let dao = await DAOFactory.getUsuarioSuperDAO();  
-        let usr;
-        usr =  await dao.obter(id);
-        return usr;
+                    }
+                }
+
+            }
+        }
     }
 
-    async obterUsuarioSuperPorNome(nomeUsuario){
+    async obterUsuarioSuperPorNome(nomeUsuario) {
         const dao = await DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
-    async obterUsuarioAdmPorNome(nomeUsuario){
+    async obterUsuarioAdmPorNome(nomeUsuario) {
         const dao = await DAOFactory.getUsuarioAdmDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
-    async obterUsuarioFinanceiroPorNome(nomeUsuario){
+    async obterUsuarioFinanceiroPorNome(nomeUsuario) {
         const dao = await DAOFactory.getUsuarioFinanceiroDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
-    async obterUsuarioCadastroPorNome(nomeUsuario){
+    async obterUsuarioCadastroPorNome(nomeUsuario) {
         const dao = await DAOFactory.getUsuarioCadastroDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
 
-    async salvarUsuarioSuper(usuario){
+    async salvarUsuarioSuper(usuario) {
         const dao = await DAOFactory.getUsuarioSuperDAO();
         await dao.salvar(usuario);
     }
 
-    async salvarUsuarioAdmin(usuario){
+    async salvarUsuarioAdmin(usuario) {
         const dao = await DAOFactory.getUsuarioAdmDAO();
         await dao.salvar(usuario);
     }
 
-    async salvarUsuarioFinanceiro(usuario){
+    async salvarUsuarioFinanceiro(usuario) {
         const dao = await DAOFactory.getUsuarioFinanceiroDAO();
         await dao.salvar(usuario);
     }
 
-    async salvarUsuarioCadastro(usuario){
+    async salvarUsuarioCadastro(usuario) {
         const dao = await DAOFactory.getUsuarioCadastroDAO();
         await dao.salvar(usuario);
     }
 
-    async obterBancoPorCodigo(codigo){
+    async obterBancoPorCodigo(codigo) {
         const dao = await DAOFactory.getBancoDAO();
         return await dao.obterPorCodigo(codigo);
     }
 
-    async salvarBanco(banco){
+    async salvarBanco(banco) {
         const dao = await DAOFactory.getBancoDAO();
         return await dao.salvar(banco);
     }
 
-    async listarBancos(){
+    async listarBancos() {
         const dao = await DAOFactory.getBancoDAO();
         return await dao.listar();
     }
 
-    async deletarBanco(id){
+    async deletarBanco(id) {
         const dao = await DAOFactory.getBancoDAO();
         return await dao.deletar(id);
     }
 
-    async existeOrgaoPorSigla(sigla){
-        const dao= await DAOFactory.getOrgaoDAO();
+    async existeOrgaoPorSigla(sigla) {
+        const dao = await DAOFactory.getOrgaoDAO();
         return await dao.existePorSigla(sigla);
     }
 
-    async existeOrgaoPorNome(nome){
-        const dao= await DAOFactory.getOrgaoDAO();
+    async existeOrgaoPorNome(nome) {
+        const dao = await DAOFactory.getOrgaoDAO();
         return await dao.existePorNome(nome);
     }
 
-    async salvarOrgao(orgao){
+    async salvarOrgao(orgao) {
 
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.salvar(orgao);
     }
 
-    async listarOrgaos(){
+    async listarOrgaos() {
 
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.listar();
     }
 
-    async obterEstadoPorId(id){
+    async obterEstadoPorId(id) {
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.obter(id);
     }
 
-    async salvarEstado(estado){
+    async salvarEstado(estado) {
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.salvar(estado);
     }
 
-    async deletarEstado(id){
+    async deletarEstado(id) {
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.deletar(id);
     }
 
-    async listarEstados(){
+    async listarEstados() {
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.listar();
     }
 
-    async obterCidadePorId(id){
+    async obterCidadePorId(id) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.obterPorId(id);
     }
 
-    async existeCidadeNoEstadoPorNome(nome, estadoID){
+    async existeCidadeNoEstadoPorNome(nome, estadoID) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.existeNoEstadoPorNome(nome, estadoID);
     }
 
-    async salvarCidade(cidade){
+    async salvarCidade(cidade) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.salvar(cidade);
     }
 
-    async listarCidades(){
+    async listarCidades() {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.listarTodos();
     }
 
-    async listarCidadesPorEstado(estado_id){
+    async listarCidadesPorEstado(estado_id) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.listarPorEstado(estado_id);
     }
 
-    async deletarCidade(id){
+    async deletarCidade(id) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.deletar(id);
     }
 
-    async obterCorretorPorId(id){
+    async obterCorretorPorId(id) {
         const dao = await DAOFactory.getCorretorDao();
         return await dao.obterPorId(id);
     }
 
-    async salvarCorretor(corretor){
+    async salvarCorretor(corretor) {
         const dao = await DAOFactory.getCorretorDao();
         return await dao.salvar(corretor);
     }
 
-    async listarTodosCorretores(){
+    async listarTodosCorretores() {
         const dao = await DAOFactory.getCorretorDao();
         return await dao.listarTodos();
     }
 
-    async obterClientePorId(id){
+    async obterClientePorId(id) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.obterPorId(id);
     }
 
-    async obterClientePorCpf(cpf){
+    async obterClientePorCpf(cpf) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.obterPorCpf(cpf);
     }
 
-    async listarClientesPorNomeLike(nome){
+    async listarClientesPorNomeLike(nome) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.listarPorNomeLike(nome);
     }
 
-    async atualizarCliente(cliente){
+    async atualizarCliente(cliente) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.atualizar(cliente);
     }
 
-    async salvarCliente(cliente){
+    async salvarCliente(cliente) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.salvar(cliente);
     }
 
-    async salvarProduto(produto){
+    async salvarProduto(produto) {
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.salvar(produto);
     }
 
-    async existeProduto(produto){
+    async existeProduto(produto) {
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.existe(produto);
     }
 
-    async listarProdutosPorCriterios(criterios){
+    async listarProdutosPorCriterios(criterios) {
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.listarProdutosPorCriterios(criterios);
     }
 
-    async obterComissionamentoPromotoraPorId(id){
+    async obterComissionamentoPromotoraPorId(id) {
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.obterPorId(id);
     }
 
-    async obterComissionamentoPromotora(produtoId, bancoId){
-        let dao  = await DAOFactory.getComissionamentoPromotoraDAO();
+    async obterComissionamentoPromotora(produtoId, bancoId) {
+        let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.obterPorProdutoEBanco(produtoId, bancoId);
     }
 
-    async salvarComissionamentoPromotora(comissionamento){
+    async salvarComissionamentoPromotora(comissionamento) {
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
-        return await dao.salvar(comissionamento); 
+        return await dao.salvar(comissionamento);
     }
 
-    async existeComissionamentoPromotora(produtoId, bancoId){
+    async existeComissionamentoPromotora(produtoId, bancoId) {
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.existe(produtoId, bancoId);
     }
 
-    async obterComissionamentoCorretor(corretorId, bancoId, produtoId){
+    async obterComissionamentoCorretor(corretorId, bancoId, produtoId) {
         const dao = await DAOFactory.getComissionamentoCorretorDAO();
         return dao.obter(corretorId, bancoId, produtoId);
     }
 
-    async salvarComissionamentoCorretor(comissionamento){
+    async salvarComissionamentoCorretor(comissionamento) {
         let dao = await DAOFactory.getComissionamentoCorretorDAO();
         return await dao.salvar(comissionamento);
     }
 
-    async existeComissionamentoCorretor(comissionamento){
+    async existeComissionamentoCorretor(comissionamento) {
         let dao = await DAOFactory.getComissionamentoCorretorDAO();
         return await dao.existe(comissionamento);
     }
 
-    async obterContaBancariaPorId(id){
+    async obterContaBancariaPorId(id) {
         let dao = await DAOFactory.getContaBancariaDao();
         return await dao.obterPorId(id);
     }
 
-    async obterContratoPorId(id){
+    async obterContratoPorId(id) {
         const dao = await DAOFactory.getContratoDAO();
         return await dao.obterPorId(id);
     }
 
-    async salvarContrato(contrato){
+    async salvarContrato(contrato) {
         let dao = await DAOFactory.getContratoDAO();
-        return await dao.salvar(contrato,true);
+        return await dao.salvar(contrato, true);
     }
 
-    async atualizarContrato(contrato, rollback){
+    async atualizarContrato(contrato, rollback) {
         let dao = await DAOFactory.getContratoDAO();
         return await dao.atualizar(contrato, rollback);
     }
 
-    async listarContratosPorCriterios(criterios){
+    async listarContratosPorCriterios(criterios) {
         const dao = await DAOFactory.getContratoDAO();
         return await dao.listarPorCriterios(criterios);
     }
 
-    async deletarContrato(id){
+    async deletarContrato(id) {
         const dao = await DAOFactory.getContratoDAO();
         return await dao.deletar(id);
     }
 
-    async salvarPagamentoComissao(pagamentoComissao){
-        const dao =  DAOFactory.getPagamentoComissaoDAO();
+    async salvarPagamentoComissao(pagamentoComissao) {
+        const dao = DAOFactory.getPagamentoComissaoDAO();
         return await dao.salvar(pagamentoComissao);
     }
 
-    async existePagamentoPorContratoId(contratoId){
+    async existePagamentoPorContratoId(contratoId) {
         const dao = await DAOFactory.getPagamentoComissaoDAO();
         return await dao.existePorContratoId(contratoId);
     }

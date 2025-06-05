@@ -202,6 +202,11 @@ class FachadaNegocio{
         return gerenciaContratos.deletarContrato(id);
     }
 
+    async gerarPagamentoDeComissao(contratoID, usuarioID){
+        const gerenciaPagamentoComissao = new GerenciaComissionamento();
+        return await gerenciaPagamentoComissao.gerarPagamentoComissao(contratoID, usuarioID);
+    }
+
 }
 
 module.exports = FachadaNegocio;

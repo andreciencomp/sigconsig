@@ -4,6 +4,9 @@ const PagamentoComissao = require("../entidades/PagamentoComissao");
 const ChaveRepetidaException = require("../excessoes/ChaveRepetidaException");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
 const ComissionamentoInvalidoException = require("../excessoes/ComissionamentoInvalidoException");
+const ContratoNaoLiberadoException = require("../excessoes/ContratoNaoLiberadoException");
+const DadosNulosException = require("../excessoes/DadosNulosException");
+const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 
 class GerenciaComissionamento {
     async cadastrarComissionamentoPromotora(comissionamento) {
@@ -32,8 +35,15 @@ class GerenciaComissionamento {
         return await fachadaDados.salvarComissionamentoCorretor(comissionamento);
     }
 
-    async gerarPagamentoComissao(contrato){
-        const fachadaDados = FachadaDados.instancia;
+    async gerarPagamentoComissao(contratoID, usuarioID){
+        
+        const fachadaDados = new FachadaDados();
+        let contrato = await fachadaDados.obterContratoPorId(contratoID);
+        if(contrato.comissaoPaga){
+            throw new PagamentoJaCadastradoException("O pagamento de comissão para este contrato já foi gerado.");
+        }
+        this.validarContratoParaPagamento(contrato);
+        
         const comissionamento = new ComissionamentoCorretor();
         comissionamento.banco = contrato.banco;
         comissionamento.produto = contrato.produto;
@@ -49,6 +59,8 @@ class GerenciaComissionamento {
         const comissionamentoPromotora = await fachadaDados.obterComissionamentoPromotora(contrato.produto.id, contrato.banco.id);
         const comissionamentoCorretor = await fachadaDados.obterComissionamentoCorretor(contrato.corretor.id, contrato.banco.id, contrato.produto.id);
         const pagamentoComissao = new PagamentoComissao();
+        const usuario = await fachadaDados.obterUsuarioPorId(usuarioID);
+        pagamentoComissao.cadastradoPor = usuario;
         pagamentoComissao.contrato = contrato;
         pagamentoComissao.corretor = contrato.corretor;
         pagamentoComissao.percentagemCorretor = comissionamentoCorretor.percentagem;
@@ -56,8 +68,24 @@ class GerenciaComissionamento {
         pagamentoComissao.valorCorretor = ((comissionamentoCorretor.percentagem)/100)* contrato.valor;
         pagamentoComissao.valorPromotora = ((comissionamentoPromotora.percentagem - comissionamentoCorretor.percentagem)/100) * contrato.valor;
         pagamentoComissao.efetivado = false;
-        return pagamentoComissao;
-        
+        const retorno =  await fachadaDados.salvarPagamentoComissao(pagamentoComissao);
+        await fachadaDados.atualizarContrato({id:contrato.id, comissaoPaga:true});
+        return retorno;
+    }
+
+    validarContratoParaPagamento(contrato){
+        if(contrato.status && contrato.status != "LIBERADO"){
+            throw new ContratoNaoLiberadoException("O contrato não está liberado.");
+        }
+        if(!contrato.corretor){
+            throw new DadosNulosException("O contrato está sem corretor definido.");
+        }
+        if(!contrato.produto){
+            throw new DadosNulosException("O contrato está sem o produto.");
+        }
+        if(!contrato.banco){
+            throw new DadosNulosException("O contrato está sem o banco.");
+        }
     }
 
 

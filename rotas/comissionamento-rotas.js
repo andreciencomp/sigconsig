@@ -27,4 +27,5 @@ router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
     }
 });
 
+
 module.exports = router;
