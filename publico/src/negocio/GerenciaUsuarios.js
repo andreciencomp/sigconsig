@@ -5,6 +5,7 @@ const UsuarioCadastro = require('../entidades/UsuarioCadastro');
 const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
 const SenhaIncorretaException = require('../excessoes/SenhaIncorretaException');
 const UsuarioInexistenteException = require('../excessoes/UsuarioInexistenteException');
+const bcrypt = require('bcryptjs');
 
 class GerenciaUsuarios {
 
@@ -17,7 +18,7 @@ class GerenciaUsuarios {
     async login(nomeUsuario, senha) {
         let fachada = new FachadaDados();
         let usuario = await fachada.obterUsuarioPorNome(nomeUsuario);
-        if (usuario.senha === senha) {
+        if (await bcrypt.compare(senha, usuario.senha)) {
             usuario.senha = '';
             return usuario;
         }else{
@@ -27,18 +28,18 @@ class GerenciaUsuarios {
 
     async cadastrarUsuario(nomeUsuario, senha, tipo) {
         let dao = FachadaDados.instancia;
-
+        let senhaCriptografada = await bcrypt.hash(senha, 10);
         if (tipo == 'USUARIO_ADMIN') {
             let usuario = new UsuarioAdm();
             usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senha;
+            usuario.senha = senhaCriptografada;
             usuario.tipo = tipo;
             await dao.salvarUsuarioAdmin(usuario);
         }
         else if (tipo == 'USUARIO_FINANCEIRO') {
             let usuario = new UsuarioFinanceiro();
             usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senha;
+            usuario.senha = senhaCriptografada;
             usuario.tipo = tipo;
             await dao.salvarUsuarioFinanceiro(usuario);
 
@@ -46,7 +47,7 @@ class GerenciaUsuarios {
         else if (tipo == 'USUARIO_CADASTRO') {
             let usuario = new UsuarioCadastro();
             usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senha;
+            usuario.senha = senhaCriptografada;
             usuario.tipo = tipo;
             await dao.salvarUsuarioCadastro(usuario);
 

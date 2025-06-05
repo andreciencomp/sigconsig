@@ -15,9 +15,4 @@ module.exports.POOL_CONFIG = {
     port: '5432',
 };
 
-/*module.exports.CONNECTION_POSTGRESQL = 'postgresql://'+
-                                        'postgres:12345@localhost:5432/sigconsigdb'; */
-                                        
-module.exports.SECURE_KEY = '5bf9dda8d40d49e681281dded03f7225';
-
 

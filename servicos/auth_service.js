@@ -10,13 +10,13 @@ const TokenNaoEncontradoException = require('../publico/src/excessoes/TokenNaoEn
 const MetodoAuthInvalidoException = require('../publico/src/excessoes/MetodoAuthInvalidoException');
 
 module.exports.gerarToken = (dado) => {
-    let token = jwt.sign(dado, config.SECURE_KEY, { expiresIn: '1d' });
+    let token = jwt.sign(dado, process.env.SECURE_KEY, { expiresIn: '1d' });
     return token;
 }
 
 module.exports.decodificarToken = async (token) => {
     let dado = null;
-    await jwt.verify(token, config.SECURE_KEY, async (err, decoded) => {
+    await jwt.verify(token, process.env.SECURE_KEY, async (err, decoded) => {
         if (err) {
             throw new TokenInvalidoException("Token inválido");
         }
