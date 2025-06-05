@@ -1,14 +1,8 @@
 const FachadaDados = require("../dados/FachadaDados");
 const PsqlContratoDAO = require("../dados/PsqlContratoDAO");
-const PsqlCorretorDAO = require("../dados/PsqlCorretorDAO");
-const ComissionamentoCorretor = require("../entidades/ComissionamentoCorretor");
-const Contrato = require("../entidades/Contrato");
-const PagamentoComissao = require("../entidades/PagamentoComissao");
-const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
+const DadosInvalidosException = require("../excessoes/DadosInvalidosException");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivelException");
-const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
-const GerenciaComissionamento = require("./GerenciaComissionamento");
 
 class GerenciaContratos {
 
@@ -49,12 +43,12 @@ class GerenciaContratos {
         return await fachada.atualizarContrato(contrato, true);
     }
 
-    async liberar(contratoId, nomeUsuario) {
-        const fachadaDados = FachadaDados.instancia;
-        const existePagamentoComissao = await fachadaDados.existePagamentoPorContratoId(contratoId);
-        if (existePagamentoComissao) {
-            throw new PagamentoJaCadastradoException("Este pagamento já está cadastrado");
+    async liberar(contratoId, dtLiberacao) {
+        const date = new Date(dtLiberacao);
+        if(date.toString() == "Invalid Date"){
+            throw new DadosInvalidosException("A data de liberação está inválida");
         }
+        const fachadaDados = new FachadaDados();
         const contratoDAO = new PsqlContratoDAO();
         const contrato = await contratoDAO.obterPorId(contratoId);
         switch (contrato.status) {
@@ -62,21 +56,19 @@ class GerenciaContratos {
                 throw new LiberacaoNaoPossivelException("O contrato já foi liberado");
             case 'CANCELADO':
                 throw new LiberacaoNaoPossivelException("O contrato está cancelado.");
-
         }
-        const gerenciaComissionamento = new GerenciaComissionamento();
-        let pagamentoComissao = await gerenciaComissionamento.gerarPagamentoComissao(contrato);
-        pagamentoComissao.cadastradoPor = nomeUsuario;
+
         contrato.status = "LIBERADO";
-        await fachadaDados.atualizarContrato(contrato);
-        return await fachadaDados.salvarPagamentoComissao(pagamentoComissao);
+        contrato.dtLiberacao = dtLiberacao;
+        await fachadaDados.atualizarContrato(contrato, true);
+        return "OK";
     }
 
-    async liberarVarios(arrayContratoId, nomeUsuario) {
+    async liberarVarios(arrayContratoId,dtLiberacao) {
         let feedbacks = [];
         for (let i = 0; i < arrayContratoId.length; i++) {
             try {
-                let res = await this.liberar(arrayContratoId[i], nomeUsuario);
+                let res = await this.liberar(arrayContratoId[i], dtLiberacao);
                 feedbacks.push({ contratoId: arrayContratoId[i], pagamentoId: res.id });
             } catch (e) {
                 feedbacks.push({ contratoId: arrayContratoId[i], excessao: e.name, msg: e.message });
@@ -141,7 +133,6 @@ class GerenciaContratos {
         }
 
         return novosCriterios;
-
     }
 
     async deletarContrato(id){

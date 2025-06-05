@@ -81,9 +81,12 @@ class PsqlClienteDao {
         }
     }
 
-    async atualizar(cliente) {
+    async atualizar(cliente, rollback=false) {
+        const client = await pool.connect();
         try {
-            pool.query('BEGIN');
+            if(rollback){
+                await client.query('BEGIN');
+            }
             let daoEndereco = new PsqlEnderecoDAO();
             let clienteSalvo = await this.obterPorId(cliente.id);
             if (cliente.endereco) {
@@ -95,12 +98,19 @@ class PsqlClienteDao {
             let dtNascimento = cliente.dtNascimento ? cliente.dtNascimento : clienteSalvo.dtNascimento;
 
             const query = "update clientes set cpf=$1, nome=$2, dt_nascimento=$3 where id=$4";
-            const res = await pool.query(query, [cpf, nome, dtNascimento, cliente.id]);
-            pool.query('COMMIT');
+            const res = await client.query(query, [cpf, nome, dtNascimento, cliente.id]);
+            if(rollback){
+                await client.query('COMMIT');
+            }
             return cliente;
+            
         } catch (e) {
-            pool.query('ROLLBACK');
+            if(rollback){
+                await client.query('ROLLBACK');
+            }
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 

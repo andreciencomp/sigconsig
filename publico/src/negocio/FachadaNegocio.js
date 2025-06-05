@@ -182,14 +182,14 @@ class FachadaNegocio{
         return await gerenciaContratos.atualizar(contrato);
     }
 
-    async liberarContrato(contratoId, nomeUsuario){
+    async liberarContrato(contratoId, dtLiberacao){
         const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.liberar(contratoId, nomeUsuario);
+        return await gerenciaContratos.liberar(contratoId, dtLiberacao);
     }
 
-    async liberarVariosContratos(arrayContratoId, nomeUsuario){
+    async liberarVariosContratos(arrayContratoId, dtLiberacao){
         const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.liberarVarios(arrayContratoId, nomeUsuario);
+        return await gerenciaContratos.liberarVarios(arrayContratoId, dtLiberacao);
     }
 
     async listarContratosPorCriterios(criterios){

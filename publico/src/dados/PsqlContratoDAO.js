@@ -25,9 +25,10 @@ class PsqlContratoDAO {
     }
 
     async obterPorId(id) {
+        const client = await pool.connect();
         try {
             const queryContrato = "select * from contratos where id=$1";
-            const resContrato = await pool.query(queryContrato, [id]);
+            const resContrato = await client.query(queryContrato, [id]);
             if (resContrato.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O contrato não existe.");
             }
@@ -35,10 +36,10 @@ class PsqlContratoDAO {
             const contrato = new Contrato();
             contrato.id = rowContrato.id;
             contrato.numero = rowContrato.numero;
-            contrato.data = rowContrato.data ? rowContrato.data.toISOString().slice(0,10) : null;
+            contrato.data = rowContrato.data ? rowContrato.data.toISOString().slice(0, 10) : null;
             contrato.valor = rowContrato.valor;
             contrato.status = rowContrato.status;
-            contrato.dtLiberacao = rowContrato.dt_liberacao ? rowContrato.dt_liberacao.toISOString().slice(0,10) : null;
+            contrato.dtLiberacao = rowContrato.dt_liberacao ? rowContrato.dt_liberacao.toISOString().slice(0, 10) : null;
             if (rowContrato.produto_id) {
                 const produtoDAO = new PsqlProdutoDAO();
                 const produto = await produtoDAO.obterPorId(rowContrato.produto_id);
@@ -68,15 +69,18 @@ class PsqlContratoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
+        } finally {
+            client.release();
         }
     }
 
     async salvar(contrato, rollback = false) {
+        const client = await pool.connect();
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
             if (rollback) {
-                await pool.query('BEGIN');
+                await client.query('BEGIN');
             }
 
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id) " +
@@ -95,7 +99,7 @@ class PsqlContratoDAO {
                 let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 if (rollback) {
-                    await pool.query('COMMIT');
+                    await client.query('COMMIT');
                 }
 
                 return resContrato.rows[0];
@@ -105,10 +109,10 @@ class PsqlContratoDAO {
                 if (contrato.endereco) {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco));
                 }
-                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
+                let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id]);
                 if (rollback) {
-                    await pool.query('COMMIT');
+                    await client.query('COMMIT');
                 }
                 return resContrato.rows[0];
             }
@@ -118,13 +122,16 @@ class PsqlContratoDAO {
                 await pool.query('ROLLBACK');
             }
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 
-    async atualizar(contrato, rollback=false) {
+    async atualizar(contrato, rollback = false) {
+        const client = await pool.connect();
         try {
-            if(rollback){
-                pool.query('BEGIN');
+            if (rollback) {
+                client.query('BEGIN');
             }
             let contratoSalvo = await this.obterPorId(contrato.id);
             if (contrato.cliente && contrato.cliente.id) {
@@ -137,10 +144,10 @@ class PsqlContratoDAO {
                 contrato.endereco.id = contratoSalvo.endereco.id;
                 await enderecoDAO.atualizar(contrato.endereco);
 
-                
-            }else if(contrato.endereco && !contratoSalvo.endereco){
+
+            } else if (contrato.endereco && !contratoSalvo.endereco) {
                 const enderecoID = await enderecoDAO.salvar(contrato.endereco);
-                contrato.endereco.id = enderecoID; 
+                contrato.endereco.id = enderecoID;
             }
             const numero = contrato.numero ? contrato.numero : contratoSalvo.numero;
             const produtoId = contrato.produto && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
@@ -154,33 +161,33 @@ class PsqlContratoDAO {
             const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
             let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
                 "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10 where id=$11";
-            await pool.query(queryAtualizarContrato, [numero, produtoId, bancoId,
+            await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
                 data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, contrato.id]);
-            if(rollback){
-                pool.query('COMMIT');
+            if (rollback) {
+                client.query('COMMIT');
             }
-            
+
         } catch (e) {
-            if(rollback){
-                pool.query('ROLLBACK');
+            if (rollback) {
+                client.query('ROLLBACK');
             }
-            
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
-        const query = "update contratos set numero=$1, produto_id=$2,data=$3,cliente_id=$4,";
     }
     //"corretorId", "cpf", "clienteNome", "bancoId", "orgaoId", "dataInicial","dataFinal",
     //  "dtLiberacaoInicial","dtLiberacaoFinal", "status", "valorMinimo", "valorMaximo", "clienteId"
     async listarPorCriterios(criterios) {
-        
+
         let atributos = Object.keys(criterios);
         let numCriterios = atributos.length;
         let valoresQuery = [];
         let contratos = [];
 
         let query = "select contratos.id,numero,produto_id, data, cliente_id, " +
-             "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
-             
+            "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id from contratos ";
+
         if (criterios["orgaoId"]) {
             query += " left join produtos on produtos.id = contratos.produto_id "
         }
@@ -192,7 +199,7 @@ class PsqlContratoDAO {
         if (numCriterios > 0) {
             query += " where ";
         }
-
+        const client = await pool.connect();
         try {
             for (let i = 0; i < numCriterios; i++) {
                 switch (atributos[i]) {
@@ -297,7 +304,7 @@ class PsqlContratoDAO {
                         break;
                 }
             }
-            const res = await pool.query(query, valoresQuery);
+            const res = await client.query(query, valoresQuery);
             const rowsContrato = res.rows;
             for (let i = 0; i < rowsContrato.length; i++) {
                 let contrato = await this.criarObjetoContrato(rowsContrato[i]);
@@ -307,23 +314,34 @@ class PsqlContratoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 
-    async deletar(id){
-        try{
+    async deletar(id, rollback=false) {
+        const client = await pool.connect();
+        try {
             const contrato = await this.obterPorId(id);
             const enderecoID = contrato.endereco ? contrato.endereco.id : null;
-            await pool.query("BEGIN"); 
-            await pool.query("delete from contratos where id=$1", [id]);
-           if(enderecoID){
-                await pool.query("delete from enderecos where id=$1",[enderecoID]);
-           }
-           pool.query("COMMIT");
-           return id;
-        }catch(e){
-            await pool.query("ROLLBACK");
+            if(rollback){
+                await client.query("BEGIN");
+            }
+            
+            await client.query("delete from contratos where id=$1", [id]);
+            if (enderecoID) {
+                await client.query("delete from enderecos where id=$1", [enderecoID]);
+            }
+            if(rollback){
+                client.query("COMMIT");
+            }
+            return id;
+            
+        } catch (e) {
+            await client.query("ROLLBACK");
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 

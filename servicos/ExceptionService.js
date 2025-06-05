@@ -65,7 +65,7 @@ class ExceptionService {
                 return res.status(400).send({excessao:e.name, msg:e.message});
 
             case new LiberacaoNaoPossivelException().name:
-                return res.status(400).send({excessao:e.name, msg:e.name});
+                return res.status(400).send({excessao:e.name, msg:e.message});
 
             case new PagamentoJaCadastradoException().name:
                 return res.status(400).send({excessao:e.name, msg:e.message});

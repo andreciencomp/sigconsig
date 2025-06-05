@@ -184,10 +184,10 @@ class DAOFactory{
         }
     }
 
-    static async getPagamentoComissaoDAO(){
+    static getPagamentoComissaoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlPagamentoComissaoDAO.getInstancia();
+                let dao = new PsqlPagamentoComissaoDAO();
                 return dao;
             default:
                 return null;

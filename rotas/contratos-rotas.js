@@ -41,7 +41,7 @@ router.post('/contratos/atualizar',authService.usuarioCadastroFiltro,async (req,
 router.post('/contratos/liberar/:id', authService.usuarioFinanceiroFiltro, async (req, res) => {
     try {
         const fachadaNegocio = FachadaNegocio.instancia;
-        const resultado = await fachadaNegocio.liberarContrato(req.params.id, req.dadosUsuario.id);
+        const resultado = await fachadaNegocio.liberarContrato(req.params.id, req.body.dtLiberacao);
         return res.status(200).send({ dados: resultado });
     } catch (e) {
         ExceptionService.checkError(e, res);

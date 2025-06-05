@@ -284,7 +284,7 @@ class FachadaDados{
     }
 
     async salvarPagamentoComissao(pagamentoComissao){
-        const dao = await DAOFactory.getPagamentoComissaoDAO();
+        const dao =  DAOFactory.getPagamentoComissaoDAO();
         return await dao.salvar(pagamentoComissao);
     }
 
