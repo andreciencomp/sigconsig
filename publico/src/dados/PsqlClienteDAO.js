@@ -24,15 +24,18 @@ class PsqlClienteDao {
     }
 
     async obterPorCpf(cpf) {
+        const client = await pool.connect();
         try {
             const queryCliente = "select * from clientes where cpf=$1";
-            const res = await pool.query(queryCliente, [cpf]);
+            const res = await client.query(queryCliente, [cpf]);
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O cliente não existe.");
             }
-            return this.criarObjetoCliente(res.rows[0]);
+            return  this.criarObjetoCliente(res.rows[0]);
         } catch (e) {
             PgUtil.checkError(e);
+        } finally{
+            client.release();
         }
     }
 

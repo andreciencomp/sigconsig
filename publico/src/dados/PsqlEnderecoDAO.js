@@ -10,9 +10,10 @@ class PsqlEnderecoDAO {
     static instancia = new PsqlEnderecoDAO();
 
     async obterPorId(id) {
+        const client = await pool.connect();
         try {
             let enderecoQuery = "select * from enderecos where id=$1";
-            const resEndereco = await pool.query(enderecoQuery, [id]);
+            const resEndereco = await client.query(enderecoQuery, [id]);
             if(resEndereco.rowCount == 0){
                 throw new EntidadeNaoEncontradaException("O endereço não existe.");
             }
@@ -26,7 +27,7 @@ class PsqlEnderecoDAO {
             let estado = null;
             if(resEndereco.rows[0].estado_id){
                 const estadoQuery = "select * from estados where id=$1";
-                const resEstado = await pool.query(estadoQuery,[resEndereco.rows[0].estado_id]);
+                const resEstado = await client.query(estadoQuery,[resEndereco.rows[0].estado_id]);
                 estado = new Estado();
                 estado.id = resEstado.rows[0].id;
                 estado.sigla = resEstado.rows[0].sigla;
@@ -35,7 +36,7 @@ class PsqlEnderecoDAO {
             endereco.estado = estado;
             if(resEndereco.rows[0].cidade_id){
                 const queryCidade = "select * from cidades where id=$1";
-                const resCidade = await pool.query(queryCidade, [resEndereco.rows[0].cidade_id]);
+                const resCidade = await client.query(queryCidade, [resEndereco.rows[0].cidade_id]);
                 let cidade = new Cidade();
                 cidade.id = resCidade.rows[0].id;
                 cidade.nome = resCidade.rows[0].nome;
@@ -46,6 +47,8 @@ class PsqlEnderecoDAO {
             
         } catch (e) {
             PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 
