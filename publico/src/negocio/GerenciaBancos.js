@@ -19,6 +19,10 @@ class GerenciaBancos{
         return await this.fachada.salvarBanco(banco);
     }
 
+    async atualizarBanco(campos){
+        return await this.fachada.atualizarBanco(campos);
+    }
+
     async listarBancos(){
         return await this.fachada.listarBancos();
     }

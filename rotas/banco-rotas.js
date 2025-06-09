@@ -3,6 +3,7 @@ const roteadorBancos = express.Router();
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
+const validarAtualizacaoBanco = require('../publico/validators/BancoValidator');
 
 roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
 
@@ -14,7 +15,6 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     }catch(e){
         ExceptionService.enviarExcessao(e,res);
     }
-
 });
 
 roteadorBancos.post('/bancos/cadastrar',
@@ -27,11 +27,21 @@ roteadorBancos.post('/bancos/cadastrar',
         }catch(e){
             ExceptionService.enviarExcessao(e,res);
         }
+});
 
+roteadorBancos.put('/bancos/atualizar',authService.usuarioAdminFiltro,async(req, res)=>{
+    try{
+        let atributos = req.body;
+        validarAtualizacaoBanco(atributos);
+        const fachada = new FachadaNegocio();
+        const resultado = await fachada.atualizarBanco(atributos);
+        return res.status(200).send({dados: resultado});
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
 });
 
 roteadorBancos.get('/bancos', async(req, res, next)=>{
-    
     let fachada = FachadaNegocio.instancia;
     try{
         let bancos = await fachada.listarBancos();
@@ -55,4 +65,3 @@ roteadorBancos.delete('/bancos/deletar/:id', authService.usuarioAdminFiltro, asy
 });
 
 module.exports = roteadorBancos;
-

@@ -74,6 +74,28 @@ class PsqlBancoDAO {
         }
     }
 
+    async atualizar(campos) {
+        const client = await pool.connect();
+        try {
+            let banco = await this.obterPorId(campos.id);
+            if (typeof (campos.codigo) != 'undefined') {
+                banco.codigo = campos.codigo;
+            }
+            if (typeof (campos.nome) != 'undefined') {
+                banco.nome = campos.nome
+            }
+            const result = await client
+                .query('update bancos set codigo=$1, nome=$2 where id=$3 returning *',[banco.codigo, banco.nome, banco.id]);
+            return result.rows[0];
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        }finally{
+            client.release();
+        }
+    }
+
     async deletar(id) {
         try {
             const result = await pool.query("delete from bancos where id=$1 returning id", [id]);

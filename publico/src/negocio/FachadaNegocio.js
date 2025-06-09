@@ -47,6 +47,11 @@ class FachadaNegocio{
 
     }
 
+    async atualizarBanco(campos){
+        const gerenciaBancos = new GerenciaBancos();
+        return await gerenciaBancos.atualizarBanco(campos);
+    }
+
     async listarBancos(){
         let gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.listarBancos();
