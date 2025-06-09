@@ -48,4 +48,15 @@ router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req
     }
 });
 
+router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const id = await fachada.deletarCliente(req.params.id);
+        return res.status(200).send({dados: {id: id}});
+
+    }catch(e){
+        ExceptionService.enviarExcessao(e,res)
+    }
+})
+
 module.exports = router;

@@ -24,6 +24,11 @@ class GerenciaClientes{
         let fachadaDados = new FachadaDados();
         return await fachadaDados.listarClientesPorNomeLike(nome);
     }
+
+    async deletarCliente(id){
+        const fachadaDados = new FachadaDados();
+        return await fachadaDados.deletarCliente(id);
+    }
 }
 
 module.exports = GerenciaClientes;

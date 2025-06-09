@@ -206,6 +206,11 @@ class FachadaDados {
         return await dao.salvar(cliente);
     }
 
+    async deletarCliente(id){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.deletar(id);
+    }
+
     async salvarProduto(produto) {
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.salvar(produto);

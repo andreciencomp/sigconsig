@@ -130,6 +130,19 @@ class PsqlClienteDao {
         }
         return cliente;
     }
+
+    async deletar(id){
+        const client = await pool.connect();
+        try{
+            const result = await client.query('delete from clientes where id=$1 returning id',[id]);
+            if(result.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Cliente inexistente.");
+            }
+            return result.rows[0].id;
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
 }
 
 module.exports = PsqlClienteDao;

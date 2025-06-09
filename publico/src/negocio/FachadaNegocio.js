@@ -147,6 +147,10 @@ class FachadaNegocio{
         return await gerenciaClientes.listarClientesPorNomeLike(nome);
     }
 
+    async deletarCliente(id){
+        const gerenciaClientes = new GerenciaClientes();
+        return await gerenciaClientes.deletarCliente(id);
+    }
     async cadastrarProduto(produto){
         let gerenciaProdutos = new GerenciaProdutos();
         return await gerenciaProdutos.cadastrar(produto);
