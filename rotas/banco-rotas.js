@@ -9,10 +9,10 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     try{
         let fachada = await FachadaNegocio.instancia;
         let banco = await fachada.obterBancoPorCodigo(req.params.codigo);
-        res.status(200).send({dados:banco});
-        return;
+        return res.status(200).send({dados:banco});
+        
     }catch(e){
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
 
 });
@@ -25,7 +25,7 @@ roteadorBancos.post('/bancos/cadastrar',
             let objetoBancoId = await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
             res.status(201).send({dados:objetoBancoId});
         }catch(e){
-            ExceptionService.checkError(e,res);
+            ExceptionService.enviarExcessao(e,res);
         }
 
 });
@@ -38,7 +38,7 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
         return res.status(200).send({dados: bancos});
 
     }catch(e){
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
 
     }
 });
@@ -50,7 +50,7 @@ roteadorBancos.delete('/bancos/deletar/:id', authService.usuarioAdminFiltro, asy
         return res.status(200).send({id: idDeletado});
         
     }catch(e){
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 

@@ -12,7 +12,7 @@ router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFilt
         const resultado = await fachadaNegocio.gerarPagamentoDeComissao(req.params.id, req.dadosUsuario.id);
         return res.status(201).send({ dados: resultado });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 })
 

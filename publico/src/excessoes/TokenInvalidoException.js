@@ -1,6 +1,8 @@
-class TokenInvalidoException extends Error{
+const APIException = require("./APIException");
+
+class TokenInvalidoException extends APIException{
     constructor(mensagem){
-        super(mensagem);
+        super(mensagem, 403);
         this.name = "TOKEN_INVALIDO_EXCEPTION";
     }
 }

@@ -8,13 +8,13 @@ class EstadoValidator{
             throw new DadosNulosException("O objeto estado está nulo.");
         }
         if(!estado.sigla || estado.sigla == ""){
-            throw new DadosNulosException("A sigla é obrigatória");
+            throw new DadosNulosException("A sigla é obrigatória","sigla");
         }
-        if(estado.sigla.length < 2 || estado.sigla.length > 2){
-            throw new DadosInvalidosException("A sigla tem que ter dois caracteres");
+        if(estado.sigla.length != 2){
+            throw new DadosInvalidosException("A sigla tem que ter dois caracteres","sigla");
         }
         if(!estado.nome || estado.nome == ""){
-            throw new DadosInvalidosException("O nome é obrigatório");
+            throw new DadosInvalidosException("O nome é obrigatório","nome");
         }
     }
 }

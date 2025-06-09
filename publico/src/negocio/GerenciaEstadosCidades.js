@@ -43,7 +43,7 @@ class GerenciaEstadosCidades{
         const fachada = new FachadaDados();
         const existe = await fachada.existeCidadeNoEstadoPorNome(cidade.nome, cidade.estado.id);
         if(existe){
-            throw new ChaveRepetidaException("Já existe uma cidade com este nome para este estado");
+            throw new ChaveRepetidaException("Já existe uma cidade com este nome para este estado","nome");
         }
         return await fachada.salvarCidade(cidade);
     }

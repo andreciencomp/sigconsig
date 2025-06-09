@@ -1,6 +1,8 @@
-class LiberacaoNaoPossivelException extends Error{
+const APIException = require("./APIException");
+
+class LiberacaoNaoPossivelException extends APIException{
     constructor(mensagem){
-        super(mensagem);
+        super(mensagem, 400);
         this.name = "LIBERACAO_NAO_POSSIVEL_EXCEPTION";
     }
 }

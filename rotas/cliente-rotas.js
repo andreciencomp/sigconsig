@@ -12,7 +12,7 @@ router.get('/clientes/:id', authService.usuarioCadastroFiltro, async (req, res)=
         const cliente = await fachadaNegocio.obterClientePorId(req.params.id);
         return res.status(200).send({dados:cliente});
     }catch(e){  
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 
@@ -22,7 +22,7 @@ router.get('/clientes/cpf/:cpf', authService.usuarioCadastroFiltro, async (req, 
         const cliente = await fachadaNegocio.obterClientePorCpf(req.params.cpf);
         return res.status(200).send({dados:cliente});
     }catch(e){  
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 
@@ -32,7 +32,7 @@ router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async 
         const clientes = await fachadaNegocio.listarClientesPorNomeLike(req.params.nomeLike);
         return res.status(200).send({dados:clientes});
     }catch(e){  
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e,res);
     } 
 });
 
@@ -43,7 +43,8 @@ router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req
         const retorno = await fachadaNegocio.cadastrarCliente(req.body);
         return res.status(201).send({dados:{id:retorno}});
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e,res);
+       
     }
 });
 

@@ -16,7 +16,7 @@ roteador.post('/orgaos/cadastrar',authService.usuarioAdminFiltro, async (req, re
 
     }catch(e){
 
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -29,7 +29,7 @@ roteador.get('/orgaos', authService.usuarioAutenticadoFiltro,async(req,res,next)
 
     }catch(e){
 
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
 
     }
 

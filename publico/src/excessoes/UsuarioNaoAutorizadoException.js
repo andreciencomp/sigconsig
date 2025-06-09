@@ -1,6 +1,8 @@
-class UsuarioNaoAutorizadoException extends Error{
+const APIException = require("./APIException");
+
+class UsuarioNaoAutorizadoException extends APIException{
     constructor(mensagem){
-        super(mensagem);
+        super(mensagem, 401);
         this.name = "USUARIO_N_AUTORIZADO_EXCEPTION";
     }
 }

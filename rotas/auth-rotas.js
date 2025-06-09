@@ -20,7 +20,7 @@ router.get('/login', async (req, res)=>{
 
     }catch(e){
         
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 

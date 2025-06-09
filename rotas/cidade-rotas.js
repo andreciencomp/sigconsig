@@ -13,7 +13,7 @@ router.get('/cidades',async function(req,res){
         return res.status(200).send({dados: cidades});
 
     }catch(e){
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 
@@ -24,7 +24,7 @@ router.get('/cidades/:id', async function(req, res){
         return res.status(200).send({dados: cidade});
 
     }catch(e){
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
     
 });
@@ -37,7 +37,7 @@ router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async(req, res
         return res.status(201).send({dados: cidadeID});
 
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 })
 
@@ -47,7 +47,7 @@ router.get('/cidades/estado/:estado_id',async function(req,res){
         let cidades = await fachada.listarCidadesPorEstado(req.params.estado_id);
         return res.status(200).send({dados: cidades});
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -58,7 +58,7 @@ router.get('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, r
         return res.status(200).send({dados:req.params.id});
 
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 

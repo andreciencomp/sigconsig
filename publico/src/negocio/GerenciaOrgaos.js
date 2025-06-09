@@ -11,14 +11,14 @@ class GerenciaOrgaos{
         orgao.sigla = sigla;
         orgao.nome = nome;
         if(!nome || nome.lenght == 0){
-            throw new DadosInvalidosException("O nome não pode ficar vazio.");
+            throw new DadosInvalidosException("O nome não pode ficar vazio.","nome");
         }
         let fachada = FachadaDados.instancia;
         if(await fachada.existeOrgaoPorSigla(sigla) == true){
-            throw new ChaveRepetidaException("Já existe um orgão com esta sigla.");
+            throw new ChaveRepetidaException("Já existe um orgão com esta sigla.","sigla");
         }
         if(await fachada.existeOrgaoPorNome(nome) == true){
-            throw new ChaveRepetidaException("Já existe um orgão com este nome.");
+            throw new ChaveRepetidaException("Já existe um orgão com este nome.","nome");
         }
         return await fachada.salvarOrgao(orgao);
     }

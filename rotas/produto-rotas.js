@@ -13,7 +13,7 @@ router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, r
         return res.status(201).send({dados:objetoComId});
 
     } catch (e) {
-        ExceptionService.checkError(e,res);
+        ExceptionService.enviarExcessao(e,res);
     }
 });
 

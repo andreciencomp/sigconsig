@@ -1,16 +1,16 @@
-const {pool} = require('../../../servicos/database_service');
+const { pool } = require('../../../servicos/database_service');
 const Banco = require('../entidades/Banco');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PgUtil = require('./PgUtil');
 
-class PsqlBancoDAO{
+class PsqlBancoDAO {
     static instancia = new PsqlBancoDAO();
 
-    async obterPorId(id){ 
-        try{
+    async obterPorId(id) {
+        try {
             const query = "select * from bancos where id=$1";
-            const res = await pool.query(query,[id]);
-            if(res.rowCount == 0){
+            const res = await pool.query(query, [id]);
+            if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O banco não existe.");
             }
             let banco = new Banco();
@@ -18,54 +18,49 @@ class PsqlBancoDAO{
             banco.codigo = res.rows[0].codigo;
             banco.nome = res.rows[0].nome;
             return banco;
-        }catch(e){
+        } catch (e) {
             PgUtil.checkError(e);
         }
     }
 
-    async obterPorCodigo(codigo){
-
-        try{
-            let strQuery = 'select * from bancos where codigo = $1';
-            const {rows} = await pool.query(strQuery, [codigo]);
-            if (await rows[0]){
-                let data = await rows[0];
-                let banco = new Banco();
-                banco.id = data.id;
-                banco.codigo = data.codigo;
-                banco.nome = data.nome;
-                return banco;
-
-            }else{
-                return null;
-                
+    async obterPorCodigo(codigo) {
+        try {
+            const result = await pool.query('select * from bancos where codigo = $1', [codigo]);
+            if (result.rowCount == 0) {
+                throw new EntidadeNaoEncontradaException("Banco inexistente.");
             }
-        }catch(e){
-            
+            let data = await result.rows[0];
+            let banco = new Banco();
+            banco.id = data.id;
+            banco.codigo = data.codigo;
+            banco.nome = data.nome;
+            return banco;
+
+        } catch (e) {
             PgUtil.checkError(e);
 
         }
     }
 
-    async salvar(banco){
+    async salvar(banco) {
 
         let strQuery = "insert into bancos(codigo,nome) values ($1, $2) returning id";
-        try{
-            const {rows} = await  pool.query(strQuery, [banco.codigo, banco.nome]);
+        try {
+            const { rows } = await pool.query(strQuery, [banco.codigo, banco.nome]);
             return rows[0];
-            
-        }catch(e){
+
+        } catch (e) {
             PgUtil.checkError(e);
         }
     }
 
-    async listar(){
+    async listar() {
 
         let strQuery = "select * from bancos";
-        try{
-            const {rows} = await pool.query(strQuery);
+        try {
+            const { rows } = await pool.query(strQuery);
             let lista = [];
-            for(var i=0;i < (await rows.length);i++){
+            for (var i = 0; i < (await rows.length); i++) {
                 let banco = new Banco();
                 banco.id = await rows[i].id;
                 banco.codigo = await rows[i].codigo;
@@ -73,23 +68,23 @@ class PsqlBancoDAO{
                 lista.push(banco);
             }
             return lista
-        }catch(e){
+        } catch (e) {
             console.log(e);
             throw 'BD_EXCEPTION';
         }
     }
 
-    async deletar(id){
-        try{
-            const result = await pool.query("delete from bancos where id=$1 returning id",[id]);
-           if(result.rows[0]){
+    async deletar(id) {
+        try {
+            const result = await pool.query("delete from bancos where id=$1 returning id", [id]);
+            if (result.rows[0]) {
                 return id;
-           }
-           else{
-            throw new EntidadeNaoEncontradaException("Este banco não existe.");
-           }
-        }catch(e){
-                PgUtil.checkError(e);
+            }
+            else {
+                throw new EntidadeNaoEncontradaException("Este banco não existe.");
+            }
+        } catch (e) {
+            PgUtil.checkError(e);
         }
     }
 }

@@ -11,7 +11,7 @@ router.get('/contratos/:id', authService.usuarioCadastroFiltro, async (req, res)
         const contrato = await fachadaNegocio.obterContratoPorID(req.params.id);
         return res.status(200).send({ dados: contrato });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 })
@@ -23,7 +23,7 @@ router.post('/contratos/cadastrar', authService.usuarioCadastroFiltro, async (re
         let resposta = await fachadaNegocio.cadastrarContrato(req.body);
         return res.status(201).send({ dados: resposta });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 });
@@ -34,7 +34,7 @@ router.post('/contratos/atualizar',authService.usuarioCadastroFiltro,async (req,
         let resposta = await fachadaNegocio.atualizarContrato(req.body);
         return res.status(200).send({ dados: resposta });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -44,7 +44,7 @@ router.post('/contratos/liberar/:id', authService.usuarioFinanceiroFiltro, async
         const resultado = await fachadaNegocio.liberarContrato(req.params.id, req.body.dtLiberacao);
         return res.status(200).send({ dados: resultado });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 });
@@ -56,7 +56,7 @@ router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async (re
         return res.status(200).send({ dados: resultado });
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 });
@@ -67,7 +67,7 @@ router.post('/contratos', authService.usuarioCadastroFiltro, async (req, res) =>
         const contratos = await fachadaNegocio.listarContratosPorCriterios(req.body);
         return res.status(200).send({ dados: contratos });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -78,7 +78,7 @@ router.get('/contratos/deletar/:id', authService.usuarioAdminFiltro, async (req,
         return res.status(200).send({dados:req.params.id});
         
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 

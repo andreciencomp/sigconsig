@@ -1,6 +1,8 @@
-class ComissaoNaoCadastradaException extends Error{
+const APIException = require("./APIException");
+
+class ComissaoNaoCadastradaException extends APIException{
     constructor(mensagem){
-        super(mensagem);
+        super(mensagem,400);
         this.name="COMISSAO_NAO_CADASTRADA_EXCEPTION";
     }
 }

@@ -14,7 +14,7 @@ estadoRouter.get('/estados/:id',async (req, res)=>{
         return res.status(200).send({dados:estado});
 
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -25,7 +25,7 @@ estadoRouter.get('/estados',async function(req, res){
         let estados = await fachada.listarEstados();
         return res.status(200).send({dados: estados});
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
     
 });
@@ -38,7 +38,7 @@ estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (r
         return res.status(201).send({dados:estadoID});
 
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -49,7 +49,7 @@ estadoRouter.get('/estados/deletar/:id',authService.usuarioAdminFiltro, async (r
         return res.status(200).send({dados:id});
 
     }catch(e){
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 

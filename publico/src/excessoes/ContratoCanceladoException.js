@@ -1,6 +1,8 @@
-class ContratoCanceladoException extends Error{
+const APIException = require("./APIException");
+
+class ContratoCanceladoException extends APIException{
     constructor(mensagem){
-        super(mensagem);
+        super(mensagem,400);
         this.mensagem = mensagem;
         this.name = "CONTRATO_CANCELADO_EXCEPITON";
     }

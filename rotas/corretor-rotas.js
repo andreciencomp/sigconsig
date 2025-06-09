@@ -14,7 +14,7 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
         return res.status(201).send({ dados: resposta });
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
@@ -24,7 +24,7 @@ router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res)
         let corretores = await fachada.listarTodosCorretores();
         return res.status(200).send({ dados: corretores });
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 });
