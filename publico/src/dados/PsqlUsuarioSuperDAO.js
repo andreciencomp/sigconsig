@@ -25,7 +25,7 @@ class PsqlUsuarioSuperDAO {
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally{
+        } finally {
             client.release();
         }
     }
@@ -50,12 +50,13 @@ class PsqlUsuarioSuperDAO {
     }
 
     async salvar(usuario) {
-        let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3)";
+        let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3) returning id";
         try {
             const { rows } = await pool.query(strQuery,
                 [usuario.nomeUsuario, usuario.senha, UsuarioSuper.USUARIO_SUPER]);
+            return rows[0].id;
         } catch (e) {
-            throw 'BD_EXCEPTION';
+            throw PgUtil.checkError(e);
 
         }
 

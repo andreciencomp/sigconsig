@@ -3,36 +3,29 @@ const roteador = express.Router();
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const authService = require('../servicos/auth_service');
 const ExceptionService = require('../servicos/ExceptionService');
+const Usuario = require('../publico/src/entidades/Usuario');
+const UsuarioNaoAutorizadoException = require('../publico/src/excessoes/UsuarioNaoAutorizadoException');
+const DadosInvalidosException = require('../publico/src/excessoes/DadosInvalidosException');
+const ValidarUsuario = require('../publico/validators/UsuarioValidator');
 
-roteador.post('/usuarios/cadastrar/admin',
-        authService.usuarioSuperFiltro, async (req, res,next)=>{
-    let fachada = FachadaNegocio.instancia;
-    try{
-        await fachada.cadastrarUsuario(req.body.nomeUsuario, req.body.senha, 'USUARIO_ADMIN');
-        res.status(201).send({dados:'OK'});
-        
-    }catch(e){
-        ExceptionService.enviarExcessao(e,res); 
-    }  
-});
+roteador.post('/usuarios/cadastrar',
+    authService.usuarioAdminFiltro, async (req, res, next) => {
+        try {
+            const usuario = req.body;
+            ValidarUsuario(usuario);
+            if(usuario.tipo == Usuario.USUARIO_SUPER){
+                throw new DadosInvalidosException("Este tipo de usuário não pode ser cadastrado.");
+            }
+            if((usuario.tipo == Usuario.USUARIO_ADMIN && req.dadosUsuario.tipo != Usuario.USUARIO_SUPER)){
+                throw new UsuarioNaoAutorizadoException("Apenas o usuário SUPER pode realizar esta operação.");
+            }
+            let fachada = new FachadaNegocio();
+            const novoUsuarioID = await fachada.cadastrarUsuario(usuario);
+            res.status(201).send({ dados: {id : novoUsuarioID} });
 
-roteador.post('/usuarios/cadastrar/outros', authService.usuarioAdminFiltro,async (req, res)=>{
-
-    let fachada = FachadaNegocio.instancia;
-    try{
-        if(req.body.tipo == 'USUARIO_ADMIN' || req.body.tipo == 'USUARIO_SUPER'){
-            throw 'DADOS_INVALIDOS_EXCEPTION';
+        } catch (e) {
+            ExceptionService.enviarExcessao(e, res);
         }
-        await fachada.cadastrarUsuario(req.body.nomeUsuario, req.body.senha, req.body.tipo);
-
-    }catch(e){
-
-        ExceptionService.enviarExcessao(e);
-        
-    }
-    res.status(201).send(authService.criarPayload(null,null,null,'OK'));
-});
-
-
+    });
 
 module.exports = roteador;

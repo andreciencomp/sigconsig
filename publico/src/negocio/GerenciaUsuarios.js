@@ -26,33 +26,33 @@ class GerenciaUsuarios {
         }
     }
 
-    async cadastrarUsuario(nomeUsuario, senha, tipo) {
-        let dao = FachadaDados.instancia;
-        let senhaCriptografada = await bcrypt.hash(senha, 10);
-        if (tipo == 'USUARIO_ADMIN') {
-            let usuario = new UsuarioAdm();
-            usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senhaCriptografada;
-            usuario.tipo = tipo;
-            await dao.salvarUsuarioAdmin(usuario);
+    async cadastrarUsuario(usuario) {
+        let dao = new FachadaDados();
+        let senhaCriptografada = await bcrypt.hash(usuario.senha, 10);
+        if (usuario.tipo == 'USUARIO_ADMIN') {
+            let usuarioAdm = new UsuarioAdm();
+            usuarioAdm.nomeUsuario = usuario.nomeUsuario;
+            usuarioAdm.senha = senhaCriptografada;
+            usuarioAdm.tipo = usuario.tipo;
+            return await dao.salvarUsuarioAdmin(usuarioAdm);
         }
-        else if (tipo == 'USUARIO_FINANCEIRO') {
-            let usuario = new UsuarioFinanceiro();
-            usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senhaCriptografada;
-            usuario.tipo = tipo;
-            await dao.salvarUsuarioFinanceiro(usuario);
+        else if (usuario.tipo == 'USUARIO_FINANCEIRO') {
+            let usuarioFinanceiro = new UsuarioFinanceiro();
+            usuarioFinanceiro.nomeUsuario = usuario.nomeUsuario;
+            usuarioFinanceiro.senha = senhaCriptografada;
+            usuarioFinanceiro.tipo = usuario.tipo;
+            return await dao.salvarUsuarioFinanceiro(usuarioFinanceiro);
 
         }
-        else if (tipo == 'USUARIO_CADASTRO') {
-            let usuario = new UsuarioCadastro();
-            usuario.nomeUsuario = nomeUsuario;
-            usuario.senha = senhaCriptografada;
-            usuario.tipo = tipo;
-            await dao.salvarUsuarioCadastro(usuario);
+        else if (usuario.tipo == 'USUARIO_CADASTRO') {
+            let usuarioCadastro = new UsuarioCadastro();
+            usuarioCadastro.nomeUsuario = usuario.nomeUsuario;
+            usuarioCadastro.senha = senhaCriptografada;
+            usuarioCadastro.tipo = usuario.tipo;
+            return await dao.salvarUsuarioCadastro(usuarioCadastro);
 
         } else {
-            throw new DadosInvalidosException("Tipo de usuário inválido");
+            throw new DadosInvalidosException("Tipo de usuário inválido","tipo");
         }
 
     }

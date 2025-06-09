@@ -6,8 +6,6 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 
 class PsqlUsuarioCadastroDAO {
 
-
-
     static instancia = new PsqlUsuarioCadastroDAO();
 
     async obter(id) {
@@ -53,12 +51,14 @@ class PsqlUsuarioCadastroDAO {
     }
 
     async salvar(usuario) {
-        let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3)";
+        let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3) returning id";
         try {
             const { rows } = await pool.query(strQuery,
                 [usuario.nomeUsuario, usuario.senha, UsuarioCadastro.USUARIO_CADASTRO]);
+            return rows[0].id;
+
         } catch (e) {
-            throw 'BD_EXCEPTION';
+            throw PgUtil.checkError(e);
 
         }
 

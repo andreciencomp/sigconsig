@@ -1,6 +1,9 @@
 class ExceptionService {
     static enviarExcessao(e, res) {
         try {
+            if(!e.statusCode){
+                throw e;
+            }
             return res.status(e.statusCode).send({ excessao: e.name, msg: e.message, atributo: e.atributo });
         } catch (e2) {
             console.log(e2);

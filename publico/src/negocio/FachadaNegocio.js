@@ -29,9 +29,9 @@ class FachadaNegocio{
         return usuario;
     }
 
-    async cadastrarUsuario(nomeUsuario, senha, tipo){
+    async cadastrarUsuario(usuario){
         
-        await this.gerenciaUsuarios.cadastrarUsuario(nomeUsuario,senha,tipo);
+        return await this.gerenciaUsuarios.cadastrarUsuario(usuario);
     }
 
     async obterBancoPorCodigo(codigo){

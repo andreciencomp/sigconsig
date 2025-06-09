@@ -72,7 +72,7 @@ module.exports.usuarioSuperFiltro = async (req, res, next) => {
         return;
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
 
     }
 
@@ -91,7 +91,7 @@ module.exports.usuarioAdminFiltro = async (req, res, next) => {
             throw new UsuarioNaoAutorizadoException("Você não tem autorização para realizar esta operação.");
         }
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
     }
 
 };
