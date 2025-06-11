@@ -109,6 +109,11 @@ class FachadaDados {
         return await dao.existePorNome(nome);
     }
 
+    async obterOrgaoPorID(id){
+        const dao = await DAOFactory.getOrgaoDAO();
+        return await dao.obterPorId(id);
+    }
+
     async salvarOrgao(orgao) {
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.salvar(orgao);

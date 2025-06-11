@@ -5,6 +5,16 @@ const ExceptionService = require('../servicos/ExceptionService');
 
 const roteador = express.Router();
 
+roteador.get('/orgaos/:id', authService.usuarioAutenticadoFiltro, async(req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const result = await fachada.obterOrgaoPorID(req.params.id);
+        return res.status(200).send({dados: result});
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
 
     let fachada = FachadaNegocio.instancia;

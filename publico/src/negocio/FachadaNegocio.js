@@ -62,6 +62,10 @@ class FachadaNegocio{
         return gerenciaBancos.deletarBanco(id);
     }
 
+    async obterOrgaoPorID(id){
+        const gerenciaOrgaos = new GerenciaOrgaos();
+        return await gerenciaOrgaos.obterOrgaoPorID(id);
+    }
 
     async cadastrarOrgao(sigla, nome){
         let gerenciaOrgaos = new GerenciaOrgaos();

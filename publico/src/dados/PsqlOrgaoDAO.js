@@ -8,21 +8,22 @@ class PsqlOrgaoDAO {
 
     static instancia = new PsqlOrgaoDAO();
 
-    async obterPorId(id){
+    async obterPorId(id, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
         try{
-            const query = "select * from orgaos where id=$1";
-            const res = await pool.query(query,[id]);
+            const res = await client.query("select * from orgaos where id=$1",[id]);
             if(res.rowCount == 0){
-                throw EntidadeNaoEncontradaException("O orgão não existe.");
+                throw new EntidadeNaoEncontradaException("O orgão não existe.");
             }
-            let orgao = new Orgao();
-            orgao.id = res.rows[0].id;
-            orgao.sigla = res.rows[0].sigla;
-            orgao.nome = res.rows[0].nome;
-            
-            return orgao;
+            return this.criarObjetoOrgao(res.rows[0]);
+
         }catch(e){
             PgUtil.checkError(e);
+
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
@@ -70,7 +71,7 @@ class PsqlOrgaoDAO {
         }
     }
 
-    async deletar(id,dbClient){
+    async deletar(id,dbClient=null){
         const client = dbClient ? dbClient : await pool.connect();
         try{
             const result = await client.query("delete from orgaos where id=$1 returning * ",[id]);

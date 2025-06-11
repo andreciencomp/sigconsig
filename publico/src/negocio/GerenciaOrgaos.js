@@ -5,6 +5,10 @@ const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
 
 class GerenciaOrgaos{
 
+    async obterOrgaoPorID(id){
+        const fachada = new FachadaDados();
+        return await fachada.obterOrgaoPorID(id);
+    }
 
     async cadastrarOrgao(sigla, nome){
         let orgao = new Orgao();
