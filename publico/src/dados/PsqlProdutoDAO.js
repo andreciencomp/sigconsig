@@ -35,23 +35,23 @@ class PsqlProdutoDAO {
             let colunas = [];
             let indice = 1;
             let strQuery = "select * from produtos where ";
-            if(criterios.orgao){
+            if (criterios.orgao) {
                 strQuery += " orgao_id=$" + indice;
                 colunas.push(criterios.orgao.id);
                 indice++;
-                if ( criterios.carencia || criterios.qtdParcelas){
+                if (criterios.carencia || criterios.qtdParcelas) {
                     strQuery += " and ";
                 }
             }
-            if(criterios.carencia){
+            if (criterios.carencia) {
                 strQuery += " carencia=$" + indice;
                 colunas.push(criterios.carencia);
-                indice ++;
-                if(criterios.qtdParcelas){
+                indice++;
+                if (criterios.qtdParcelas) {
                     strQuery += " and ";
                 }
             }
-            if(criterios.qtdParcelas){
+            if (criterios.qtdParcelas) {
                 strQuery += " qtd_parcelas=$" + indice;
                 colunas.push(criterios.qtdParcelas);
             }
@@ -67,14 +67,37 @@ class PsqlProdutoDAO {
         }
     }
 
-    async salvar(produto) {
+    async salvar(produto, dbClient = null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning *";
-            const { rows } = await pool.query(query, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
+            const { rows } = await client.query(query, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
             return await this.criarObjectoProduto(rows[0]);
-            
+
         } catch (e) {
             PgUtil.checkError(e);
+        } finally {
+            if (!dbClient) {
+                client.release();
+            }
+        }
+    }
+
+    async deletar(id, dbClient = null) {
+        const client = dbClient ? dbClient : await pool.connect();
+        try {
+            const result = await client.query("delete from produtos where id=$1 returning * ", [id]);
+            if (result.rowCount == 0) {
+                throw new EntidadeNaoEncontradaException("Produto não encontrado.");
+            }
+            return this.criarObjectoProduto(result.rows[0]);
+
+        } catch (e) {
+            PgUtil.checkError(e);
+        } finally {
+            if (!dbClient) {
+                client.release;
+            }
         }
     }
 

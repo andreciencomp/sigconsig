@@ -157,8 +157,13 @@ class FachadaNegocio{
         return await gerenciaClientes.deletarCliente(id);
     }
     async cadastrarProduto(produto){
-        let gerenciaProdutos = new GerenciaProdutos();
+        const gerenciaProdutos = new GerenciaProdutos();
         return await gerenciaProdutos.cadastrar(produto);
+    }
+
+    async deletarProduto(id){
+        const gerenciaProdutos = new GerenciaProdutos();
+        return await gerenciaProdutos.deletar(id);
     }
 
     async existeProduto(produto){
