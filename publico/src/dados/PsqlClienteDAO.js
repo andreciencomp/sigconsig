@@ -54,38 +54,43 @@ class PsqlClienteDao {
         }
     }
 
-    async salvar(cliente, rollback=false) {
+    async salvar(cliente, rollback=false, dbClient=null) {
+        const client = dbClient ? dbClient :  await pool.connect();
         try {
             if(rollback){
-                await pool.query('BEGIN');
+                await client.query('BEGIN');
             }
             let enderecoId = null;
             if (cliente.endereco) {
-                let endereco = new Endereco();
                 let estadoId = cliente.endereco.estado ? cliente.endereco.estado.id : null;
                 let cidadeId = cliente.endereco.cidade ? cliente.endereco.cidade.id : null;
                 let enderecoQuery = "insert into enderecos (cep, rua, numero, bairro, telefone, estado_id, cidade_id) values ($1, $2, $3, $4, $5, $6, $7) returning id";
-                const resEndereco = await pool.query(enderecoQuery, [cliente.endereco.cep,
+                const resEndereco = await client.query(enderecoQuery, [cliente.endereco.cep,
                 cliente.endereco.rua, cliente.endereco.numero, cliente.endereco.bairro, cliente.endereco.telefone, estadoId, cidadeId]);
                 enderecoId = resEndereco.rows[0].id;
             }
             const clienteQuery = "insert into clientes (cpf, nome, dt_nascimento, endereco_id) values ($1, $2, $3, $4) returning id"
-            let resCliente = await pool.query(clienteQuery, [cliente.cpf, cliente.nome, cliente.dtNascimento, enderecoId]);
+            let resCliente = await client.query(clienteQuery, [cliente.cpf, cliente.nome, cliente.dtNascimento, enderecoId]);
             if(rollback){
-                await pool.query('COMMIT');
+                await client.query('COMMIT');
             }
             return resCliente.rows[0];
 
         } catch (e) {
             if(rollback){
-                await pool.query('ROLLBACK');
+                await client.query('ROLLBACK');
             }
             PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release()
+            }
+            
         }
     }
 
-    async atualizar(cliente, rollback=false) {
-        const client = await pool.connect();
+    async atualizar(cliente, rollback=false, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             if(rollback){
                 await client.query('BEGIN');
@@ -100,12 +105,12 @@ class PsqlClienteDao {
             let nome = cliente.nome ? cliente.nome : clienteSalvo.nome;
             let dtNascimento = cliente.dtNascimento ? cliente.dtNascimento : clienteSalvo.dtNascimento;
 
-            const query = "update clientes set cpf=$1, nome=$2, dt_nascimento=$3 where id=$4";
-            const res = await client.query(query, [cpf, nome, dtNascimento, cliente.id]);
+            const query = "update clientes set cpf=$1, nome=$2, dt_nascimento=$3 where id=$4 returning *";
+            const resultado = await client.query(query, [cpf, nome, dtNascimento, cliente.id]);
             if(rollback){
                 await client.query('COMMIT');
             }
-            return cliente;
+            return await this.criarObjetoCliente(resultado.rows[0]);
             
         } catch (e) {
             if(rollback){
@@ -113,7 +118,10 @@ class PsqlClienteDao {
             }
             PgUtil.checkError(e);
         }finally{
-            client.release();
+            if(!dbClient){
+                client.release();
+            }
+            
         }
     }
 

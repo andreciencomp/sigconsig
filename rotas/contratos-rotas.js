@@ -3,7 +3,7 @@ const router = express.Router();
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
-const validarContrato = require('../publico/validators/ContratoValidator');
+const {validarCadastroContrato} = require('../publico/validators/ContratoValidator');
 
 router.get('/contratos/:id', authService.usuarioCadastroFiltro, async (req, res) => {
     let fachadaNegocio = new FachadaNegocio();
@@ -18,7 +18,7 @@ router.get('/contratos/:id', authService.usuarioCadastroFiltro, async (req, res)
 
 router.post('/contratos/cadastrar', authService.usuarioCadastroFiltro, async (req, res) => {
     try {
-        validarContrato(req.body);
+        validarCadastroContrato(req.body);
         let fachadaNegocio = FachadaNegocio.instancia;
         let resposta = await fachadaNegocio.cadastrarContrato(req.body);
         return res.status(201).send({ dados: resposta });

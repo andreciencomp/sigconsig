@@ -24,7 +24,8 @@ class PgUtil {
         }
         switch (e.code) {
             case '23502':
-                throw new DadosNulosException("Possui dados Nulos.");
+                console.log(e);
+                throw new DadosNulosException("Possui dados Nulos.",nomeAtributo);
             case '23503':
                 throw new RestricaoChaveEstrangeiraException("Restrição de chave estrangeira", nomeAtributo);
 

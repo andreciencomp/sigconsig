@@ -14,7 +14,7 @@ class PsqlEnderecoDAO {
         try {
             let enderecoQuery = "select * from enderecos where id=$1";
             const resEndereco = await client.query(enderecoQuery, [id]);
-            if(resEndereco.rowCount == 0){
+            if (resEndereco.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O endereço não existe.");
             }
             let endereco = new Endereco();
@@ -25,80 +25,124 @@ class PsqlEnderecoDAO {
             endereco.bairro = resEndereco.rows[0].bairro;
             endereco.telefone = resEndereco.rows[0].telefone;
             let estado = null;
-            if(resEndereco.rows[0].estado_id){
+            if (resEndereco.rows[0].estado_id) {
                 const estadoQuery = "select * from estados where id=$1";
-                const resEstado = await client.query(estadoQuery,[resEndereco.rows[0].estado_id]);
+                const resEstado = await client.query(estadoQuery, [resEndereco.rows[0].estado_id]);
                 estado = new Estado();
                 estado.id = resEstado.rows[0].id;
                 estado.sigla = resEstado.rows[0].sigla;
                 estado.nome = resEstado.rows[0].nome;
             }
             endereco.estado = estado;
-            if(resEndereco.rows[0].cidade_id){
+            if (resEndereco.rows[0].cidade_id) {
                 const queryCidade = "select * from cidades where id=$1";
                 const resCidade = await client.query(queryCidade, [resEndereco.rows[0].cidade_id]);
                 let cidade = new Cidade();
                 cidade.id = resCidade.rows[0].id;
                 cidade.nome = resCidade.rows[0].nome;
                 cidade.estado = estado;
-                endereco.cidade = cidade; 
+                endereco.cidade = cidade;
             }
             return endereco;
-            
+
         } catch (e) {
             PgUtil.checkError(e);
-        }finally{
+        } finally {
             client.release();
         }
     }
 
-    async salvar(endereco) {
+    async salvar(endereco, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
                 "values ($1, $2, $3, $4, $5, $6, $7) returning id";
-            const { rows } = await pool.query(query, [endereco.estado.id, endereco.cidade.id,
-                 endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
-            return rows[0].id;
+            const { rows } = await client.query(query, [endereco.estado.id, endereco.cidade.id,
+            endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
+        } finally {
+            if(!dbClient){
+                 client.release();
+            }
+           
         }
     }
 
-    async atualizar(endereco){
-        try{
+    async atualizar(endereco, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
+        try {
             let enderecoSalvo = await this.obterPorId(endereco.id);
             let estadoId = null;
-            if(endereco.estado && endereco.estado.id){
-                estadoId = endereco.estado.id;
+            if (typeof (endereco.estado) != "undefined") {
+                if (endereco.estado && endereco.estado.id) {
+                    estadoId = endereco.estado.id;
+                }
+                else if (enderecoSalvo.estado && enderecoSalvo.estado.id) {
+                    estadoId = enderecoSalvo.estado.id;
+                }
             }
-            else if(enderecoSalvo.estado && enderecoSalvo.estado.id){
-                estadoId = enderecoSalvo.estado.id;
-            }   
             let cidadeId = null;
-            if(endereco.cidade && endereco.cidade.id){
+            if (endereco.cidade && endereco.cidade.id) {
                 cidadeId = endereco.cidade.id;
             }
-            else if(enderecoSalvo.cidade && enderecoSalvo.cidade.id){
+            else if (enderecoSalvo.cidade && enderecoSalvo.cidade.id) {
                 cidadeId = enderecoSalvo.cidade.id;
             }
 
-            let cep = endereco.cep ? endereco.cep : enderecoSalvo.cep;
-            let rua = endereco.rua ? endereco.rua : enderecoSalvo.rua;
-            let numero = endereco.numero ? endereco.numero : enderecoSalvo.numero;
-            let bairro = endereco.bairro ? endereco.bairro : enderecoSalvo.bairro;
-            let telefone = endereco.telefone ? endereco.telefone : enderecoSalvo.telefone;
+            let cep = typeof (endereco.cep) != 'undefined' ? endereco.cep : enderecoSalvo.cep;
+            let rua = typeof (endereco.rua) != 'undefined' ? endereco.rua : enderecoSalvo.rua;
+            let numero = typeof (endereco.numero) != 'undefined' ? endereco.numero : enderecoSalvo.numero;
+            let bairro = typeof (endereco.bairro) != 'undefined' ? endereco.bairro : enderecoSalvo.bairro;
+            let telefone = typeof (endereco.telefone) != 'undefined' ? endereco.telefone : enderecoSalvo.telefone;
+
 
             const query = "update enderecos set estado_id=$1, cidade_id=$2, cep=$3, rua=$4, numero=$5," +
-                "bairro=$6, telefone=$7 where id=$8";
-            const {rows} = await pool.query(query,[estadoId, cidadeId, cep, rua, numero, bairro, telefone, endereco.id]);
-            
-            return endereco;
+                "bairro=$6, telefone=$7 where id=$8 returning * ";
+            const { rows } = await client.query(query, [estadoId, cidadeId, cep, rua, numero, bairro, telefone, endereco.id]);
 
-        }catch(e){
+            return await this.criarObjetoEndereco(rows[0]);
+
+        } catch (e) {
             PgUtil.checkError(e);
 
+        } finally {
+            if(!dbClient){
+                client.release();
+            }
         }
+    }
+
+    async criarObjetoEndereco(row) {
+        let endereco = new Endereco();
+        endereco.id = row.id;
+        endereco.cep = row.cep;
+        endereco.rua = row.rua;
+        endereco.numero = row.numero;
+        endereco.bairro = row.bairro;
+        endereco.telefone = row.telefone;
+        let estado = null;
+        if (row.estado_id) {
+            const estadoQuery = "select * from estados where id=$1";
+            const resEstado = await client.query(estadoQuery, [row.estado_id]);
+            estado = new Estado();
+            estado.id = resEstado.rows[0].id;
+            estado.sigla = resEstado.rows[0].sigla;
+            estado.nome = resEstado.rows[0].nome;
+        }
+        endereco.estado = estado;
+        if (row.cidade_id) {
+            const queryCidade = "select * from cidades where id=$1";
+            const resCidade = await client.query(queryCidade, [row.cidade_id]);
+            let cidade = new Cidade();
+            cidade.id = resCidade.rows[0].id;
+            cidade.nome = resCidade.rows[0].nome;
+            cidade.estado = estado;
+            endereco.cidade = cidade;
+        }
+        return endereco;
     }
 
 }

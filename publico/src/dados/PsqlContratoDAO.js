@@ -76,47 +76,43 @@ class PsqlContratoDAO {
         }
     }
 
-    async salvar(contrato, rollback = false) {
-        const client = await pool.connect();
+    async salvar(contrato, rollback = false, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
             if (rollback) {
                 await client.query('BEGIN');
             }
-
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id, comissao_paga) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id";
+                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
-
             if (clienteId == null) {
                 contrato.cliente.endereco = contrato.endereco;
-
-
-                clienteId = (await clienteDAO.salvar(contrato.cliente)).id;
+                clienteId = (await clienteDAO.salvar(contrato.cliente, false, client)).id;
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
-                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco));
+                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco, client)).id;
                 }
-                let resContrato = await pool.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
+                let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
                 if (rollback) {
                     await client.query('COMMIT');
                 }
 
-                return resContrato.rows[0];
+                return await this.criarObjetoContrato(resContrato.rows[0]);
 
             } else {
                 let endereco_contrato_id = null;
                 if (contrato.endereco) {
-                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco));
+                    endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco, client)).id;
                 }
                 let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
                 if (rollback) {
                     await client.query('COMMIT');
                 }
-                return resContrato.rows[0];
+                return await this.criarObjetoContrato(resContrato.rows[0]);
             }
 
         } catch (e) {
@@ -124,59 +120,81 @@ class PsqlContratoDAO {
                 await client.query('ROLLBACK');
             }
             PgUtil.checkError(e);
-        }finally{
-            client.release();
+        } finally {
+            if(!dbClient){
+                client.release();
+            }
+            
         }
     }
 
-    async atualizar(contrato, rollback = false) {
-        const client = await pool.connect();
+    async atualizar(contrato, rollback = false, dbClient) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             if (rollback) {
                 client.query('BEGIN');
             }
             let contratoSalvo = await this.obterPorId(contrato.id);
-            if (contrato.cliente && contrato.cliente.id) {
+
+            let clienteId = null;
+            if (typeof (contrato.cliente) != 'undefined') {
                 const clienteDAO = new PsqlClienteDao();
-                await clienteDAO.atualizar(contrato.cliente);
-
+                if (contrato.cliente && contrato.cliente.id) {
+                    const clienteAtualizado = await clienteDAO.atualizar(contrato.cliente, false, client);
+                    clienteId = clienteAtualizado.id;
+                }
+                else if (contrato.cliente) {
+                    const novoCliente = await clienteDAO.salvar(contrato.cliente,false, client);
+                    clienteId = novoCliente.id;
+                }
+            } else {
+                clienteId = contratoSalvo.cliente.id;
             }
-            let enderecoDAO = new PsqlEnderecoDAO();
-            if (contrato.endereco && contratoSalvo.endereco) {
-                contrato.endereco.id = contratoSalvo.endereco.id;
-                await enderecoDAO.atualizar(contrato.endereco);
 
-
-            } else if (contrato.endereco && !contratoSalvo.endereco) {
-                const enderecoID = await enderecoDAO.salvar(contrato.endereco);
-                contrato.endereco.id = enderecoID;
+            let enderecoId = null;
+            if (typeof (contrato.endereco) != 'undefined') {
+                let enderecoDAO = new PsqlEnderecoDAO();
+                if (contrato.endereco && contratoSalvo.endereco) {
+                    contrato.endereco.id = contratoSalvo.endereco.id;
+                    const enderecoAtualizado = await enderecoDAO.atualizar(contrato.endereco);
+                    enderecoId = contratoAtualizado.id;
+                } else if (!contrato.endereco && contratoSalvo.endereco) {
+                    await this.deletar(contratoSalvo.endereco.id);
+                }
             }
-            const numero = contrato.numero ? contrato.numero : contratoSalvo.numero;
-            const produtoId = contrato.produto && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
-            const bancoId = contrato.banco && contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
-            const data = contrato.data ? contrato.data : contratoSalvo.data;
-            const valor = contrato.valor ? contrato.valor : contratoSalvo.valor;
-            const clienteId = contrato.cliente && contrato.cliente.id ? contrato.cliente.id : contratoSalvo.cliente.id;
-            const enderecoId = contrato.endereco && contrato.endereco.id ? contrato.endereco.id : (contratoSalvo.endereco && contratoSalvo.endereco.id ? contratoSalvo.endereco.id : null);
-            const status = contrato.status ? contrato.status : contratoSalvo.status;
-            const corretorId = contrato.corretor && contrato.corretor.id ? contrato.corretor.id : contratoSalvo.corretor.id;
-            const dtLiberacao = contrato.dtLiberacao ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
-            const comissaoPaga = contrato.comissaoPaga != null ? contrato.comissaoPaga : contratoSalvo.comissaoPaga;
+
+            const numero = typeof (contrato.numero) != 'undefined' ? contrato.numero : contratoSalvo.numero;
+            const produtoId = typeof (contrato.produto) != 'undefined' && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
+            const bancoId = typeof (contrato.banco) != 'undefined' && contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
+            const data = typeof (contrato.data) != 'undefined' ? contrato.data : contratoSalvo.data;
+            const valor = typeof (contrato.valor) != 'undefined' ? contrato.valor : contratoSalvo.valor;
+            //const clienteId = typeof(contrato.cliente)!='undefined' && contrato.cliente.id ? contrato.cliente.id : (contratoSalvo.cliente ? contratoSalvo.cliente.id : null);
+            //const enderecoId = typeof(contrato.endereco)!='undefined' && contrato.endereco && contrato.endereco.id ? contrato.endereco.id : (contratoSalvo.endereco && contratoSalvo.endereco.id ? contratoSalvo.endereco.id : null);
+            const status = typeof (contrato.status) != 'undefined' ? contrato.status : contratoSalvo.status;
+            const corretorId = typeof (contrato.corretor) != 'undefined' && contrato.corretor.id ? contrato.corretor.id : (contratoSalvo.corretor ? contratoSalvo.corretor.id : null);
+            const dtLiberacao = typeof (contrato.dtLiberacao) != 'undefined' ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
+            const comissaoPaga = typeof (contrato.comissaoPaga) != 'undefined' ? contrato.comissaoPaga : contratoSalvo.comissaoPaga;
+
             let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
-                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10, comissao_paga=$11 where id=$12";
-            await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
+                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10, comissao_paga=$11 where id=$12 returning *";
+            const result = await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
                 data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, comissaoPaga, contrato.id]);
+
             if (rollback) {
                 client.query('COMMIT');
             }
+            return await this.criarObjetoContrato(result.rows[0]);
 
         } catch (e) {
             if (rollback) {
                 client.query('ROLLBACK');
             }
             PgUtil.checkError(e);
-        }finally{
-            client.release();
+        } finally {
+            if(!dbClient){
+                client.release();
+            }
+            
         }
     }
     //"corretorId", "cpf", "clienteNome", "bancoId", "orgaoId", "dataInicial","dataFinal",
@@ -307,7 +325,7 @@ class PsqlContratoDAO {
                         break;
 
                     case 'comissaoPaga':
-                        query+= " comissao_paga = $" + (i +1);
+                        query += " comissao_paga = $" + (i + 1);
                         valoresQuery.push(criterios['comissaoPaga']);
                         if (i < numCriterios - 1) {
                             query += " and ";
@@ -325,25 +343,25 @@ class PsqlContratoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
-        }finally{
+        } finally {
             client.release();
         }
     }
 
-    async deletar(id, rollback=false) {
+    async deletar(id, rollback = false) {
         const client = await pool.connect();
         try {
             const contrato = await this.obterPorId(id);
             const enderecoID = contrato.endereco ? contrato.endereco.id : null;
-            if(rollback){
+            if (rollback) {
                 await client.query("BEGIN");
             }
-            
+
             await client.query("delete from contratos where id=$1", [id]);
             if (enderecoID) {
                 await client.query("delete from enderecos where id=$1", [enderecoID]);
             }
-            if(rollback){
+            if (rollback) {
                 client.query("COMMIT");
             }
             return id;
@@ -351,7 +369,7 @@ class PsqlContratoDAO {
         } catch (e) {
             await client.query("ROLLBACK");
             PgUtil.checkError(e);
-        }finally{
+        } finally {
             client.release();
         }
     }
@@ -369,7 +387,7 @@ class PsqlContratoDAO {
         contrato.status = row.status;
         contrato.dtLiberacao = row.dt_liberacao ? row.dt_liberacao.toISOString().slice(0, 10) : row.dt_liberacao;
         contrato.valor = row.valor;
-        contrato.comissaoPaga = row.comissao_paga;
+        contrato.comissaoPaga = row.comissao_paga ? true : false;
         if (row.banco_id) {
             let banco = await bancoDAO.obterPorId(row.banco_id);
             contrato.banco = banco;
