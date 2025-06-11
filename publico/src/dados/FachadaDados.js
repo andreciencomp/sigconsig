@@ -110,15 +110,18 @@ class FachadaDados {
     }
 
     async salvarOrgao(orgao) {
-
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.salvar(orgao);
     }
 
     async listarOrgaos() {
-
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.listar();
+    }
+
+    async deletarOrgao(id){
+        const dao = await DAOFactory.getOrgaoDAO();
+        return await dao.deletar(id);
     }
 
     async obterEstadoPorId(id) {

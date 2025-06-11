@@ -24,9 +24,14 @@ class GerenciaOrgaos{
     }
 
     async listarOrgaos(){
-        let fachada = FachadaDados.instancia;
-        let orgaos = await fachada.listarOrgaos();
+        const fachada = new FachadaDados();
+        const orgaos = await fachada.listarOrgaos();
         return orgaos;
+    }
+
+    async deletarOrgao(id){
+        const fachada = new FachadaDados();
+        return await fachada.deletarOrgao(id);
     }
 }
 

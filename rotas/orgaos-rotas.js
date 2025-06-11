@@ -5,35 +5,41 @@ const ExceptionService = require('../servicos/ExceptionService');
 
 const roteador = express.Router();
 
-roteador.post('/orgaos/cadastrar',authService.usuarioAdminFiltro, async (req, res, next)=>{
+roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
 
     let fachada = FachadaNegocio.instancia;
     let sigla = req.body.sigla;
     let nome = req.body.nome;
-    try{
+    try {
         const objetoComId = await fachada.cadastrarOrgao(sigla, nome);
-        return res.status(201).send({dados:objetoComId});
+        return res.status(201).send({ dados: objetoComId });
 
-    }catch(e){
+    } catch (e) {
 
         ExceptionService.enviarExcessao(e, res);
     }
 });
 
-roteador.get('/orgaos', authService.usuarioAutenticadoFiltro,async(req,res,next)=>{
-
+roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) => {
     let fachada = FachadaNegocio.instancia;
-    try{
+    try {
         let orgaos = await fachada.listarOrgaos();
-        return res.status(200).send({dados:orgaos});
+        return res.status(200).send({ dados: orgaos });
 
-    }catch(e){
-
+    } catch (e) {
         ExceptionService.enviarExcessao(e, res);
-
     }
+});
 
+roteador.delete('/orgaos/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
+    try {
+        const fachada = new FachadaNegocio();
+        const resultado = await fachada.deletarOrgao(req.params.id);
+        return res.status(200).send({dados: resultado});
 
+    } catch (e) {
+        ExceptionService.enviarExcessao(e, res);
+    }
 });
 
 

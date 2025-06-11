@@ -2,6 +2,7 @@ const PgUtil = require('./PgUtil');
 const { pool } = require('../../../servicos/database_service');
 const Orgao = require('../entidades/Orgao');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
+const Produto = require('../entidades/Produto');
 
 class PsqlOrgaoDAO {
 
@@ -60,15 +61,39 @@ class PsqlOrgaoDAO {
                 orgao.sigla = rows[i].sigla;
                 orgao.nome = rows[i].nome;
                 orgaos.push(orgao);
-
             }
             return orgaos;
 
         } catch (e) {
 
             PgUtil.checkError(e);
-
         }
+    }
+
+    async deletar(id,dbClient){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const result = await client.query("delete from orgaos where id=$1 returning * ",[id]);
+            if(result.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Orgão não encontrato.");
+            }
+            return this.criarObjetoOrgao(result.rows[0]);
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
+    criarObjetoOrgao(row){
+        const orgao = new Orgao();
+        orgao.id = row.id;
+        orgao.sigla = row.sigla;
+        orgao.nome = row.nome;
+        return orgao;
     }
 }
 

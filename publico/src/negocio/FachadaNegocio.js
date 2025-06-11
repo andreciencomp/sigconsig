@@ -69,9 +69,14 @@ class FachadaNegocio{
     }
 
     async listarOrgaos(){
-        let gerenciaOrgaos = new GerenciaOrgaos();
-        let orgaos = await gerenciaOrgaos.listarOrgaos();
+        const gerenciaOrgaos = new GerenciaOrgaos();
+        const orgaos = await gerenciaOrgaos.listarOrgaos();
         return orgaos;
+    }
+
+    async deletarOrgao(id){
+        const gerenciaOrgaos = new GerenciaOrgaos();
+        return await gerenciaOrgaos.deletarOrgao(id);
     }
 
     async obterEstadoPorID(id){
