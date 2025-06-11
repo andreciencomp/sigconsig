@@ -49,6 +49,7 @@ function validarAtualizacaoContrato(contrato) {
             if (!contrato.cliente.cpf.length < 11) {
                 throw new DadosInvalidosException("CPF muito curto.");
             }
+            
         }
     }
     return true;

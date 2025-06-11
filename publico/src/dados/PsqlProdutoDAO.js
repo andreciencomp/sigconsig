@@ -69,9 +69,10 @@ class PsqlProdutoDAO {
 
     async salvar(produto) {
         try {
-            const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning id";
+            const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning *";
             const { rows } = await pool.query(query, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
-            return rows[0];
+            return await this.criarObjectoProduto(rows[0]);
+            
         } catch (e) {
             PgUtil.checkError(e);
         }
