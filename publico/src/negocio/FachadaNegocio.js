@@ -11,8 +11,6 @@ const GerenciaContratos = require('./GerenciaContratos');
 
 class FachadaNegocio{
 
-    static instancia = new FachadaNegocio();
-
     async obterUsuarioPorId(id){
         const gerenciaUsuarios = new GerenciaUsuarios();
         return await gerenciaUsuarios.obterUsuarioPorId(id);
@@ -52,7 +50,7 @@ class FachadaNegocio{
 
     async deletarBanco(id){
         const gerenciaBancos = new GerenciaBancos();
-        return gerenciaBancos.deletarBanco(id);
+        return await gerenciaBancos.deletarBanco(id);
     }
 
     async obterOrgaoPorID(id){

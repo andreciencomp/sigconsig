@@ -1,7 +1,6 @@
 const ExceptionService =  require('../servicos/ExceptionService');
 const express = require('express');
 const router = express.Router();
-const c = require('../config');
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 

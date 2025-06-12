@@ -9,7 +9,7 @@ const estadoRouter = express.Router();
 
 estadoRouter.get('/estados/:id',async (req, res)=>{
     try{
-        let fachada = new FachadaNegocio();
+        const fachada = new FachadaNegocio();
         const estado = await fachada.obterEstadoPorID(req.params.id);
         return res.status(200).send({dados:estado});
 
@@ -21,9 +21,10 @@ estadoRouter.get('/estados/:id',async (req, res)=>{
 estadoRouter.get('/estados',async function(req, res){
     
     try{
-        let fachada = fachadaNegocio.instancia;
-        let estados = await fachada.listarEstados();
+        const fachada = new FachadaNegocio();
+        const estados = await fachada.listarEstados();
         return res.status(200).send({dados: estados});
+        
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }

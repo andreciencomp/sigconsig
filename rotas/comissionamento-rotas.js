@@ -8,8 +8,8 @@ const validarComissionamentoPromotora = require('../publico/validators/Comission
 router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFiltro, async(req, res)=>{
     try{
         validarComissionamentoPromotora(req.body);
-        const fachadaNegocio = FachadaNegocio.instancia;
-        const idComissionamento = await fachadaNegocio.cadastrarComissionamentoPromotora(req.body);
+        const fachada = new FachadaNegocio();
+        const idComissionamento = await fachada.cadastrarComissionamentoPromotora(req.body);
         return res.status(201).send({dados:idComissionamento});
 
     }catch(e){
@@ -19,8 +19,8 @@ router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFilt
 
 router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
     try{
-        const fachadaNegocio = FachadaNegocio.instancia;
-        const idComissionamento = await fachadaNegocio.cadastrarComissionamentoCorretor(req.body);
+        const fachada = new FachadaNegocio();
+        const idComissionamento = await fachada.cadastrarComissionamentoCorretor(req.body);
         return res.status(201).send({dados:idComissionamento});
     }catch(e){
         ExceptionService.enviarExcessao(e,res);

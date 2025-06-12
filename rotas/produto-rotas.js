@@ -8,8 +8,8 @@ const ExceptionService = require('../servicos/ExceptionService');
 router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
     try {
         validarCadastroProduto(req.body);
-        let fachadaNegocio = FachadaNegocio.instancia;
-        let objetoComId = await fachadaNegocio.cadastrarProduto(req.body);
+        const fachada = new FachadaNegocio();
+        const objetoComId = await fachada.cadastrarProduto(req.body);
         return res.status(201).send({dados:objetoComId});
 
     } catch (e) {
@@ -22,6 +22,7 @@ router.delete('/produtos/deletar/:id', authService.usuarioAdminFiltro, async (re
         const fachada = new FachadaNegocio();
         const result = await fachada.deletarProduto(req.params.id);
         return res.status(200).send({dados: result});
+        
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }

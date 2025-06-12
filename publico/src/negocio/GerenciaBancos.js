@@ -29,7 +29,7 @@ class GerenciaBancos{
 
     async deletarBanco(id){
         const fachadaDados = new FachadaDados();
-        return fachadaDados.deletarBanco(id);
+        return await fachadaDados.deletarBanco(id);
     }
 }
 

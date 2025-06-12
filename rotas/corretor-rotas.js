@@ -7,10 +7,10 @@ const validarCorretor = require('../publico/validators/CorretorValidator');
 
 router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
 
-    let fachada = FachadaNegocio.instancia;
+    const fachada = new FachadaNegocio();
     try {
         validarCorretor(req.body);
-        let resposta = await fachada.cadastrarCorretor(req.body);
+        const resposta = await fachada.cadastrarCorretor(req.body);
         return res.status(201).send({ dados: resposta });
 
     } catch (e) {
@@ -19,9 +19,9 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
 });
 
 router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res) => {
-    let fachada = FachadaNegocio.instancia;
+    const fachada = new FachadaNegocio();
     try {
-        let corretores = await fachada.listarTodosCorretores();
+        const corretores = await fachada.listarTodosCorretores();
         return res.status(200).send({ dados: corretores });
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);

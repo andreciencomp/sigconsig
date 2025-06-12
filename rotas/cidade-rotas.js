@@ -6,58 +6,58 @@ const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const CidadeValidator = require('../publico/validators/CidadeValidator');
 const router = express.Router();
 
-router.get('/cidades',async function(req,res){
-    let fachada = fachadaNegocio.instancia;
-    try{
-        let cidades = await fachada.listarCidades();
-        return res.status(200).send({dados: cidades});
+router.get('/cidades', async function (req, res) {
+    try {
+        const fachada = new FachadaNegocio();
+        const cidades = await fachada.listarCidades();
+        return res.status(200).send({ dados: cidades });
 
-    }catch(e){
-        ExceptionService.enviarExcessao(e,res);
+    } catch (e) {
+        ExceptionService.enviarExcessao(e, res);
     }
 });
 
-router.get('/cidades/:id', async function(req, res){
-    let fachada = fachadaNegocio.instancia;
-    try{
-        let cidade = await fachada.obterCidadePorId(req.params.id);
-        return res.status(200).send({dados: cidade});
+router.get('/cidades/:id', async function (req, res) {
+    try {
+        const fachada = new FachadaNegocio();
+        const cidade = await fachada.obterCidadePorId(req.params.id);
+        return res.status(200).send({ dados: cidade });
 
-    }catch(e){
-        ExceptionService.enviarExcessao(e,res);
+    } catch (e) {
+        ExceptionService.enviarExcessao(e, res);
     }
-    
 });
 
-router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async(req, res)=>{
-    try{
+router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
+    try {
         CidadeValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
         const cidadeID = await fachada.cadastrarCidade(req.body);
-        return res.status(201).send({dados: cidadeID});
+        return res.status(201).send({ dados: cidadeID });
 
-    }catch(e){
+    } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
 })
 
-router.get('/cidades/estado/:estado_id',async function(req,res){
-    let fachada = fachadaNegocio.instancia;
-    try{
+router.get('/cidades/estado/:estado_id', async function (req, res) {
+    try {
+        const fachada = new FachadaNegocio();
         let cidades = await fachada.listarCidadesPorEstado(req.params.estado_id);
-        return res.status(200).send({dados: cidades});
-    }catch(e){
+        return res.status(200).send({ dados: cidades });
+
+    } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
 });
 
-router.get('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
-    try{
+router.get('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
+    try {
         const fachada = new FachadaNegocio();
-        const cidadeID = await fachada.deletarCidade(req.params.id);
-        return res.status(200).send({dados:req.params.id});
+        await fachada.deletarCidade(req.params.id);
+        return res.status(200).send({ dados: req.params.id });
 
-    }catch(e){
+    } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
 });

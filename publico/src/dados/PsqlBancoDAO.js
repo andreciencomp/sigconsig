@@ -99,7 +99,7 @@ class PsqlBancoDAO {
     async deletar(id) {
         try {
             const result = await pool.query("delete from bancos where id=$1 returning id", [id]);
-            if (result.rows[0]) {
+            if (result.rowCount > 0) {
                 return id;
             }
             else {

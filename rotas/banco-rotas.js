@@ -8,8 +8,8 @@ const validarAtualizacaoBanco = require('../publico/validators/BancoValidator');
 roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
 
     try{
-        let fachada = await FachadaNegocio.instancia;
-        let banco = await fachada.obterBancoPorCodigo(req.params.codigo);
+        const fachada = new FachadaNegocio();
+        const banco = await fachada.obterBancoPorCodigo(req.params.codigo);
         return res.status(200).send({dados:banco});
         
     }catch(e){
@@ -17,13 +17,11 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     }
 });
 
-roteadorBancos.post('/bancos/cadastrar',
-            authService.usuarioAdminFiltro, async(req, res, next)=>{
-        
+roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(req, res, next)=>{
         try{
-            let fachada = FachadaNegocio.instancia;
-            let objetoBancoId = await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
-            res.status(201).send({dados:objetoBancoId});
+            const fachada = new FachadaNegocio();
+            const resultado = await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
+            res.status(201).send({dados:resultado});
         }catch(e){
             ExceptionService.enviarExcessao(e,res);
         }
@@ -42,9 +40,9 @@ roteadorBancos.put('/bancos/atualizar',authService.usuarioAdminFiltro,async(req,
 });
 
 roteadorBancos.get('/bancos', async(req, res, next)=>{
-    let fachada = FachadaNegocio.instancia;
     try{
-        let bancos = await fachada.listarBancos();
+        const fachada = new FachadaNegocio();
+        const bancos = await fachada.listarBancos();
         return res.status(200).send({dados: bancos});
 
     }catch(e){
