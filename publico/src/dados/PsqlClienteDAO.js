@@ -31,11 +31,33 @@ class PsqlClienteDao {
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O cliente não existe.");
             }
-            return  this.criarObjetoCliente(res.rows[0]);
+            return  await this.criarObjetoCliente(res.rows[0]);
         } catch (e) {
             PgUtil.checkError(e);
         } finally{
             client.release();
+        }
+    }
+
+    async listar(dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const clientes = [];
+            const result = await client.query("select * from clientes");
+            for(let i=0; i < result.rowCount; i++){
+                const cliente = await this.criarObjetoCliente(result.rows[i]);
+                clientes.push(cliente);
+            }
+            return clientes;
+            
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }finally{
+            if(!dbClient){
+                 client.release();
+            }
+           
         }
     }
 

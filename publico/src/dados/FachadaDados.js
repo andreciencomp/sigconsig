@@ -209,6 +209,11 @@ class FachadaDados {
         return await dao.obterPorCpf(cpf);
     }
 
+    async listarClientes(){
+        const dao = await DAOFactory.getClienteDao();
+        return await dao.listar();
+    }
+
     async listarClientesPorNomeLike(nome) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.listarPorNomeLike(nome);

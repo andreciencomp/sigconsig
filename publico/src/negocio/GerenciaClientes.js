@@ -16,8 +16,13 @@ class GerenciaClientes{
     }
 
     async cadastrar(cliente){
-        let fachadaDados = FachadaDados.instancia;
+        const fachadaDados = new FachadaDados();
         return await fachadaDados.salvarCliente(cliente);
+    }
+
+    async listarClientes(){
+        const fachada = new FachadaDados();
+        return await fachada.listarClientes();
     }
 
     async listarClientesPorNomeLike(nome){

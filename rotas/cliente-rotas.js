@@ -59,4 +59,15 @@ router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(
     }
 })
 
+router.get('/clientes',authService.usuarioAutenticadoFiltro, async(req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const clientes = await fachada.listarClientes();
+        return res.status(200).send({dados: clientes});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 module.exports = router;
