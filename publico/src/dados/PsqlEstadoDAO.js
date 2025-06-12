@@ -44,6 +44,22 @@ class PsqlEstadoDAO {
         }
     }
 
+    async existePorSigla(sigla, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const result = await client.query("select sigla from estados where exists( select sigla from estados where sigla=$1)",[sigla]);
+            return result.rowCount > 0;
+            
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
     async salvar(estado) {
         const query = "insert into estados(sigla, nome) values($1, $2) returning id";
         try {

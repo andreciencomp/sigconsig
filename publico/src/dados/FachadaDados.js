@@ -134,6 +134,11 @@ class FachadaDados {
         return await dao.obter(id);
     }
 
+    async existeEstadoPorSigla(sigla){
+        const dao = await DAOFactory.getEstadoDAO();
+        return await dao.existePorSigla(sigla);
+    }
+
     async salvarEstado(estado) {
         const dao = await DAOFactory.getEstadoDAO();
         return await dao.salvar(estado);
