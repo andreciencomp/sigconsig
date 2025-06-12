@@ -13,36 +13,29 @@ class FachadaNegocio{
 
     static instancia = new FachadaNegocio();
 
-    constructor(){
-
-        this.gerenciaUsuarios = new GerenciaUsuarios();
-    }
-
     async obterUsuarioPorId(id){
-        
-        let usuario =  await this.gerenciaUsuarios.obterUsuarioPorId(id);
-        return  usuario;
+        const gerenciaUsuarios = new GerenciaUsuarios();
+        return await gerenciaUsuarios.obterUsuarioPorId(id);
     }
 
     async login(nomeUsuario, senha){
-        let usuario = await this.gerenciaUsuarios.login(nomeUsuario, senha);
-        return usuario;
+        const gerenciaUsuarios = new GerenciaUsuarios();
+        return await gerenciaUsuarios.login(nomeUsuario, senha);
     }
 
     async cadastrarUsuario(usuario){
-        
-        return await this.gerenciaUsuarios.cadastrarUsuario(usuario);
+        const gerenciaUsuarios = new GerenciaUsuarios();
+        return await gerenciaUsuarios.cadastrarUsuario(usuario);
     }
 
     async obterBancoPorCodigo(codigo){
 
-        let gerenciaBancos = await new GerenciaBancos();
-        let banco = await gerenciaBancos.obterBancoPorCodigo(codigo);
-        return  banco;
+        const gerenciaBancos = new GerenciaBancos();
+        return await gerenciaBancos.obterBancoPorCodigo(codigo);
     }
 
     async cadastrarBanco(codigo, nome){
-        let gerenciaBancos = new GerenciaBancos();
+        const gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.cadastrarBanco(codigo, nome);
 
     }
@@ -53,7 +46,7 @@ class FachadaNegocio{
     }
 
     async listarBancos(){
-        let gerenciaBancos = new GerenciaBancos();
+        const gerenciaBancos = new GerenciaBancos();
         return await gerenciaBancos.listarBancos();
     }
 
@@ -68,14 +61,13 @@ class FachadaNegocio{
     }
 
     async cadastrarOrgao(sigla, nome){
-        let gerenciaOrgaos = new GerenciaOrgaos();
+        const gerenciaOrgaos = new GerenciaOrgaos();
         return await gerenciaOrgaos.cadastrarOrgao(sigla, nome);
     }
 
     async listarOrgaos(){
         const gerenciaOrgaos = new GerenciaOrgaos();
-        const orgaos = await gerenciaOrgaos.listarOrgaos();
-        return orgaos;
+        return await gerenciaOrgaos.listarOrgaos();
     }
 
     async deletarOrgao(id){
@@ -94,9 +86,8 @@ class FachadaNegocio{
     }
 
     async listarEstados(){
-        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        let estados = await gerenciaEstadosCidades.listarEstados();
-        return estados;
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return await gerenciaEstadosCidades.listarEstados();
     }
 
     async deletarEstado(id){
@@ -105,7 +96,7 @@ class FachadaNegocio{
     }
 
     async obterCidadePorId(id){
-        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
         return gerenciaEstadosCidades.obterCidadePorId(id); 
     }
 
@@ -115,15 +106,13 @@ class FachadaNegocio{
     }
 
     async listarCidades(){
-        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        let cidades = await gerenciaEstadosCidades.listarCidades();
-        return cidades;
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return await gerenciaEstadosCidades.listarCidades();
     }
 
     async listarCidadesPorEstado(estado_id){
-        let gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        let cidades = await gerenciaEstadosCidades.listarCidadesPorEstado(estado_id);
-        return cidades;
+        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
+        return await gerenciaEstadosCidades.listarCidadesPorEstado(estado_id);
     }
 
     async deletarCidade(id){
@@ -132,12 +121,12 @@ class FachadaNegocio{
     }
 
     async cadastrarCorretor(corretor){
-        let gerenciaCorretores = new GerenciaCorretores();
+        const gerenciaCorretores = new GerenciaCorretores();
         return await gerenciaCorretores.cadastrar(corretor);
     }
 
     async listarTodosCorretores(){
-        let gerenciaCorretores = new GerenciaCorretores();
+        const gerenciaCorretores = new GerenciaCorretores();
         return await gerenciaCorretores.listarTodos();
     }
 
@@ -152,7 +141,7 @@ class FachadaNegocio{
     }
 
     async cadastrarCliente(cliente){
-        let gerenciaClientes = new GerenciaClientes();
+        const gerenciaClientes = new GerenciaClientes();
         return await gerenciaClientes.cadastrar(cliente);
     }
 
@@ -162,7 +151,7 @@ class FachadaNegocio{
     }
 
     async listarClientesPorNomeLike(nome){
-        let gerenciaClientes = new GerenciaClientes();
+        const gerenciaClientes = new GerenciaClientes();
         return await gerenciaClientes.listarClientesPorNomeLike(nome);
     }
 
@@ -181,7 +170,7 @@ class FachadaNegocio{
     }
 
     async existeProduto(produto){
-        let gerenciaProdutos = new GerenciaProdutos();
+        const gerenciaProdutos = new GerenciaProdutos();
         return await gerenciaProdutos.existe(produto);
     }
 
@@ -234,7 +223,6 @@ class FachadaNegocio{
         const gerenciaPagamentoComissao = new GerenciaComissionamento();
         return await gerenciaPagamentoComissao.gerarPagamentoComissao(contratoID, usuarioID);
     }
-
 }
 
 module.exports = FachadaNegocio;
