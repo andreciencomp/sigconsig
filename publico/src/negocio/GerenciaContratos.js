@@ -61,8 +61,8 @@ class GerenciaContratos {
         contrato.status = "LIBERADO";
         contrato.dtLiberacao = dtLiberacao;
         const fachada = new FachadaDados();
-        await fachada.atualizarContrato(contrato, true);
-        return "OK";
+        const contratoLiberado = await fachada.atualizarContrato(contrato, true);
+        return contratoLiberado;
     }
 
     async liberarVarios(arrayContratoId,dtLiberacao) {

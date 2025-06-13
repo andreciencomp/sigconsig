@@ -103,7 +103,7 @@ class PsqlEnderecoDAO {
                 "bairro=$6, telefone=$7 where id=$8 returning * ";
             const { rows } = await client.query(query, [estadoId, cidadeId, cep, rua, numero, bairro, telefone, endereco.id]);
 
-            return await this.criarObjetoEndereco(rows[0]);
+            return await this.criarObjetoEndereco(rows[0], client);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -115,7 +115,7 @@ class PsqlEnderecoDAO {
         }
     }
 
-    async criarObjetoEndereco(row) {
+    async criarObjetoEndereco(row, client) {
         let endereco = new Endereco();
         endereco.id = row.id;
         endereco.cep = row.cep;

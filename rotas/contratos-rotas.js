@@ -52,8 +52,8 @@ router.post('/contratos/liberar/:id', authService.usuarioFinanceiroFiltro, async
 router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
-        const resultado = await fachada.liberarVariosContratos(req.body, req.dadosUsuario.id);
-        return res.status(200).send({ dados: resultado });
+        const contratoLiberado = await fachada.liberarVariosContratos(req.body, req.dadosUsuario.id);
+        return res.status(200).send({ dados: contratoLiberado });
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);

@@ -168,8 +168,6 @@ class PsqlContratoDAO {
             const bancoId = typeof (contrato.banco) != 'undefined' && contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
             const data = typeof (contrato.data) != 'undefined' ? contrato.data : contratoSalvo.data;
             const valor = typeof (contrato.valor) != 'undefined' ? contrato.valor : contratoSalvo.valor;
-            //const clienteId = typeof(contrato.cliente)!='undefined' && contrato.cliente.id ? contrato.cliente.id : (contratoSalvo.cliente ? contratoSalvo.cliente.id : null);
-            //const enderecoId = typeof(contrato.endereco)!='undefined' && contrato.endereco && contrato.endereco.id ? contrato.endereco.id : (contratoSalvo.endereco && contratoSalvo.endereco.id ? contratoSalvo.endereco.id : null);
             const status = typeof (contrato.status) != 'undefined' ? contrato.status : contratoSalvo.status;
             const corretorId = typeof (contrato.corretor) != 'undefined' && contrato.corretor.id ? contrato.corretor.id : (contratoSalvo.corretor ? contratoSalvo.corretor.id : null);
             const dtLiberacao = typeof (contrato.dtLiberacao) != 'undefined' ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
