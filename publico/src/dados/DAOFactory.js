@@ -119,7 +119,7 @@ class DAOFactory{
     static async getEnderecoDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlEnderecoDAO.instancia;
+                let dao = new PsqlEnderecoDAO();
                 return dao;
             default:
                 return null;
