@@ -2,13 +2,9 @@ const FachadaDados = require('../dados/FachadaDados');
 const Banco = require('../entidades/Banco');
 
 class GerenciaBancos{
-
-    constructor(){
-        this.fachada = FachadaDados.instancia;
-    }
-
     async obterBancoPorCodigo(codigo){
-        return await this.fachada.obterBancoPorCodigo(codigo);
+        const fachada = new FachadaDados();
+        return await fachada.obterBancoPorCodigo(codigo);
 
     }
 
@@ -16,15 +12,18 @@ class GerenciaBancos{
         let banco = new Banco();
         banco.codigo = codigo;
         banco.nome = nome;
-        return await this.fachada.salvarBanco(banco);
+        const fachada = new FachadaDados();
+        return await fachada.salvarBanco(banco);
     }
 
     async atualizarBanco(campos){
-        return await this.fachada.atualizarBanco(campos);
+        const fachada = new FachadaDados();
+        return await fachada.atualizarBanco(campos);
     }
 
     async listarBancos(){
-        return await this.fachada.listarBancos();
+        const fachada = new FachadaDados();
+        return await fachada.listarBancos();
     }
 
     async deletarBanco(id){

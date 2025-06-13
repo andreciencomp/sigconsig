@@ -11,19 +11,19 @@ class GerenciaOrgaos{
     }
 
     async cadastrarOrgao(sigla, nome){
-        let orgao = new Orgao();
+        const orgao = new Orgao();
         orgao.sigla = sigla;
         orgao.nome = nome;
         if(!nome || nome.lenght == 0){
             throw new DadosInvalidosException("O nome não pode ficar vazio.","nome");
         }
-        let fachada = FachadaDados.instancia;
         if(await fachada.existeOrgaoPorSigla(sigla) == true){
             throw new ChaveRepetidaException("Já existe um orgão com esta sigla.","sigla");
         }
         if(await fachada.existeOrgaoPorNome(nome) == true){
             throw new ChaveRepetidaException("Já existe um orgão com este nome.","nome");
         }
+        const fachada = new FachadaDados();
         return await fachada.salvarOrgao(orgao);
     }
 

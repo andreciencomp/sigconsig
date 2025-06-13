@@ -2,22 +2,13 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 const DAOFactory = require('./DAOFactory');
 
 class FachadaDados {
-
-    static instancia = new FachadaDados();
-
     static getInstancia() {
-
         if (this.instancia == null) {
             this.instancia = new FachadaDados();
             return this.instancia;
         }
 
         return this.instancia;
-    }
-
-    salvarUsuario(usuario) {
-
-        console.log("Não implementado ainda");
     }
 
     async obterUsuarioPorId(id) {

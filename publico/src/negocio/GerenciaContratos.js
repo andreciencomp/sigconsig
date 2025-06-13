@@ -8,8 +8,8 @@ const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitida
 class GerenciaContratos {
 
     async obterPorID(id) {
-        const fachadaDados = new FachadaDados();
-        return await fachadaDados.obterContratoPorId(id);
+        const fachada = new FachadaDados();
+        return await fachada.obterContratoPorId(id);
     }
 
     async cadastrar(contrato) {
@@ -49,7 +49,7 @@ class GerenciaContratos {
         if(date.toString() == "Invalid Date"){
             throw new DadosInvalidosException("A data de liberação está inválida");
         }
-        const fachadaDados = new FachadaDados();
+        
         const contratoDAO = new PsqlContratoDAO();
         const contrato = await contratoDAO.obterPorId(contratoId);
         switch (contrato.status) {
@@ -58,10 +58,10 @@ class GerenciaContratos {
             case 'CANCELADO':
                 throw new LiberacaoNaoPossivelException("O contrato está cancelado.");
         }
-
         contrato.status = "LIBERADO";
         contrato.dtLiberacao = dtLiberacao;
-        await fachadaDados.atualizarContrato(contrato, true);
+        const fachada = new FachadaDados();
+        await fachada.atualizarContrato(contrato, true);
         return "OK";
     }
 
@@ -81,8 +81,8 @@ class GerenciaContratos {
 
     async listarPorCriterios(criterios) {
 
-        const fachadaDados = FachadaDados.instancia;
-        return await fachadaDados.listarContratosPorCriterios(this.filtrarCriterios(criterios));
+        const fachada = new FachadaDados();
+        return await fachada.listarContratosPorCriterios(this.filtrarCriterios(criterios));
     }
 
     filtrarCriterios(criterios) {
@@ -137,12 +137,12 @@ class GerenciaContratos {
     }
 
     async deletarContrato(id){
-        const fachadaDados = new FachadaDados();
-        const contrato = await fachadaDados.obterContratoPorId(id);
+        const fachada = new FachadaDados();
+        const contrato = await fachada.obterContratoPorId(id);
         if(contrato.status != 'CADASTRADO'){
             throw new OperacaoNaoPermitidaException("Não foi possível remover. O contrato está com o status: " + contrato.status);
         }
-        return await fachadaDados.deletarContrato(id);
+        return await fachada.deletarContrato(id);
     }
 }
 

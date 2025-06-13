@@ -10,35 +10,35 @@ const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastra
 
 class GerenciaComissionamento {
     async cadastrarComissionamentoPromotora(comissionamento) {
-        const fachadaDados = FachadaDados.instancia;
-        if (await fachadaDados.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id)) {
+        const fachada = FachadaDados.instancia;
+        if (await fachada.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id)) {
             throw new ChaveRepetidaException("Já existe este comissionamento para promotora");
         }
-        return await fachadaDados.salvarComissionamentoPromotora(comissionamento);
+        return await fachada.salvarComissionamentoPromotora(comissionamento);
     }
 
     async cadastrarComissionamentoCorretor(comissionamento){
-        const fachadaDados = FachadaDados.instancia;
-        const existeComissionamentoNaPromotora = await fachadaDados.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
+        const fachada = FachadaDados.instancia;
+        const existeComissionamentoNaPromotora = await fachada.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
         if(!existeComissionamentoNaPromotora){
             throw new ComissaoNaoCadastradaException("Comissão não cadastrada na promotora");
         }
-        const existeComissionamentoCorretor = await fachadaDados.existeComissionamentoCorretor(comissionamento);
+        const existeComissionamentoCorretor = await fachada.existeComissionamentoCorretor(comissionamento);
         if(existeComissionamentoCorretor){
             throw new ChaveRepetidaException("Esta comissão já está cadastrada para este corretor.");
         }
         
-        let comissionamentoPromotora = await fachadaDados.obterComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
+        let comissionamentoPromotora = await fachada.obterComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
         if(comissionamento.percentagem > comissionamentoPromotora.percentagem){
             throw new ComissionamentoInvalidoException("A percetagem do corretor está maior que o da promotora");
         }
-        return await fachadaDados.salvarComissionamentoCorretor(comissionamento);
+        return await fachada.salvarComissionamentoCorretor(comissionamento);
     }
 
     async gerarPagamentoComissao(contratoID, usuarioID){
         
-        const fachadaDados = new FachadaDados();
-        let contrato = await fachadaDados.obterContratoPorId(contratoID);
+        const fachada = new FachadaDados();
+        let contrato = await fachada.obterContratoPorId(contratoID);
         if(contrato.comissaoPaga){
             throw new PagamentoJaCadastradoException("O pagamento de comissão para este contrato já foi gerado.");
         }
@@ -48,18 +48,18 @@ class GerenciaComissionamento {
         comissionamento.banco = contrato.banco;
         comissionamento.produto = contrato.produto;
         comissionamento.corretor = contrato.corretor;
-        const existeComissionamentoPromtora = await fachadaDados.existeComissionamentoPromotora(contrato.produto.id,contrato.banco.id);
+        const existeComissionamentoPromtora = await fachada.existeComissionamentoPromotora(contrato.produto.id,contrato.banco.id);
         if(!existeComissionamentoPromtora){
             throw new ComissaoNaoCadastradaException("Comissão não cadastrada na promotora");
         }
-        const existeComissionamento = await fachadaDados.existeComissionamentoCorretor(comissionamento);
+        const existeComissionamento = await fachada.existeComissionamentoCorretor(comissionamento);
         if(!existeComissionamento){
             throw new ComissaoNaoCadastradaException("Comissão não cadastrada para o corretor.");
         }
-        const comissionamentoPromotora = await fachadaDados.obterComissionamentoPromotora(contrato.produto.id, contrato.banco.id);
-        const comissionamentoCorretor = await fachadaDados.obterComissionamentoCorretor(contrato.corretor.id, contrato.banco.id, contrato.produto.id);
+        const comissionamentoPromotora = await fachada.obterComissionamentoPromotora(contrato.produto.id, contrato.banco.id);
+        const comissionamentoCorretor = await fachada.obterComissionamentoCorretor(contrato.corretor.id, contrato.banco.id, contrato.produto.id);
         const pagamentoComissao = new PagamentoComissao();
-        const usuario = await fachadaDados.obterUsuarioPorId(usuarioID);
+        const usuario = await fachada.obterUsuarioPorId(usuarioID);
         pagamentoComissao.cadastradoPor = usuario;
         pagamentoComissao.contrato = contrato;
         pagamentoComissao.corretor = contrato.corretor;
@@ -68,8 +68,8 @@ class GerenciaComissionamento {
         pagamentoComissao.valorCorretor = ((comissionamentoCorretor.percentagem)/100)* contrato.valor;
         pagamentoComissao.valorPromotora = ((comissionamentoPromotora.percentagem - comissionamentoCorretor.percentagem)/100) * contrato.valor;
         pagamentoComissao.efetivado = false;
-        const retorno =  await fachadaDados.salvarPagamentoComissao(pagamentoComissao);
-        await fachadaDados.atualizarContrato({id:contrato.id, comissaoPaga:true});
+        const retorno =  await fachada.salvarPagamentoComissao(pagamentoComissao);
+        await fachada.atualizarContrato({id:contrato.id, comissaoPaga:true});
         return retorno;
     }
 

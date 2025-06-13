@@ -6,7 +6,7 @@ const RestricaoChaveEstrangeiraException = require('../excessoes/RestricaoChaveE
 class GerenciaEstadosCidades{
 
     async obterEstadoPorId(id){
-        let fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         return await fachada.obterEstadoPorId(id);
     }
 
@@ -17,7 +17,7 @@ class GerenciaEstadosCidades{
     }
 
     async listarEstados(){
-        let fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         return await fachada.listarEstados();
     }
 
@@ -31,8 +31,8 @@ class GerenciaEstadosCidades{
     }
 
     async obterCidadePorId(id){
-        let fachada = FachadaDados.instancia;
-        let cidade = await fachada.obterCidadePorId(id);
+        const fachada = new FachadaDados();
+        const cidade = await fachada.obterCidadePorId(id);
         if(!cidade){
             throw new EntidadeNaoEncontradaException("Entidade não encontrada");
         }
@@ -49,14 +49,14 @@ class GerenciaEstadosCidades{
     }
 
     async listarCidades(){
-        let fachada = FachadaDados.instancia;
-        let cidades = await fachada.listarCidades();
+        const fachada = new FachadaDados();
+        const cidades = await fachada.listarCidades();
         return cidades;
     }
 
     async listarCidadesPorEstado(estado_id){
-        let fachada = FachadaDados.instancia;
-        let cidades = await fachada.listarCidadesPorEstado(estado_id);
+        const fachada = new FachadaDados();
+        const cidades = await fachada.listarCidadesPorEstado(estado_id);
         return cidades;
     }
 
