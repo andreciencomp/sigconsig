@@ -34,7 +34,7 @@ class GerenciaEstadosCidades{
         const fachada = new FachadaDados();
         const cidade = await fachada.obterCidadePorId(id);
         if(!cidade){
-            throw new EntidadeNaoEncontradaException("Entidade não encontrada");
+            throw new EntidadeNaoEncontradaException("Cidade não encontrada");
         }
         return cidade;
     }

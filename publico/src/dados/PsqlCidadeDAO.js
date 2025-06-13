@@ -14,7 +14,7 @@ class PsqlCidadeDao {
         try {
             const { rows } = await pool.query(strQuery, [id]);
             if (rows.length == 0) {
-                return null;
+                throw new EntidadeNaoEncontradaException("Cidade não encontrada.");
             }
             let cidade = new Cidade();
             cidade.id = rows[0].id;
