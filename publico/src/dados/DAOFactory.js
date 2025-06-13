@@ -148,7 +148,7 @@ class DAOFactory{
     static async getClienteDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlClienteDao.instancia;
+                let dao = new PsqlClienteDao();
                 return dao;
             default:
                 return null;

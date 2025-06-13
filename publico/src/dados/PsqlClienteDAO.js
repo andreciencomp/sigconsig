@@ -1,13 +1,10 @@
 let PgUtil = require('./PgUtil');
-let Endereco = require('../entidades/Endereco');
-let Estado = require('../entidades/Estado');
 const { pool } = require('../../../servicos/database_service');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
 const Cliente = require('../entidades/Cliente');
 
 class PsqlClienteDao {
-    static instancia = new PsqlClienteDao();
 
     async obterPorId(id) {
         try {
@@ -57,7 +54,6 @@ class PsqlClienteDao {
             if(!dbClient){
                  client.release();
             }
-           
         }
     }
 
@@ -84,12 +80,9 @@ class PsqlClienteDao {
             }
             let enderecoId = null;
             if (cliente.endereco) {
-                let estadoId = cliente.endereco.estado ? cliente.endereco.estado.id : null;
-                let cidadeId = cliente.endereco.cidade ? cliente.endereco.cidade.id : null;
-                let enderecoQuery = "insert into enderecos (cep, rua, numero, bairro, telefone, estado_id, cidade_id) values ($1, $2, $3, $4, $5, $6, $7) returning id";
-                const resEndereco = await client.query(enderecoQuery, [cliente.endereco.cep,
-                cliente.endereco.rua, cliente.endereco.numero, cliente.endereco.bairro, cliente.endereco.telefone, estadoId, cidadeId]);
-                enderecoId = resEndereco.rows[0].id;
+                const enderecoDAO = new PsqlEnderecoDAO();
+                const enderecoSalvo = await enderecoDAO.salvar(cliente.endereco,client);
+                enderecoId = enderecoSalvo.id;
             }
             const clienteQuery = "insert into clientes (cpf, nome, dt_nascimento, endereco_id) values ($1, $2, $3, $4) returning id"
             let resCliente = await client.query(clienteQuery, [cliente.cpf, cliente.nome, cliente.dtNascimento, enderecoId]);
