@@ -30,10 +30,10 @@ class PsqlEnderecoDAO {
         const client = dbClient ? dbClient : await pool.connect();
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
-                "values ($1, $2, $3, $4, $5, $6, $7) returning id";
+                "values ($1, $2, $3, $4, $5, $6, $7) returning * ";
             const { rows } = await client.query(query, [endereco.estado.id, endereco.cidade.id,
             endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
-            return rows[0];
+            return await this.criarObjetoEndereco(rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
