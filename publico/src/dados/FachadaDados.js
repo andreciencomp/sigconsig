@@ -90,6 +90,16 @@ class FachadaDados {
         return await dao.deletar(id);
     }
 
+    async existeCodigoDeBanco(codigo){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.existeCodigo(codigo);
+    }
+
+    async existeNomeDeBanco(nome){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.existeNome(nome);
+    }
+
     async existeOrgaoPorSigla(sigla) {
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.existePorSigla(sigla);

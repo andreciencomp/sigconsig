@@ -20,8 +20,9 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
 roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(req, res, next)=>{
         try{
             const fachada = new FachadaNegocio();
-            const resultado = await fachada.cadastrarBanco(req.body.codigo, req.body.nome);
+            const resultado = await fachada.cadastrarBanco(req.body);
             res.status(201).send({dados:resultado});
+            
         }catch(e){
             ExceptionService.enviarExcessao(e,res);
         }

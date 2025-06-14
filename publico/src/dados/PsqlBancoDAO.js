@@ -23,6 +23,38 @@ class PsqlBancoDAO {
         }
     }
 
+    async existeCodigo(codigo, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const result = await client.query("select id from bancos where codigo=$1",[codigo]);
+            return result.rowCount > 0;
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
+    async existeNome(nome, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const result = await client.query("select id from bancos where nome=$1",[nome]);
+            return result.rowCount > 0;
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
+
+
     async obterPorCodigo(codigo) {
         try {
             const result = await pool.query('select * from bancos where codigo = $1', [codigo]);

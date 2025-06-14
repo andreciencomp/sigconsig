@@ -32,9 +32,9 @@ class FachadaNegocio{
         return await gerenciaBancos.obterBancoPorCodigo(codigo);
     }
 
-    async cadastrarBanco(codigo, nome){
+    async cadastrarBanco(banco){
         const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.cadastrarBanco(codigo, nome);
+        return await gerenciaBancos.cadastrarBanco(banco);
 
     }
 

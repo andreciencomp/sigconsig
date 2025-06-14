@@ -79,7 +79,7 @@ class DAOFactory{
     static async getBancoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlBancoDAO.instancia;
+                let dao = new PsqlBancoDAO();
                 return dao;
             default:
                 return null;

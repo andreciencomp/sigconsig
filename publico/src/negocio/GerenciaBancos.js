@@ -1,5 +1,5 @@
 const FachadaDados = require('../dados/FachadaDados');
-const Banco = require('../entidades/Banco');
+const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 
 class GerenciaBancos{
     async obterBancoPorCodigo(codigo){
@@ -8,11 +8,14 @@ class GerenciaBancos{
 
     }
 
-    async cadastrarBanco(codigo, nome){
-        let banco = new Banco();
-        banco.codigo = codigo;
-        banco.nome = nome;
+    async cadastrarBanco(banco){
         const fachada = new FachadaDados();
+        if(await fachada.existeCodigoDeBanco(banco.codigo)){
+            throw new ChaveRepetidaException("Já existe um banco com este código","codigo");
+        }
+        if(await fachada.existeNomeDeBanco(banco.nome)){
+            throw new ChaveRepetidaException("Já existe um banco com este nome","nome");
+        }
         return await fachada.salvarBanco(banco);
     }
 
