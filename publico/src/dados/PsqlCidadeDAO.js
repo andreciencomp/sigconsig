@@ -18,16 +18,11 @@ class PsqlCidadeDao {
             if (rows.length == 0) {
                 throw new EntidadeNaoEncontradaException("Cidade não encontrada.");
             }
-            let cidade = new Cidade();
-            cidade.id = rows[0].id;
-            cidade.nome = rows[0].nome;
-            const estadoDao = new PsqlEstadoDAO();
-            let estado = await estadoDao.obter(rows[0].estado_id);
-            cidade.estado = estado; 
-            return cidade;
+            return await this.criarObjetoCidade(rows[0]); 
 
         } catch (e) {
             PgUtil.checkError(e);
+            
         }finally{
             if(!dbClient){
                 client.release();
