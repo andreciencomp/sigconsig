@@ -65,6 +65,11 @@ class FachadaDados {
         return await dao.salvar(usuario);
     }
 
+    async obterBancoPorID(id){
+        const dao = await DAOFactory.getBancoDAO();
+        return await dao.obterPorId(id);
+    }
+
     async obterBancoPorCodigo(codigo) {
         const dao = await DAOFactory.getBancoDAO();
         return await dao.obterPorCodigo(codigo);
