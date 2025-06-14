@@ -2,9 +2,7 @@ const { pool } = require('../../../servicos/database_service');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PgUtil = require('./PgUtil');
 const Cidade = require('../entidades/Cidade');
-const DAOFactory = require('./DAOFactory');
 const PsqlEstadoDAO = require('./PsqlEstadoDAO');
-const Estado = require('../entidades/Estado');
 
 class PsqlCidadeDao {
 
@@ -22,7 +20,7 @@ class PsqlCidadeDao {
 
         } catch (e) {
             PgUtil.checkError(e);
-            
+
         }finally{
             if(!dbClient){
                 client.release();
@@ -92,12 +90,7 @@ class PsqlCidadeDao {
             let cidades = [];
             const {rows} = await pool.query(strQuery);
             for(var i=0; i < rows.length; i++){
-                let cidade = new Cidade();
-                cidade.id = rows[i].id;
-                cidade.nome = rows[i].nome;
-                let estadoDao = new PsqlEstadoDAO();
-                let estado =  await estadoDao.obter(rows[i].estado_id);
-                cidade.estado = estado;
+                let cidade = await this.criarObjetoCidade(rows[i]);
                 cidades.push(cidade);
             }
             return cidades;
