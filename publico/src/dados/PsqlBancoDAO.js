@@ -86,13 +86,13 @@ class PsqlBancoDAO {
         }
     }
 
-    async listar() {
-
-        let strQuery = "select * from bancos";
+    async listar(dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
-            const { rows } = await pool.query(strQuery);
+            let strQuery = "select * from bancos";
+            const { rows } = await client.query(strQuery);
             let lista = [];
-            for (var i = 0; i < (await rows.length); i++) {
+            for (var i = 0; i < (rows.length); i++) {
                 let banco = new Banco();
                 banco.id = await rows[i].id;
                 banco.codigo = await rows[i].codigo;
@@ -101,8 +101,9 @@ class PsqlBancoDAO {
             }
             return lista
         } catch (e) {
-            console.log(e);
-            throw 'BD_EXCEPTION';
+            PgUtil.checkError(e);
+        }finally{
+            client.release();
         }
     }
 
