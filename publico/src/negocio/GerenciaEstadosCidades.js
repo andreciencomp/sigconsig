@@ -48,6 +48,23 @@ class GerenciaEstadosCidades{
         return await fachada.salvarCidade(cidade);
     }
 
+    async atualizarCidade(cidade){
+        const fachada = new FachadaDados();
+        if(!await fachada.existeCidadePorID(cidade.id)){
+            throw new EntidadeNaoEncontradaException("Esta cidade não existe.");
+        }
+
+        if(typeof(cidade.estado) != 'undefined'){
+            const existeNomeCidade = await fachada.existeCidadeNoEstadoPorNome(cidade.nome, cidade.estado.id);
+            const cidadeCadastrada = await fachada.obterCidadePorId(cidade.id);
+            if(cidade.id != cidadeCadastrada .id && existeNomeCidade){
+                throw new ChaveRepetidaException("Já existe uma cidade com este nome para este estado","nome");
+            }
+        }
+        return await fachada.atualizarCidade(cidade);
+        
+    }
+
     async listarCidades(){
         const fachada = new FachadaDados();
         const cidades = await fachada.listarCidades();

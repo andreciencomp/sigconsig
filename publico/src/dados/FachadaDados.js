@@ -165,6 +165,11 @@ class FachadaDados {
         return await dao.obterPorId(id);
     }
 
+    async existeCidadePorID(id){
+        const dao = await DAOFactory.getCidadeDao();
+        return await dao.existePorID(id);
+    }
+
     async existeCidadeNoEstadoPorNome(nome, estadoID) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.existeNoEstadoPorNome(nome, estadoID);
@@ -173,6 +178,11 @@ class FachadaDados {
     async salvarCidade(cidade) {
         const dao = await DAOFactory.getCidadeDao();
         return await dao.salvar(cidade);
+    }
+
+    async atualizarCidade(cidade){
+        const dao = await DAOFactory.getCidadeDao();
+        return await dao.atualizar(cidade);
     }
 
     async listarCidades() {

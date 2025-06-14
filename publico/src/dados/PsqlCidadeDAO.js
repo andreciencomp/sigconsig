@@ -4,28 +4,50 @@ const PgUtil = require('./PgUtil');
 const Cidade = require('../entidades/Cidade');
 const DAOFactory = require('./DAOFactory');
 const PsqlEstadoDAO = require('./PsqlEstadoDAO');
+const Estado = require('../entidades/Estado');
 
 class PsqlCidadeDao {
 
     static instancia = new PsqlCidadeDao();
 
-    async obterPorId(id) {
-        const strQuery = 'select * from cidades where id = $1';
+    async obterPorId(id, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
-            const { rows } = await pool.query(strQuery, [id]);
+            const strQuery = 'select * from cidades where id = $1';
+            const { rows } = await client.query(strQuery, [id]);
             if (rows.length == 0) {
                 throw new EntidadeNaoEncontradaException("Cidade não encontrada.");
             }
             let cidade = new Cidade();
             cidade.id = rows[0].id;
             cidade.nome = rows[0].nome;
-            const estadoDao = await new PsqlEstadoDAO();
+            const estadoDao = new PsqlEstadoDAO();
             let estado = await estadoDao.obter(rows[0].estado_id);
             cidade.estado = estado; 
             return cidade;
 
         } catch (e) {
             PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
+    async existePorID(id, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const result = await client.query("select id from cidades where id=$1",[id]);
+            return result.rowCount > 0;
+
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
@@ -48,6 +70,24 @@ class PsqlCidadeDao {
 
         }catch(e){
             PgUtil.checkError(e);
+        }
+    }
+
+    async atualizar(cidade, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
+        try{
+            const cidadeCadastrada = await this.obterPorId(cidade.id, client);
+            const novoNome = typeof(cidade.id)!= 'undefined' ? cidade.nome : cidadeCadastrada.nome;
+            const estadoID = typeof(cidade.estado) != 'undefined' ? cidade.estado.id : (cidadeCadastrada.estado ? cidadeCadastrada.estado.id : null);
+            const result = await client.query("update cidades set nome=$1, estado_id=$2 where id=$3 returning * ",[novoNome, estadoID, cidade.id]);
+            return this.criarObjetoCidade(result.rows[0]);
+
+        }catch(e){
+
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
@@ -99,6 +139,16 @@ class PsqlCidadeDao {
         }catch(e){
             PgUtil.checkError(e);
         }
+    }
+
+    async criarObjetoCidade(row){
+        const cidade = new Cidade();
+        cidade.id = row.id;
+        cidade.nome = row.nome;
+        const estadoDAO = new PsqlEstadoDAO();
+        const estado = await estadoDAO.obter(row.estado_id);
+        cidade.estado = estado;
+        return cidade;
     }
 }
 

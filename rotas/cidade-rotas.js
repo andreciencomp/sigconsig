@@ -40,6 +40,16 @@ router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async (req, re
     }
 })
 
+router.put('/cidades/atualizar',authService.usuarioAdminFiltro, async(req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const cidadeAtualizada = await fachada.atualizarCidade(req.body);
+        return res.status(200).send({dados: cidadeAtualizada});
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 router.get('/cidades/estado/:estado_id', async function (req, res) {
     try {
         const fachada = new FachadaNegocio();
