@@ -84,11 +84,12 @@ class PsqlCidadeDao {
         }
     }
 
-    async listarTodos(){
-        const strQuery = 'select * from cidades';
+    async listarTodos(dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
         try{
+            const strQuery = 'select * from cidades';
             let cidades = [];
-            const {rows} = await pool.query(strQuery);
+            const {rows} = await client.query(strQuery);
             for(var i=0; i < rows.length; i++){
                 let cidade = await this.criarObjetoCidade(rows[i]);
                 cidades.push(cidade);
@@ -97,26 +98,32 @@ class PsqlCidadeDao {
 
         }catch(e){
             PgUtil.checkError(e);
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
-    async listarPorEstado(estado_id){
-        const strQuery = 'select * from cidades where estado_id = $1';
+    async listarPorEstado(estado_id, dbClient=null){
+        const client = dbClient ? dbClient : await pool.connect();
         try{
+            const strQuery = 'select * from cidades where estado_id = $1';
             let cidades = []
-            const {rows} = await pool.query(strQuery,[estado_id]);
-            for(var i = 0; i < rows.length ; i++){
-                let cidade = new Cidade();
-                cidade.id = rows[i].id;
-                cidade.nome = rows[i].nome;
-                let estadoDao = new PsqlEstadoDAO();
-                let estado = await estadoDao.obter(estado_id);
-                cidade.estado = estado;
+            const {rows} = await client.query(strQuery,[estado_id]);
+            for(let i = 0; i < rows.length ; i++){
+                const cidade = await this.criarObjetoCidade(rows[i]);
                 cidades.push(cidade);
             }
             return cidades;
+            
         }catch(e){
             PgUtil.checkError(e);
+
+        }finally{
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
