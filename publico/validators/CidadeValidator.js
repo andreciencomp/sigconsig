@@ -1,6 +1,6 @@
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
 
-class CidadeValidator extends Error{
+class CidadeValidator{
 
     static validarCadastro(cidade){
         if(!cidade){
