@@ -6,7 +6,6 @@ const ExceptionService = require('../servicos/ExceptionService');
 const BancoValidator = require('../publico/validators/BancoValidator');
 
 roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
-
     try{
         const fachada = new FachadaNegocio();
         const banco = await fachada.obterBancoPorCodigo(req.params.codigo);
@@ -19,6 +18,7 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
 
 roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(req, res, next)=>{
         try{
+            BancoValidator.validarCadastro(req.body);
             const fachada = new FachadaNegocio();
             const resultado = await fachada.cadastrarBanco(req.body);
             res.status(201).send({dados:resultado});
