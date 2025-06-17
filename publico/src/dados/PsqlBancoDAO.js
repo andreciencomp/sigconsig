@@ -103,12 +103,14 @@ class PsqlBancoDAO {
         } catch (e) {
             PgUtil.checkError(e);
         }finally{
-            client.release();
+            if(!dbClient){
+                client.release();
+            }
         }
     }
 
-    async atualizar(campos) {
-        const client = await pool.connect();
+    async atualizar(campos, dbClient=null) {
+        const client = dbClient ? dbClient : await pool.connect();
         try {
             let banco = await this.obterPorId(campos.id);
             if (typeof (campos.codigo) != 'undefined') {
@@ -125,7 +127,10 @@ class PsqlBancoDAO {
             PgUtil.checkError(e);
 
         }finally{
-            client.release();
+            if(!dbClient){
+                client.release();
+            }
+            
         }
     }
 
