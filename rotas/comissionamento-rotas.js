@@ -3,12 +3,12 @@ const router = express.Router();
 const ExceptionService =  require('../servicos/ExceptionService');
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
-const validarComissionamentoPromotora = require('../publico/validators/ComissionamentoPromotoraValidator');
+const ComissionamentoPromotoraValidator = require('../publico/validators/ComissionamentoPromotoraValidator');
 const ComissionamentoCorretorValidator = require('../publico/validators/ComissionamentoCorretorValidator');
 
 router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFiltro, async(req, res)=>{
     try{
-        validarComissionamentoPromotora(req.body);
+        ComissionamentoPromotoraValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
         const idComissionamento = await fachada.cadastrarComissionamentoPromotora(req.body);
         return res.status(201).send({dados:idComissionamento});
