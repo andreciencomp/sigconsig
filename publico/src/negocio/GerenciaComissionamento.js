@@ -10,7 +10,7 @@ const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastra
 
 class GerenciaComissionamento {
     async cadastrarComissionamentoPromotora(comissionamento) {
-        const fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         if (await fachada.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id)) {
             throw new ChaveRepetidaException("Já existe este comissionamento para promotora");
         }
@@ -18,7 +18,7 @@ class GerenciaComissionamento {
     }
 
     async cadastrarComissionamentoCorretor(comissionamento){
-        const fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         const existeComissionamentoNaPromotora = await fachada.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
         if(!existeComissionamentoNaPromotora){
             throw new ComissaoNaoCadastradaException("Comissão não cadastrada na promotora");
