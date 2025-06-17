@@ -1,8 +1,8 @@
 const express = require('express');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
-const validarCliente = require('../publico/validators/ClienteValidator');
 const authService = require('../servicos/auth_service');
+const ClienteValidator = require('../publico/validators/ClienteValidator');
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async 
 router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req, res)=>{
     try{
         let fachada = new FachadaNegocio();
-        validarCliente(req.body);
+        ClienteValidator.validarCadastro(req.body);
         const retorno = await fachada.cadastrarCliente(req.body);
         return res.status(201).send({dados:{id:retorno}});
 
