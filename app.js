@@ -25,18 +25,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/', roteadorDefault);
-app.use('/api', roteadorUsuario);
-app.use('/api', roteadorAuth);
-app.use('/api', roteadorBanco);
-app.use('/api', roteadorOrgaos);
-app.use('/api', roteadorEstado);
-app.use('/api', roteadorCidade);
-app.use('/api', roteadorCorretor);
-app.use('/api', roteadorCliente);
-app.use('/api', roteadorProduto);
-app.use('/api', roteadorComissionamento);
-app.use('/api', roteadorContratos);
-app.use('/api', roteadorPagamentoComissao);
+app.use('/', roteadorUsuario);
+app.use('/', roteadorAuth);
+app.use('/', roteadorBanco);
+app.use('/', roteadorOrgaos);
+app.use('/', roteadorEstado);
+app.use('/', roteadorCidade);
+app.use('/', roteadorCorretor);
+app.use('/', roteadorCliente);
+app.use('/', roteadorProduto);
+app.use('/', roteadorComissionamento);
+app.use('/', roteadorContratos);
+app.use('/', roteadorPagamentoComissao);
 
 module.exports = app;
 
