@@ -1,5 +1,6 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
+const DataValidator = require("./DataValidator");
 
 function validarCorretor(corretor){
     if(!corretor.codigo){
@@ -22,6 +23,10 @@ function validarCorretor(corretor){
     if(corretor.nome.length < 3){
         throw new DadosInvalidosException("O nome está muito curto","nome");
     }
+    if(corretor.dtNascimento){
+        DataValidator.validarData(corretor.dtNascimento, "dtNascimento");
+    }
+    return true;
 }
 
 module.exports = validarCorretor;

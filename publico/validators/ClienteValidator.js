@@ -1,5 +1,6 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
+const DataValidator = require("./DataValidator");
 
 function validarCliente(cliente){
     if(!cliente.nome){
@@ -16,6 +17,11 @@ function validarCliente(cliente){
     if(cliente.cpf.length < 11){
         throw new DadosInvalidosException("O CPF é muito curto","cpf");
     }
+    if(cliente.dtNascimento){
+        DataValidator.validarData(cliente.dtNascimento, "dtNascimento");
+    }
+
+    return true;
 }
 
 module.exports = validarCliente;
