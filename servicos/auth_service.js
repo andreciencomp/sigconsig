@@ -109,7 +109,7 @@ module.exports.usuarioFinanceiroFiltro = async (req, res, next) => {
         throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
 
     }
 
@@ -129,7 +129,7 @@ module.exports.usuarioCadastroFiltro = async (req, res, next) => {
         throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
 
     }
 
@@ -144,7 +144,7 @@ module.exports.usuarioAutenticadoFiltro = async (req, res, next) => {
         return;
 
     } catch (e) {
-        ExceptionService.checkError(e, res);
+        ExceptionService.enviarExcessao(e, res);
 
     }
 

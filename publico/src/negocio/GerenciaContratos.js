@@ -14,7 +14,7 @@ class GerenciaContratos {
 
     async cadastrar(contrato) {
 
-        const fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         if (contrato.produto.id == null) {
             const fachadaDados = new FachadaDados();
             let produtos = await fachadaDados.listarProdutosPorCriterios(
@@ -30,7 +30,7 @@ class GerenciaContratos {
     }
 
     async atualizar(contrato) {
-        const fachada = FachadaDados.instancia;
+        const fachada = new FachadaDados();
         if (contrato.produto) {
             const existeProduto = await fachada.existeProduto(contrato.produto);
             if (!existeProduto) {
