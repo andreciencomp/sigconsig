@@ -4,6 +4,7 @@ const DadosInvalidosException = require("../excessoes/DadosInvalidosException");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivelException");
 const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
+const CPFService = require("./CPFService");
 
 class GerenciaContratos {
 
@@ -21,16 +22,23 @@ class GerenciaContratos {
                 { orgaoId: contrato.produto.orgao.id, carencia: contrato.produto.carencia, qtdParcelas: contrato.produto.qtdParcelas }
             );
             if (produtos.length == 0) {
-                throw new EntidadeNaoEncontradaException("O produto não foi encontrado.");
+                throw new EntidadeNaoEncontradaException("O produto não foi encontrado.","produto");
             }
             contrato.produto.id = produtos[0].id;
-            contrato.status = !contrato.status ? 'CADASTRADO' : contrato.status;
         }
+
+        if (contrato.cliente && contrato.cliente.cpf) {
+            contrato.cliente.cpf = CPFService.formatarParaApenasNumeros(contrato.cliente.cpf);
+        }
+        contrato.status = 'CADASTRADO';
         return await fachada.salvarContrato(contrato);
     }
 
     async atualizar(contrato) {
         const fachada = new FachadaDados();
+        if(contrato.cliente && contrato.cliente.cpf){
+            contrato.cliente.cpf = CPFService.formatarParaApenasNumeros(contrato.cliente.cpf);
+        }
         if (contrato.produto) {
             const existeProduto = await fachada.existeProduto(contrato.produto);
             if (!existeProduto) {
@@ -46,10 +54,10 @@ class GerenciaContratos {
 
     async liberar(contratoId, dtLiberacao) {
         const date = new Date(dtLiberacao);
-        if(date.toString() == "Invalid Date"){
+        if (date.toString() == "Invalid Date") {
             throw new DadosInvalidosException("A data de liberação está inválida");
         }
-        
+
         const contratoDAO = new PsqlContratoDAO();
         const contrato = await contratoDAO.obterPorId(contratoId);
         switch (contrato.status) {
@@ -65,7 +73,7 @@ class GerenciaContratos {
         return contratoLiberado;
     }
 
-    async liberarVarios(arrayContratoId,dtLiberacao) {
+    async liberarVarios(arrayContratoId, dtLiberacao) {
         let feedbacks = [];
         for (let i = 0; i < arrayContratoId.length; i++) {
             try {
@@ -86,7 +94,7 @@ class GerenciaContratos {
     }
 
     filtrarCriterios(criterios) {
-        if(!criterios){
+        if (!criterios) {
             return {}
         }
         let novosCriterios = {};
@@ -136,10 +144,10 @@ class GerenciaContratos {
         return novosCriterios;
     }
 
-    async deletarContrato(id){
+    async deletarContrato(id) {
         const fachada = new FachadaDados();
         const contrato = await fachada.obterContratoPorId(id);
-        if(contrato.status != 'CADASTRADO'){
+        if (contrato.status != 'CADASTRADO') {
             throw new OperacaoNaoPermitidaException("Não foi possível remover. O contrato está com o status: " + contrato.status);
         }
         return await fachada.deletarContrato(id);

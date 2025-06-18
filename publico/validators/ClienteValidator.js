@@ -1,6 +1,7 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
 const DataValidator = require("./DataValidator");
+const CPFValidator = require("./CPFValidator")
 
 class ClienteValidator {
     static validarCadastro(cliente) {
@@ -11,12 +12,10 @@ class ClienteValidator {
             throw new DadosInvalidosException("O nome está muito curto.", "nome");
         }
 
-        if (!cliente.cpf) {
-            throw new DadosInvalidosException("O CPF está vazio", "cpf");
-        }
-
-        if (cliente.cpf.length < 11) {
-            throw new DadosInvalidosException("O CPF é muito curto", "cpf");
+        if(cliente.cpf){
+            CPFValidator.validar(cliente.cpf);
+        }else{
+            throw new DadosNulosException("O CPF está nulo.","cpf");
         }
 
         if (cliente.dtNascimento) {

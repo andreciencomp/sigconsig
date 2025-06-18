@@ -1,5 +1,6 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 const DadosNulosException = require("../src/excessoes/DadosNulosException");
+const CPFValidator = require("./CPFValidator");
 const DataValidator = require("./DataValidator");
 
 function validarCorretor(corretor){
@@ -10,11 +11,10 @@ function validarCorretor(corretor){
         throw new DadosInvalidosException("O código do corretor tem que ser um número","codigo");
     }
 
-    if(!corretor.cpf){
-        throw new DadosNulosException("O CPF não pode ficar em branco.","cpf");
-    }
-    if(corretor.cpf.length < 11){
-        throw new DadosInvalidosException("O CPF está muito curto.","cpf");
+    if(corretor.cpf){
+        CPFValidator.validar(corretor.cpf);
+    }else{
+        throw new DadosNulosException("O CPF está nulo.","cpf");
     }
 
     if(!corretor.nome){

@@ -1,4 +1,5 @@
 const FachadaDados = require("../dados/FachadaDados");
+const CPFService = require("./CPFService");
 
 class GerenciaClientes{
 
@@ -14,6 +15,7 @@ class GerenciaClientes{
 
     async cadastrar(cliente){
         const fachadaDados = new FachadaDados();
+        cliente.cpf = CPFService.formatarParaApenasNumeros(cliente.cpf);
         return await fachadaDados.salvarCliente(cliente);
     }
 

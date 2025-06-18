@@ -1,9 +1,11 @@
 const FachadaDados = require("../dados/FachadaDados");
+const CPFService = require("./CPFService");
 
 class GerenciaCorretores{
 
     async cadastrar(corretor){
         const fachada = new FachadaDados();
+        corretor.cpf = CPFService.formatarParaApenasNumeros(corretor.CPF);
         return await fachada.salvarCorretor(corretor);
     }
 
