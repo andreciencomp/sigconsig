@@ -13,7 +13,7 @@ class ClienteValidator {
         }
 
         if(cliente.cpf){
-            CPFValidator.validar(cliente.cpf);
+            CPFValidator.validar(cliente.cpf, "cpf");
         }else{
             throw new DadosNulosException("O CPF está nulo.","cpf");
         }

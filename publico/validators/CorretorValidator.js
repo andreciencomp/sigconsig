@@ -10,9 +10,8 @@ function validarCorretor(corretor){
     if(isNaN(Number(corretor.codigo))){
         throw new DadosInvalidosException("O código do corretor tem que ser um número","codigo");
     }
-
     if(corretor.cpf){
-        CPFValidator.validar(corretor.cpf);
+        CPFValidator.validar(corretor.cpf, "cpf");
     }else{
         throw new DadosNulosException("O CPF está nulo.","cpf");
     }
