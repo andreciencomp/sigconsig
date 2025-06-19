@@ -3,13 +3,12 @@ const router = express.Router();
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
-const validarCorretor = require('../publico/validators/CorretorValidator');
+const CorretorValidator = require('../publico/validators/CorretorValidator');
 
 router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
-
     const fachada = new FachadaNegocio();
     try {
-        validarCorretor(req.body);
+        CorretorValidator.validarCadastro(req.body);
         const resposta = await fachada.cadastrarCorretor(req.body);
         return res.status(201).send({ dados: resposta });
 
