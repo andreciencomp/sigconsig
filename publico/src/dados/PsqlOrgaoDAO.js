@@ -40,14 +40,17 @@ class PsqlOrgaoDAO {
         return rows.length > 0;
     }
 
-    async salvar(orgao) {
+    async salvar(orgao, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            let strQuery = 'insert into orgaos (sigla, nome) values ($1, $2) returning id';
-            const {rows} = await pool.query(strQuery, [orgao.sigla, orgao.nome]);
-            return rows[0];
+            let strQuery = 'insert into orgaos (sigla, nome) values ($1, $2) returning *';
+            const {rows} = await client.query(strQuery, [orgao.sigla, orgao.nome]);
+            return this.criarObjetoOrgao(rows[0]);
             
         } catch (e) {
-
+            if(!pgClient){
+                client.release();
+            }
             PgUtil.checkError(e);
         }
     }

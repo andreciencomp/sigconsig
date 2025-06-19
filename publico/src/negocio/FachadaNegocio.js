@@ -58,9 +58,9 @@ class FachadaNegocio{
         return await gerenciaOrgaos.obterOrgaoPorID(id);
     }
 
-    async cadastrarOrgao(sigla, nome){
+    async cadastrarOrgao(orgao){
         const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.cadastrarOrgao(sigla, nome);
+        return await gerenciaOrgaos.cadastrarOrgao(orgao);
     }
 
     async listarOrgaos(){

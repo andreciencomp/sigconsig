@@ -10,20 +10,14 @@ class GerenciaOrgaos{
         return await fachada.obterOrgaoPorID(id);
     }
 
-    async cadastrarOrgao(sigla, nome){
-        const orgao = new Orgao();
-        orgao.sigla = sigla;
-        orgao.nome = nome;
-        if(!nome || nome.lenght == 0){
-            throw new DadosInvalidosException("O nome não pode ficar vazio.","nome");
-        }
-        if(await fachada.existeOrgaoPorSigla(sigla) == true){
+    async cadastrarOrgao(orgao){
+        const fachada = new FachadaDados();
+        if(await fachada.existeOrgaoPorSigla(orgao.sigla)){
             throw new ChaveRepetidaException("Já existe um orgão com esta sigla.","sigla");
         }
-        if(await fachada.existeOrgaoPorNome(nome) == true){
+        if(await fachada.existeOrgaoPorNome(orgao.nome)){
             throw new ChaveRepetidaException("Já existe um orgão com este nome.","nome");
         }
-        const fachada = new FachadaDados();
         return await fachada.salvarOrgao(orgao);
     }
 

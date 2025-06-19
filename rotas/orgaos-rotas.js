@@ -2,6 +2,7 @@ const express = require('express');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const authService = require('../servicos/auth_service');
 const ExceptionService = require('../servicos/ExceptionService');
+const OrgaoValidator = require('../publico/validators/OrgaoValidator');
 
 const roteador = express.Router();
 
@@ -17,9 +18,10 @@ roteador.get('/orgaos/:id', authService.usuarioAutenticadoFiltro, async (req, re
 
 roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
     try {
+        OrgaoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
-        const objetoComId = await fachada.cadastrarOrgao(req.body.sigla, req.body.nome);
-        return res.status(201).send({ dados: objetoComId });
+        const orgaoCadastrado = await fachada.cadastrarOrgao(req.body);
+        return res.status(201).send({ dados: orgaoCadastrado });
 
     } catch (e) {
 
@@ -48,7 +50,5 @@ roteador.delete('/orgaos/deletar/:id', authService.usuarioAdminFiltro, async (re
         ExceptionService.enviarExcessao(e, res);
     }
 });
-
-
 
 module.exports = roteador;
