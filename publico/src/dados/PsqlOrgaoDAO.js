@@ -27,6 +27,22 @@ class PsqlOrgaoDAO {
         }
     }
 
+    async existePorID(id, pgClient){
+        const client = pgClient ? pgClient : await pool.connect();
+        try{
+            const result = await client.query('select id from orgaos where id=$1',[id]);
+            return result.rowCount > 0;
+
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }finally{
+            if(!pgClient){
+                client.release();
+            }
+        }
+    }
+
     async existePorSigla(sigla, pgClient=null) {
         const client = pgClient ? pgClient : await pool.connect();
         try {

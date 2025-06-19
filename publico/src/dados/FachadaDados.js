@@ -135,6 +135,11 @@ class FachadaDados {
         return await dao.listar();
     }
 
+    async existeOrgaoPorID(id){
+        const dao = await DAOFactory.getOrgaoDAO();
+        return await dao.existePorID(id);
+    }
+
     async deletarOrgao(id){
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.deletar(id);
@@ -255,6 +260,10 @@ class FachadaDados {
         return await dao.deletar(id);
     }
 
+    async obterProduto(produto){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.obter(produto);
+    }
     async obterProdutoPorID(id){
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.obterPorId(id);
@@ -265,9 +274,19 @@ class FachadaDados {
         return await dao.salvar(produto);
     }
 
+    async atualizarProduto(produto){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.atualizar(produto);
+    }
+
     async deletarProduto(id){
         const dao = await DAOFactory.getProdutoDAO();
         return await dao.deletar(id);
+    }
+
+    async existeProdutoPorID(id){
+        const dao = await DAOFactory.getProdutoDAO();
+        return await dao.existePorID(id);
     }
 
     async existeProduto(produto) {

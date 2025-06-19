@@ -1,5 +1,6 @@
 const FachadaDados = require('../dados/FachadaDados');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
+const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 class GerenciaProdutos{
 
     async obterProdutoPorID(id){
@@ -14,6 +15,18 @@ class GerenciaProdutos{
             throw new ChaveRepetidaException("Este produto já foi cadastrado.");
         }
         return fachadaDados.salvarProduto(produto);
+    }
+
+    async atualizarProduto(produto){
+        const fachada = new FachadaDados();
+        if(!(await fachada.existeOrgaoPorID(produto.orgao.id))){
+            throw new EntidadeNaoEncontradaException("Orgão não encontrato", "orgao");
+        }
+        const produtoCadastrado = await fachada.obterProduto(produto);
+        if(produtoCadastrado && produtoCadastrado.id != produto.id && await fachada.existeProduto(produto)){
+            throw new ChaveRepetidaException("Já existe esse produto");
+        }
+        return await fachada.atualizarProduto(produto);
     }
 
     async deletar(id){

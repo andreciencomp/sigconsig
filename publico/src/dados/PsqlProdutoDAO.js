@@ -8,11 +8,11 @@ const paraSnakeCase = require('../../../servicos/util');
 class PsqlProdutoDAO {
     static instancia = new PsqlProdutoDAO;
 
-    async obterPorId(id, pgClient=null) {
+    async obterPorId(id, pgClient = null) {
         const client = pgClient ? pgClient : await pool.connect();
         try {
-            let produtoQuery = "select * from produtos where id=$1";
-            let result = await client.query(produtoQuery, [id]);
+            const produtoQuery = "select * from produtos where id=$1";
+            const result = await client.query(produtoQuery, [id]);
             if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O produto não existe.");
             }
@@ -21,8 +21,28 @@ class PsqlProdutoDAO {
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally{
-            if(!pgClient){
+        } finally {
+            if (!pgClient) {
+                client.release();
+            }
+        }
+    }
+
+    async obter(produto, pgClient) {
+        const client = pgClient ? pgClient : await pool.connect();
+        try {
+            const produtoQuery = "select * from produtos where orgao_id=$1 and carencia=$2 and qtd_parcelas=$3";
+            const result = await client.query(produtoQuery, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
+            if (result.rowCount == 0) {
+                return null;
+            }
+            return await this.criarObjetoProduto(result.rows[0]);
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        } finally {
+            if (!pgClient) {
                 client.release();
             }
         }
@@ -68,7 +88,7 @@ class PsqlProdutoDAO {
     async salvar(produto, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {
-            const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning *";
+            const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning * ";
             const { rows } = await client.query(query, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
             return await this.criarObjetoProduto(rows[0]);
 
@@ -76,6 +96,27 @@ class PsqlProdutoDAO {
             PgUtil.checkError(e);
         } finally {
             if (!dbClient) {
+                client.release();
+            }
+        }
+    }
+
+    async atualizar(produto, pgClient = null) {
+        const client = pgClient ? pgClient : await pool.connect();
+        try {
+            const produtoCadastrado = await this.obterPorId(produto.id);
+            const novaCarencia = typeof (produto.carencia) != 'undefined' ? produto.carencia : produtoCadastrado.carencia;
+            const novaQtdParcelas = typeof (produto.qtdParcelas) != 'undefined' ? produto.qtdParcelas : produtoCadastrado.qtdParcelas;
+            const novoOrgaoID = typeof (produto.orgao.id) != 'undefined' ? produto.orgao.id : produtoCadastrado.orgao.id;
+            const result = await client.query('update produtos set orgao_id=$1, carencia=$2, qtd_parcelas=$3 where id=$4 returning * ',
+                [novoOrgaoID, novaCarencia, novaQtdParcelas, produto.id]);
+            return await this.criarObjetoProduto(result.rows[0]);
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        } finally {
+            if (!pgClient) {
                 client.release();
             }
         }
@@ -95,6 +136,22 @@ class PsqlProdutoDAO {
         } finally {
             if (!dbClient) {
                 client.release;
+            }
+        }
+    }
+
+    async existePorID(id, pgClient = null) {
+        const client = pgClient ? pgClient : await pool.connect();
+        try {
+            const result = await client.query('select id from produtos where id=$1', [id]);
+            return result.rowCount > 0;
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        } finally {
+            if (!pgClient) {
+                client.release();
             }
         }
     }

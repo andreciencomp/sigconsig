@@ -27,6 +27,18 @@ router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     }
 });
 
+router.put('/produtos/atualizar',authService.usuarioAdminFiltro, async (req, res)=>{
+    try{
+        ProdutoValidator.validarAtualizacao(req.body);
+        const fachada = new FachadaNegocio();
+        const produtoAtualizado = await fachada.atualizarProduto(req.body);
+        return res.status(200).send({dados: produtoAtualizado});
+
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 router.delete('/produtos/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
