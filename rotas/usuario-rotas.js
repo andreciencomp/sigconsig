@@ -6,13 +6,13 @@ const ExceptionService = require('../servicos/ExceptionService');
 const Usuario = require('../publico/src/entidades/Usuario');
 const UsuarioNaoAutorizadoException = require('../publico/src/excessoes/UsuarioNaoAutorizadoException');
 const DadosInvalidosException = require('../publico/src/excessoes/DadosInvalidosException');
-const ValidarUsuario = require('../publico/validators/UsuarioValidator');
+const UsuarioValidator = require('../publico/validators/UsuarioValidator');
 
 roteador.post('/usuarios/cadastrar',
-    authService.usuarioAdminFiltro, async (req, res, next) => {
+    authService.usuarioAdminFiltro, async (req, res) => {
         try {
             const usuario = req.body;
-            ValidarUsuario(usuario);
+            UsuarioValidator.validarCadastro(usuario);
             if(usuario.tipo == Usuario.USUARIO_SUPER){
                 throw new DadosInvalidosException("Este tipo de usuário não pode ser cadastrado.");
             }
