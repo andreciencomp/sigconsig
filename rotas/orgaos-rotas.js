@@ -29,6 +29,18 @@ roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     }
 });
 
+roteador.put('/orgaos/atualizar',authService.usuarioAdminFiltro, async (req, res)=>{
+    try{
+        OrgaoValidator.validarAtualizacao(req.body);
+        const fachada = new FachadaNegocio();
+        const orgaoAtualizado = await fachada.atualizarOrgao(req.body);
+        return res.status(201).send({dados: orgaoAtualizado});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();

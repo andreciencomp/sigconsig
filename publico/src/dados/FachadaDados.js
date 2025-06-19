@@ -125,6 +125,11 @@ class FachadaDados {
         return await dao.salvar(orgao);
     }
 
+    async atualizarOrgao(orgao){
+        const dao = await DAOFactory.getOrgaoDAO();
+        return await dao.atualizar(orgao);
+    }
+
     async listarOrgaos() {
         const dao = await DAOFactory.getOrgaoDAO();
         return await dao.listar();

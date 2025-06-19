@@ -1,7 +1,5 @@
 const FachadaDados = require('../dados/FachadaDados');
-const Orgao = require('../entidades/Orgao');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
-const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
 
 class GerenciaOrgaos{
 
@@ -19,6 +17,20 @@ class GerenciaOrgaos{
             throw new ChaveRepetidaException("Já existe um orgão com este nome.","nome");
         }
         return await fachada.salvarOrgao(orgao);
+    }
+
+    async atualizarOrgao(orgao){
+        const fachada = new FachadaDados();
+        const orgaoCadastrado = await fachada.obterOrgaoPorID(orgao.id);
+        const jaExisteSigla = await fachada.existeOrgaoPorSigla(orgao.sigla);
+        const jaExisteNome = await fachada.existeOrgaoPorNome(orgao.nome);
+        if(orgaoCadastrado.sigla != orgao.sigla && jaExisteSigla){
+            throw new ChaveRepetidaException("Já existe um orgão com esta sigla.","sigla");
+        }
+        if(orgaoCadastrado.nome != orgao.nome && jaExisteNome){
+            throw new ChaveRepetidaException("Já existe um orgão com este nome.","nome");
+        }
+        return await fachada.atualizarOrgao(orgao);
     }
 
     async listarOrgaos(){

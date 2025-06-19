@@ -63,6 +63,11 @@ class FachadaNegocio{
         return await gerenciaOrgaos.cadastrarOrgao(orgao);
     }
 
+    async atualizarOrgao(orgao){
+        const gerenciaOrgaos = new GerenciaOrgaos();
+        return await gerenciaOrgaos.atualizarOrgao(orgao);
+    }
+
     async listarOrgaos(){
         const gerenciaOrgaos = new GerenciaOrgaos();
         return await gerenciaOrgaos.listarOrgaos();
