@@ -1,6 +1,12 @@
 const FachadaDados = require('../dados/FachadaDados');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 class GerenciaProdutos{
+
+    async obterProdutoPorID(id){
+        const fachada = new FachadaDados();
+        return await fachada.obterProdutoPorID(id);
+    }
+
     async cadastrar(produto){
         const fachadaDados = new FachadaDados();
         const existeProduto = await fachadaDados.existeProduto(produto);

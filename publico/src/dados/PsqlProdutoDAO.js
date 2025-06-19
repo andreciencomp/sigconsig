@@ -8,25 +8,23 @@ const paraSnakeCase = require('../../../servicos/util');
 class PsqlProdutoDAO {
     static instancia = new PsqlProdutoDAO;
 
-    async obterPorId(id) {
+    async obterPorId(id, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
             let produtoQuery = "select * from produtos where id=$1";
-            let resProduto = await pool.query(produtoQuery, [id]);
-            if (resProduto.rowCount == 0) {
+            let result = await client.query(produtoQuery, [id]);
+            if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O produto não existe.");
             }
-            let rowProduto = resProduto.rows[0];
-            let produto = new Produto();
-            produto.id = rowProduto.id;
-            produto.carencia = rowProduto.carencia;
-            produto.qtdParcelas = rowProduto.qtd_parcelas;
-            const orgaoDAO = new PsqlOrgaoDAO();
-            const orgao = await orgaoDAO.obterPorId(rowProduto.orgao_id);
-            produto.orgao = orgao;
-            return produto;
+            return await this.criarObjetoProduto(result.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
+
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
@@ -58,7 +56,7 @@ class PsqlProdutoDAO {
             let result = await pool.query(strQuery, colunas);
             let produtos = [];
             for (let i = 0; i < result.rows.length; i++) {
-                produtos.push(await this.criarObjectoProduto(result.rows[i]));
+                produtos.push(await this.criarObjetoProduto(result.rows[i]));
             }
             return produtos;
 
@@ -72,7 +70,7 @@ class PsqlProdutoDAO {
         try {
             const query = "insert into produtos(orgao_id, carencia, qtd_parcelas) values ($1, $2, $3) returning *";
             const { rows } = await client.query(query, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
-            return await this.criarObjectoProduto(rows[0]);
+            return await this.criarObjetoProduto(rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -90,7 +88,7 @@ class PsqlProdutoDAO {
             if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("Produto não encontrado.");
             }
-            return this.criarObjectoProduto(result.rows[0]);
+            return this.criarObjetoProduto(result.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -111,7 +109,7 @@ class PsqlProdutoDAO {
         }
     }
 
-    async criarObjectoProduto(rowProduto) {
+    async criarObjetoProduto(rowProduto) {
         let produto = new Produto();
         produto.id = rowProduto.id;
         produto.carencia = rowProduto.carencia;
