@@ -19,6 +19,12 @@ class GerenciaClientes{
         return await fachadaDados.salvarCliente(cliente);
     }
 
+    async atualizarCliente(cliente){
+        const fachada = new FachadaDados();
+        cliente.cpf = typeof(cliente.cpf)!= 'undefined' ? CPFService.formatarParaApenasNumeros(cliente.cpf) : cliente.cpf;
+        return await fachada.atualizarCliente(cliente,true);
+    }
+
     async listarClientes(){
         const fachada = new FachadaDados();
         return await fachada.listarClientes();

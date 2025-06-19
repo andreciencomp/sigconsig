@@ -1,7 +1,7 @@
 const DadosInvalidosException = require("../src/excessoes/DadosInvalidosException");
 
 class DataValidator {
-    static validarData(strData, nomeAtributo = null) {
+    static validar(strData, nomeAtributo = null) {
         let dia = 0;
         let mes = 0;
         let ano = 0;

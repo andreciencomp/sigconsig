@@ -245,9 +245,9 @@ class FachadaDados {
         return await dao.listarPorNomeLike(nome);
     }
 
-    async atualizarCliente(cliente) {
+    async atualizarCliente(cliente, canRollback=false) {
         const dao = await DAOFactory.getClienteDao();
-        return await dao.atualizar(cliente);
+        return await dao.atualizar(cliente, canRollback);
     }
 
     async salvarCliente(cliente) {

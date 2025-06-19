@@ -31,8 +31,10 @@ class PsqlEnderecoDAO {
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
                 "values ($1, $2, $3, $4, $5, $6, $7) returning * ";
-            const { rows } = await client.query(query, [endereco.estado.id, endereco.cidade.id,
-            endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
+            const estadoID = endereco.estado ? endereco.estado.id : null;
+            const cidadeID = endereco.cidade ? endereco.cidade.id : null;
+            const { rows } = await client.query(query,
+                 [estadoID, cidadeID, endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
             return await this.criarObjetoEndereco(rows[0]);
 
         } catch (e) {
@@ -82,6 +84,24 @@ class PsqlEnderecoDAO {
 
         } finally {
             if(!dbClient){
+                client.release();
+            }
+        }
+    }
+
+    async deletar(id, pgClient=null){
+        const client = pgClient ? pgClient : await pool.connect();
+        try{
+            const result = await client.query("delete from enderecos where id=$1 returning * ",[id]);
+            if(result.rowCount > 0){
+                return await this.criarObjetoEndereco(result.rows[0]);
+            }
+            throw new EntidadeNaoEncontradaException("Endereço não encontrato");
+
+        }catch(e){
+            PgUtil.checkError(e)
+        }finally{
+            if(!pgClient){
                 client.release();
             }
         }

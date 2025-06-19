@@ -51,6 +51,18 @@ router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req
     }
 });
 
+router.put('/clientes/atualizar',authService.usuarioCadastroFiltro, async (req, res)=>{
+    try{
+        ClienteValidator.validarAtualizacao(req.body);
+        const fachada = new FachadaNegocio();
+        const clienteAtualizado = await fachada.atualizarCliente(req.body);
+        return res.status(200).send({dados: clienteAtualizado});
+
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();

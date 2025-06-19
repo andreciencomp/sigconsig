@@ -12,7 +12,7 @@ class ContratoValidator {
             ProdutoValidator.validarCadastro(contrato.produto);
         }
 
-        DataValidator.validarData(contrato.data);
+        DataValidator.validar(contrato.data);
 
         if (!contrato.cliente) {
             throw new DadosNulosException("O cliente está nulo", "cliente");
