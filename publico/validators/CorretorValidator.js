@@ -24,7 +24,7 @@ class CorretorValidator {
             throw new DadosInvalidosException("O nome está muito curto", "nome");
         }
         if (corretor.dtNascimento) {
-            DataValidator.validarData(corretor.dtNascimento, "dtNascimento");
+            DataValidator.validar(corretor.dtNascimento, "dtNascimento");
         }
         return true;
     }

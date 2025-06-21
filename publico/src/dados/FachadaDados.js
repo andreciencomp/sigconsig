@@ -215,9 +215,14 @@ class FachadaDados {
         return await dao.obterPorId(id);
     }
 
-    async salvarCorretor(corretor) {
+    async salvarCorretor(corretor, canRollback=false) {
         const dao = await DAOFactory.getCorretorDao();
-        return await dao.salvar(corretor);
+        return await dao.salvar(corretor, canRollback);
+    }
+
+    async atualizarCorretor(corretor, canRollback=false){
+        const dao = await DAOFactory.getCorretorDao();
+        return await dao.atualizar(corretor, canRollback);
     }
 
     async listarTodosCorretores() {

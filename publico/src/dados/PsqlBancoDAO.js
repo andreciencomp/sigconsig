@@ -6,48 +6,51 @@ const PgUtil = require('./PgUtil');
 class PsqlBancoDAO {
     static instancia = new PsqlBancoDAO();
 
-    async obterPorId(id) {
+    async obterPorId(id, pgClient = null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
             const query = "select * from bancos where id=$1";
-            const res = await pool.query(query, [id]);
+            const res = await client.query(query, [id]);
             if (res.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O banco não existe.");
             }
-            let banco = new Banco();
-            banco.id = res.rows[0].id;
-            banco.codigo = res.rows[0].codigo;
-            banco.nome = res.rows[0].nome;
-            return banco;
+            return this.criarObjetoBanco(res.rows[0]);
+
         } catch (e) {
             PgUtil.checkError(e);
-        }
-    }
-
-    async existeCodigo(codigo, dbClient=null){
-        const client = dbClient ? dbClient : await pool.connect();
-        try{
-            const result = await client.query("select id from bancos where codigo=$1",[codigo]);
-            return result.rowCount > 0;
-
-        }catch(e){
-            PgUtil.checkError(e);
-        }finally{
-            if(!dbClient){
+            
+        } finally {
+            if (!pgClient) {
                 client.release();
             }
         }
     }
 
-    async existeNome(nome, dbClient=null){
+    async existeCodigo(codigo, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
-        try{
-            const result = await client.query("select id from bancos where nome=$1",[nome]);
+        try {
+            const result = await client.query("select id from bancos where codigo=$1", [codigo]);
             return result.rowCount > 0;
 
-        }catch(e){
+        } catch (e) {
             PgUtil.checkError(e);
-        }finally{
-            if(!dbClient){
+        } finally {
+            if (!dbClient) {
+                client.release();
+            }
+        }
+    }
+
+    async existeNome(nome, dbClient = null) {
+        const client = dbClient ? dbClient : await pool.connect();
+        try {
+            const result = await client.query("select id from bancos where nome=$1", [nome]);
+            return result.rowCount > 0;
+
+        } catch (e) {
+            PgUtil.checkError(e);
+        } finally {
+            if (!dbClient) {
                 client.release();
             }
         }
@@ -86,7 +89,7 @@ class PsqlBancoDAO {
         }
     }
 
-    async listar(dbClient=null) {
+    async listar(dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {
             let strQuery = "select * from bancos";
@@ -102,14 +105,14 @@ class PsqlBancoDAO {
             return lista
         } catch (e) {
             PgUtil.checkError(e);
-        }finally{
-            if(!dbClient){
+        } finally {
+            if (!dbClient) {
                 client.release();
             }
         }
     }
 
-    async atualizar(campos, dbClient=null) {
+    async atualizar(campos, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {
             let banco = await this.obterPorId(campos.id);
@@ -120,17 +123,17 @@ class PsqlBancoDAO {
                 banco.nome = campos.nome
             }
             const result = await client
-                .query('update bancos set codigo=$1, nome=$2 where id=$3 returning *',[banco.codigo, banco.nome, banco.id]);
+                .query('update bancos set codigo=$1, nome=$2 where id=$3 returning *', [banco.codigo, banco.nome, banco.id]);
             return result.rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
 
-        }finally{
-            if(!dbClient){
+        } finally {
+            if (!dbClient) {
                 client.release();
             }
-            
+
         }
     }
 
@@ -146,6 +149,14 @@ class PsqlBancoDAO {
         } catch (e) {
             PgUtil.checkError(e);
         }
+    }
+
+    criarObjetoBanco(row) {
+        let banco = new Banco();
+        banco.id = row.id;
+        banco.codigo = row.codigo;
+        banco.nome = row.nome;
+        return banco;
     }
 }
 

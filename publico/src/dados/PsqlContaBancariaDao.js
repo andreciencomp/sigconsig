@@ -7,10 +7,11 @@ const PsqlBancoDAO = require('./PsqlBancoDAO');
 class PsqlContaBancariaDAO {
     static instancia = new PsqlContaBancariaDAO();
 
-    async obterPorId(id){
+    async obterPorId(id, pgClient=null){
+        const client = pgClient ? pgClient : await pool.connect();
         try{
             const query = "select * from contas_bancarias where id=$1";
-            const res = await pool.query(query,[id]);
+            const res = await client.query(query,[id]);
             if(res.rowCount == 0){
                 throw new EntidadeNaoEncontradaException("A conta bancária não existe.");
             }
@@ -27,17 +28,39 @@ class PsqlContaBancariaDAO {
             return conta;
         }catch(e){
             PgUtil.checkError(e);
+        }finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
-    async salvar(bancoId, numAgencia, numConta, digito) {
+    async salvar(contaBancaria, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const query = "insert into contas_bancarias (num_agencia, num_conta, digito) values($1, $2, $3, $4) returning id";
-            const { rows } = await pool.query(query, [bancoId, numAgencia, numConta, digito]);
-            return rows[0];
+            const query = "insert into contas_bancarias (banco_id, num_agencia, num_conta, digito) values($1, $2, $3, $4) returning * ";
+            const { rows } = await client.query(query, [contaBancaria.banco.id, contaBancaria.numAgencia, contaBancaria.numConta, contaBancaria.digito]);
+            return await this.criarObjetoContaBancaria(rows[0]);
         } catch (e) {
             PgUtil.checkError(e);
+        }finally{
+            if(!pgClient){
+                client.release();
+            }
         }
+    }
+
+    async criarObjetoContaBancaria(row, pgClient=null){
+        const conta = new ContaBancaria();
+        conta.id = row.id;
+        conta.numAgencia = row.num_agencia;
+        conta.numConta = row.num_conta;
+        conta.digito = row.digito;
+        if(row.banco_id){
+            const bancoDAO = new PsqlBancoDAO();
+            conta.banco = await bancoDAO.obterPorId(row.banco_id,pgClient);
+        }
+        return conta;
     }
 }
 

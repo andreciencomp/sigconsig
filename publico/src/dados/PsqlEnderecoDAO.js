@@ -7,8 +7,8 @@ const PsqlEstadoDAO = require('./PsqlEstadoDAO');
 
 class PsqlEnderecoDAO {
 
-    async obterPorId(id) {
-        const client = await pool.connect();
+    async obterPorId(id, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
             let enderecoQuery = "select * from enderecos where id=$1";
             const resEndereco = await client.query(enderecoQuery, [id]);
@@ -21,8 +21,12 @@ class PsqlEnderecoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
+            
         } finally {
-            client.release();
+            if(!pgClient){
+                 client.release();
+            }
+           
         }
     }
 

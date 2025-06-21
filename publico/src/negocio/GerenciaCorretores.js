@@ -6,7 +6,7 @@ class GerenciaCorretores{
     async cadastrar(corretor){
         const fachada = new FachadaDados();
         corretor.cpf = CPFService.formatarParaApenasNumeros(corretor.cpf);
-        return await fachada.salvarCorretor(corretor);
+        return await fachada.salvarCorretor(corretor, true);
     }
 
     async listarTodos(){
