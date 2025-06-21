@@ -81,22 +81,24 @@ class PsqlEstadoDAO {
         }
     }
 
-    async listar() {
-        const strQuery = 'select * from estados';
+    async listar(pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const { rows } = await pool.query(strQuery);
+            const strQuery = 'select * from estados';
+            const { rows } = await client.query(strQuery);
             let lista = [];
-            for (var i = 0; i < rows.length; i++) {
-                let estado = new Estado();
-                estado.id = rows[i].id;
-                estado.sigla = rows[i].sigla;
-                estado.nome = rows[i].nome;
+            for (let i = 0; i < rows.length; i++) {
+                const estado = this.criarObjetoEstado(rows[i]);
                 lista.push(estado);
             }
             return lista;
 
         } catch (e) {
             PgUtil.checkError(e);
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
@@ -109,7 +111,7 @@ class PsqlEstadoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
-            
+
         } finally{
             if(!pgClient){
                 client.release();
