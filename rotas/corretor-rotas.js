@@ -31,6 +31,7 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
 router.put('/corretores/atualizar', authService.usuarioAdminFiltro, async (req, res)=>{
     const fachada = new FachadaNegocio();
     try{
+        CorretorValidator.validarAtualizacao(req.body);
         const corretorAtualizado = await fachada.atualizarCorretor(req.body);
         return res.status(200).send({dados: corretorAtualizado});
         
@@ -55,7 +56,7 @@ router.delete('/corretores/deletar/:id', authService.usuarioAdminFiltro, async (
     try{
         const corretorDeletado = await fachada.deletarCorretor(req.params.id);
         return res.status(200).send({dados: corretorDeletado});
-        
+
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
