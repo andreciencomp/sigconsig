@@ -7,22 +7,23 @@ class PsqlEstadoDAO {
 
     static instancia = new PsqlEstadoDAO();
 
-    async obter(id) {
-        let strQuery = "select * from estados where id=$1";
+    async obter(id, pgClient = null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const result = await pool.query(strQuery, [id]);
+            const strQuery = "select * from estados where id=$1";
+            const result = await client.query(strQuery, [id]);
             if (result.rowCount == 0) {
-                throw new EntidadeNaoEncontradaException("Estado não encontrato.");
+                throw new EntidadeNaoEncontradaException("Estado inexistente.");
             }
-            let estado = new Estado();
-            estado.id = result.rows[0].id;
-            estado.sigla = result.rows[0].sigla;
-            estado.nome = result.rows[0].nome;
-            return estado;
+            return this.criarObjetoEstado(result.rows[0]);
 
         } catch (e) {
-
             PgUtil.checkError(e);
+
+        } finally {
+            if (!pgClient) {
+                client.release();
+            }
         }
     }
 
@@ -44,17 +45,17 @@ class PsqlEstadoDAO {
         }
     }
 
-    async existePorSigla(sigla, dbClient=null){
+    async existePorSigla(sigla, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
-        try{
-            const result = await client.query("select sigla from estados where exists( select sigla from estados where sigla=$1)",[sigla]);
+        try {
+            const result = await client.query("select sigla from estados where exists( select sigla from estados where sigla=$1)", [sigla]);
             return result.rowCount > 0;
-            
-        }catch(e){
+
+        } catch (e) {
             PgUtil.checkError(e);
 
-        }finally{
-            if(!dbClient){
+        } finally {
+            if (!dbClient) {
                 client.release();
             }
         }
@@ -98,6 +99,14 @@ class PsqlEstadoDAO {
         } catch (e) {
             PgUtil.checkError(e);
         }
+    }
+
+    criarObjetoEstado(row) {
+        const estado = new Estado();
+        estado.id = row.id;
+        estado.sigla = row.sigla;
+        estado.nome = row.nome;
+        return estado;
     }
 }
 

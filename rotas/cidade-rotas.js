@@ -32,13 +32,13 @@ router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async (req, re
     try {
         CidadeValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
-        const cidadeID = await fachada.cadastrarCidade(req.body);
-        return res.status(201).send({ dados: cidadeID });
+        const cidadeCadastrada = await fachada.cadastrarCidade(req.body);
+        return res.status(201).send({ dados: cidadeCadastrada });
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
-})
+});
 
 router.put('/cidades/atualizar',authService.usuarioAdminFiltro, async(req, res)=>{
     try{
