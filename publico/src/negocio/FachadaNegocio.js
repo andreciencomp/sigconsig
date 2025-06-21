@@ -128,6 +128,11 @@ class FachadaNegocio{
         return await gerenciaEstadosCidades.deletarCidade(id);
     }
 
+    async obterCorretorPorID(id){
+        const gerenciaCorretores = new GerenciaCorretores();
+        return await gerenciaCorretores.obterCorretorPorID(id);
+    }
+
     async cadastrarCorretor(corretor){
         const gerenciaCorretores = new GerenciaCorretores();
         return await gerenciaCorretores.cadastrar(corretor);

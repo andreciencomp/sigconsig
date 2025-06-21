@@ -5,6 +5,17 @@ const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
 const CorretorValidator = require('../publico/validators/CorretorValidator');
 
+router.get('/corretores/:id',authService.usuarioCadastroFiltro, async (req,res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const corretor = await fachada.obterCorretorPorID(req.params.id);
+        return res.status(200).send({dados: corretor});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
 router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
     const fachada = new FachadaNegocio();
     try {
