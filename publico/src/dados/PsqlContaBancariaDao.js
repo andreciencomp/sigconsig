@@ -82,8 +82,8 @@ class PsqlContaBancariaDAO {
             return await this.criarObjetoContaBancaria(result.rows[0]);
 
         }catch(e){
-            console.log(e);
             PgUtil.checkError(e);
+            
         }finally{
             if(!pgClient){
                 client.release();

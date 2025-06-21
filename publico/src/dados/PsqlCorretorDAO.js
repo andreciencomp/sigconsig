@@ -16,7 +16,7 @@ class PsqlCorretorDAO {
             if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("É nescessário o id do corretor para atualizar.");
             }
-            return await this.criarObjetoCorretor(result.rows[0]);
+            return await this.criarObjetoCorretor(result.rows[0], client);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -53,7 +53,7 @@ class PsqlCorretorDAO {
             if (canRollback) {
                 await client.query('COMMIT');
             }
-            return await this.criarObjetoCorretor(rows[0]);
+            return await this.criarObjetoCorretor(rows[0], client);
 
         } catch (e) {
             if (canRollback) {
@@ -128,7 +128,7 @@ class PsqlCorretorDAO {
             if(canRollback){
                 client.query("COMMIT");
             }
-            return this.criarObjetoCorretor(result.rows[0]);
+            return this.criarObjetoCorretor(result.rows[0], client);
 
 
         }catch(e){
@@ -149,7 +149,7 @@ class PsqlCorretorDAO {
             let corretores = [];
             const { rows } = await client.query("select * from corretores");
             for (let i = 0; i < rows.length; i++) {
-                const corretor = await this.criarObjetoCorretor(rows[i]);
+                const corretor = await this.criarObjetoCorretor(rows[i], client);
                 corretores.push(corretor);
             }
             return corretores;
