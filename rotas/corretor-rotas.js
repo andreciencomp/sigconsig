@@ -50,4 +50,15 @@ router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res)
 
 });
 
+router.delete('/corretores/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
+    const fachada = new FachadaNegocio();
+    try{
+        const corretorDeletado = await fachada.deletarCorretor(req.params.id);
+        return res.status(200).send({dados: corretorDeletado});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
 module.exports = router;

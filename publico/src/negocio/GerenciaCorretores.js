@@ -20,8 +20,13 @@ class GerenciaCorretores{
     }
 
     async listarTodos(){
-        const fachadaDados = new FachadaDados();
-        return await fachadaDados.listarTodosCorretores();
+        const fachada = new FachadaDados();
+        return await fachada.listarTodosCorretores();
+    }
+
+    async deletarCorretor(id){
+        const fachada = new FachadaDados();
+        return await fachada.deletarCorretor(id, true);
     }
     
 }

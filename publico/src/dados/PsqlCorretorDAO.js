@@ -14,7 +14,7 @@ class PsqlCorretorDAO {
             const corretorQuery = "select * from corretores where id=$1";
             const result = await client.query(corretorQuery, [id]);
             if (result.rowCount == 0) {
-                throw new EntidadeNaoEncontradaException("É nescessário o id do corretor para atualizar.");
+                throw new EntidadeNaoEncontradaException("Corretor inexistente.");
             }
             return await this.criarObjetoCorretor(result.rows[0], client);
 
@@ -126,14 +126,14 @@ class PsqlCorretorDAO {
             const result = await client.query(query,[codigo, cpf, nome, dtNascimento, contaBancariaID, enderecoID, ativo, corretor.id]);
                  
             if(canRollback){
-                client.query("COMMIT");
+                await client.query("COMMIT");
             }
             return this.criarObjetoCorretor(result.rows[0], client);
 
 
         }catch(e){
             if(canRollback){
-                client.query("ROLLBACK");
+                await client.query("ROLLBACK");
             }
             PgUtil.checkError(e);
         }finally{
@@ -158,6 +158,44 @@ class PsqlCorretorDAO {
             PgUtil.checkError(e);
 
         } finally{
+            if(!pgClient){
+                client.release();
+            }
+        }
+    }
+
+    async deletar(id, canCommit=false, pgClient=null){
+        const client = pgClient ? pgClient : await pool.connect();
+        try{
+            if(canCommit){
+                await client.query("BEGIN");
+            }
+            const corretor = await this.obterPorId(id, client);
+
+            if(corretor.endereco){
+                const enderecoDAO = new PsqlEnderecoDAO();
+                await enderecoDAO.deletar(corretor.endereco.id);
+            }
+            if(corretor.contaBancaria){
+                const contaBancariaDAO = new PsqlContaBancariaDAO();
+                await contaBancariaDAO.deletar(corretor.contaBancaria.id, client);
+            }
+            const result = await client.query("delete from corretores where id=$1 returning * ",[id]);
+            if(result.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Corretor inexistente.");
+            }
+            if(canCommit){
+                await client.query("COMMIT");
+            }
+            return await this.criarObjetoCorretor(result.rows[0], client);
+            
+        }catch(e){
+            if(canCommit){
+                await client.query("ROLLBACK");
+            }
+            PgUtil.checkError(e);
+
+        }finally{
             if(!pgClient){
                 client.release();
             }

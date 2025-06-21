@@ -230,6 +230,11 @@ class FachadaDados {
         return await dao.listarTodos();
     }
 
+    async deletarCorretor(id, canCommit){
+        const dao = await DAOFactory.getCorretorDao();
+        return await dao.deletar(id, canCommit);
+    }
+
     async obterClientePorId(id) {
         const dao = await DAOFactory.getClienteDao();
         return await dao.obterPorId(id);

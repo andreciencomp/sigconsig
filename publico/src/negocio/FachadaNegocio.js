@@ -148,6 +148,11 @@ class FachadaNegocio{
         return await gerenciaCorretores.listarTodos();
     }
 
+    async deletarCorretor(id){
+        const gerenciaCorretores = new GerenciaCorretores();
+        return await gerenciaCorretores.deletarCorretor(id);
+    }
+
     async obterClientePorId(id){
         const gerenciaClientes = new GerenciaClientes();
         return await gerenciaClientes.obterPorId(id);
