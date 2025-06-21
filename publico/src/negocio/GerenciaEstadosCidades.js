@@ -16,6 +16,21 @@ class GerenciaEstadosCidades{
         return await fachadaDados.salvarEstado(estado);
     }
 
+    async atualizarEstado(estado){
+        const fachada = new FachadaDados();
+        const jaExistente = await fachada.existeEstadoPorSigla(estado.sigla);
+        const estadoSalvo = await fachada.obterEstadoPorId(estado.id);
+        if(estado.sigla != estadoSalvo.sigla && jaExistente){
+            throw new ChaveRepetidaException("Este estado já está cadastrado.");
+        }
+        if(typeof(estado.sigla) != 'undefined'){
+            estado.sigla = estado.sigla ? estado.sigla.toUpperCase() : null;
+        }
+        
+        return await fachada.atualizarEstado(estado);
+
+    }
+
     async listarEstados(){
         const fachada = new FachadaDados();
         return await fachada.listarEstados();

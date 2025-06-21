@@ -1,5 +1,4 @@
 const express = require('express');
-const fachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
 const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
@@ -34,10 +33,22 @@ estadoRouter.get('/estados',async function(req, res){
 estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         EstadoValidator.validarCadastro(req.body);
+        console.log(req.body);
         const fachada = new FachadaNegocio();
         const estadoCadastrado = await fachada.cadastrarEstado(req.body);
         return res.status(201).send({dados:estadoCadastrado});
 
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
+estadoRouter.put('/estados/atualizar', authService.usuarioAdminFiltro, async (req, res)=>{
+    try{
+        EstadoValidator.validarAtualizacao(req.body);
+        const fachada = new FachadaNegocio();
+        const estadoAtualizado = await fachada.atualizarEstado(req.body);
+        return res.status(200).send({dados: estadoAtualizado});
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }

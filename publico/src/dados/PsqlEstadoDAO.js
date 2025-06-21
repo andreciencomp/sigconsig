@@ -81,6 +81,25 @@ class PsqlEstadoDAO {
         }
     }
 
+    async atualizar(estado, pgClient=null){
+        const client = pgClient ? pgClient : await pool.connect();
+        try{
+            const estadoSalvo = await this.obter(estado.id);
+            const sigla = typeof(estado.sigla) != 'undefined' ? estado.sigla : estadoSalvo.sigla;
+            const nome = typeof(estado.nome) != 'undefined' ? estado.nome : estadoSalvo.nome;
+            const result = await client.query("update estados set sigla=$1, nome=$2 where id=$3 returning * ",[sigla, nome, estado.id]);
+            return this.criarObjetoEstado(result.rows[0]);
+
+        }catch(e){
+            PgUtil.checkError(e);
+
+        }finally{
+            if(!pgClient){
+                client.release();
+            }
+        }
+    }
+
     async listar(pgClient=null) {
         const client = pgClient ? pgClient : await pool.connect();
         try {
