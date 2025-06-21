@@ -17,29 +17,19 @@ class PsqlCorretorDAO {
         const client = pgClient ? pgClient : await pool.connect();
         try {
             const corretorQuery = "select * from corretores where id=$1";
-            const resCorretor = await client.query(corretorQuery, [id]);
-            if (resCorretor.rowCount == 0) {
+            const result = await client.query(corretorQuery, [id]);
+            if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O corretor não existe");
             }
-            let corretor = new Corretor();
-            corretor.id = resCorretor.rows[0].id;
-            corretor.codigo = resCorretor.rows[0].codigo;
-            corretor.cpf = resCorretor.rows[0].cpf;
-            corretor.nome = resCorretor.rows[0].nome;
-            corretor.dtNascimento = resCorretor.rows[0].dt_nascimento;
-            corretor.ativo = resCorretor.rows[0].ativo;
-            if (resCorretor.rows[0].endereco_id) {
-                const enderecoDAO = new PsqlEnderecoDAO();
-                let endereco = await enderecoDAO.obterPorId(resCorretor.rows[0].endereco_id);
-                corretor.endereco = endereco;
-            }
-            if (resCorretor.rows[0].conta_bancaria_id) {
-                let daoContaBancaria = new PsqlContaBancariaDAO();
-                corretor.contaBancaria = await daoContaBancaria.obterPorId(resCorretor.rows[0].conta_bancaria_id);
-            }
-            return corretor;
+            return await this.criarObjetoCorretor(result.rows[0]);
+
         } catch (e) {
             PgUtil.checkError(e);
+
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
