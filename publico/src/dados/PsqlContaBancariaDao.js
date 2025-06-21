@@ -11,23 +11,15 @@ class PsqlContaBancariaDAO {
         const client = pgClient ? pgClient : await pool.connect();
         try{
             const query = "select * from contas_bancarias where id=$1";
-            const res = await client.query(query,[id]);
-            if(res.rowCount == 0){
+            const result = await client.query(query,[id]);
+            if(result.rowCount == 0){
                 throw new EntidadeNaoEncontradaException("A conta bancária não existe.");
             }
-            let conta = new ContaBancaria();
-            conta.id = res.rows[0].id;
-            conta.numAgencia = res.rows[0].num_agencia;
-            conta.numConta = res.rows[0].num_conta;
-            conta.digito = res.rows[0].digito;
-            if(res.rows[0].banco_id){
-                let daoBanco = new PsqlBancoDAO();
-                let banco = await daoBanco.obterPorId(res.rows[0].banco_id);
-                conta.banco = banco;
-            }
-            return conta;
+            return await this.criarObjetoContaBancaria(result.rows[0]);
+
         }catch(e){
             PgUtil.checkError(e);
+            
         }finally{
             if(!pgClient){
                 client.release();

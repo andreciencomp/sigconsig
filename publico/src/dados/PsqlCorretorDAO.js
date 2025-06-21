@@ -1,11 +1,6 @@
 const { pool } = require('../../../servicos/database_service')
 const PgUtil = require('../dados/PgUtil');
 const Corretor = require('../entidades/Corretor');
-const Endereco = require('../entidades/Endereco');
-const ContaBancaria = require('../entidades/ContaBancaria');
-const Banco = require('../entidades/Banco');
-const Estado = require('../entidades/Estado');
-const Cidade = require('../entidades/Cidade');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
 const PsqlContaBancariaDAO = require('./PsqlContaBancariaDao');
@@ -83,7 +78,7 @@ class PsqlCorretorDAO {
                 corretores.push(corretor);
             }
             return corretores;
-            
+
         } catch (e) {
             PgUtil.checkError(e);
 
