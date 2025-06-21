@@ -27,21 +27,23 @@ class PsqlEstadoDAO {
         }
     }
 
-    async obterPorSigla(sigla) {
-
-        const strQuery = "select * from estados where sigla = $1";
+    async obterPorSigla(sigla, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const { rows } = await pool.query(strQuery, [sigla]);
-            if (await rows[0]) {
-                const estado = new Estado();
-                estado.id = rows[0].id;
-                estado.sigla = rows[0].sigla;
-                estado.nome = rows[0].nome;
-                return estado;
+            const strQuery = "select * from estados where sigla = $1";
+            const result = await client.query(strQuery, [sigla]);
+            if(result.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Estado inexistente.");
             }
-            return null;
+            return this.criarObjetoEstado(result.rows[0]);
+
         } catch (e) {
             PgUtil.checkError(e);
+
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
@@ -61,14 +63,21 @@ class PsqlEstadoDAO {
         }
     }
 
-    async salvar(estado) {
-        const query = "insert into estados(sigla, nome) values($1, $2) returning id";
+    async salvar(estado, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const result = await pool.query(query, [estado.sigla, estado.nome]);
-            return result.rows[0].id;
+            const query = "insert into estados(sigla, nome) values($1, $2) returning * ";
+            const result = await client.query(query, [estado.sigla, estado.nome]);
+            return  this.criarObjetoEstado(result.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
+
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
+            
         }
     }
 

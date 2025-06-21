@@ -35,8 +35,8 @@ estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (r
     try{
         EstadoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
-        const estadoID = await fachada.cadastrarEstado(req.body);
-        return res.status(201).send({dados:estadoID});
+        const estadoCadastrado = await fachada.cadastrarEstado(req.body);
+        return res.status(201).send({dados:estadoCadastrado});
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
