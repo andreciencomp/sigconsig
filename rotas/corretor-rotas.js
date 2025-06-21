@@ -10,7 +10,7 @@ router.get('/corretores/:id',authService.usuarioCadastroFiltro, async (req,res)=
         const fachada = new FachadaNegocio();
         const corretor = await fachada.obterCorretorPorID(req.params.id);
         return res.status(200).send({dados: corretor});
-        
+
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
@@ -27,6 +27,17 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
         ExceptionService.enviarExcessao(e, res);
     }
 });
+
+router.put('/corretores/atualizar', authService.usuarioAdminFiltro, async (req, res)=>{
+    const fachada = new FachadaNegocio();
+    try{
+        const corretorAtualizado = await fachada.atualizarCorretor(req.body);
+        return res.status(200).send({dados: corretorAtualizado});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
 
 router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res) => {
     const fachada = new FachadaNegocio();

@@ -14,6 +14,11 @@ class GerenciaCorretores{
         return await fachada.salvarCorretor(corretor, true);
     }
 
+    async atualizarCorretor(corretor){
+        const fachada = new FachadaDados();
+        return await fachada.atualizarCorretor(corretor,true);
+    }
+
     async listarTodos(){
         const fachadaDados = new FachadaDados();
         return await fachadaDados.listarTodosCorretores();
