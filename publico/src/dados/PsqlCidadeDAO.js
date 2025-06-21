@@ -127,12 +127,22 @@ class PsqlCidadeDao {
         }
     }
 
-    async deletar(id){
+    async deletar(id, pgClient=null){
+        const client = pgClient ? pgClient : await pool.connect();
         try{
-            await pool.query("delete from cidades where id=$1",[id]);
-            return id;
+            const result = await client.query("delete from cidades where id=$1 returning * ",[id]);
+            if(result.rowCount == 0){
+                throw new EntidadeNaoEncontradaException("Cidade inexistente.");
+            }
+            return await this.criarObjetoCidade(result.rows[0]);
+
         }catch(e){
             PgUtil.checkError(e);
+
+        }finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 

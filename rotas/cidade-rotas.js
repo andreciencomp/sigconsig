@@ -61,11 +61,11 @@ router.get('/cidades/estado/:estado_id', async function (req, res) {
     }
 });
 
-router.get('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
+router.delete('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
-        await fachada.deletarCidade(req.params.id);
-        return res.status(200).send({ dados: req.params.id });
+        const cidadeDeletada = await fachada.deletarCidade(req.params.id);
+        return res.status(200).send({ dados: cidadeDeletada });
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
