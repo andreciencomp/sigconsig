@@ -46,8 +46,8 @@ estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (r
 estadoRouter.delete('/estados/deletar/:id',authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
-        const id = await fachada.deletarEstado(req.params.id);
-        return res.status(200).send({dados:id});
+        const estadoDeletado = await fachada.deletarEstado(req.params.id);
+        return res.status(200).send({dados:estadoDeletado});
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);

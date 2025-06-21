@@ -100,13 +100,20 @@ class PsqlEstadoDAO {
         }
     }
 
-    async deletar(id) {
+    async deletar(id, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
-            const deleteQuery = "delete from estados where id=$1";
-            const result = await pool.query(deleteQuery, [id]);
-            return id;
+            const strQuery = "delete from estados where id=$1 returning * ";
+            const result = await client.query(strQuery, [id]);
+            return this.criarObjetoEstado(result.rows[0]);
+
         } catch (e) {
             PgUtil.checkError(e);
+            
+        } finally{
+            if(!pgClient){
+                client.release();
+            }
         }
     }
 
