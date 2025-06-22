@@ -10,20 +10,6 @@ const PsqlBancoDAO = require('./PsqlBancoDAO');
 
 class PsqlContratoDAO {
 
-    #construtor() {
-        this.instancia = new PsqlContratoDAO();
-    }
-
-    static getInstancia() {
-        if (!this.instancia) {
-            this.instancia = new PsqlContratoDAO();
-            return this.instancia;
-        }
-        else {
-            return this.instancia;
-        }
-    }
-
     async obterPorId(id) {
         const client = await pool.connect();
         try {

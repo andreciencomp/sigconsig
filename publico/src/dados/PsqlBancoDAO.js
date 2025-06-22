@@ -4,7 +4,6 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 const PgUtil = require('./PgUtil');
 
 class PsqlBancoDAO {
-    static instancia = new PsqlBancoDAO();
 
     async obterPorId(id, pgClient = null) {
         const client = pgClient ? pgClient : await pool.connect();

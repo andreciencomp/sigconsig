@@ -5,8 +5,6 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 
 class PsqlEstadoDAO {
 
-    static instancia = new PsqlEstadoDAO();
-
     async obter(id, pgClient = null) {
         const client = pgClient ? pgClient : await pool.connect();
         try {

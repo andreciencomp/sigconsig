@@ -30,8 +30,8 @@ class PsqlEnderecoDAO {
         }
     }
 
-    async salvar(endereco, dbClient=null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async salvar(endereco, pgClient=null) {
+        const client = pgClient ? pgClient : await pool.connect();
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
                 "values ($1, $2, $3, $4, $5, $6, $7) returning * ";
@@ -44,7 +44,7 @@ class PsqlEnderecoDAO {
         } catch (e) {
             PgUtil.checkError(e);
         } finally {
-            if(!dbClient){
+            if(!pgClient){
                  client.release();
             }  
         }

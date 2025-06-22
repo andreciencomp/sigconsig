@@ -6,7 +6,6 @@ const PsqlOrgaoDAO = require('./PsqlOrgaoDAO');
 const paraSnakeCase = require('../../../servicos/util');
 
 class PsqlProdutoDAO {
-    static instancia = new PsqlProdutoDAO;
 
     async obterPorId(id, pgClient = null) {
         const client = pgClient ? pgClient : await pool.connect();

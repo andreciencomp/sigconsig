@@ -6,7 +6,6 @@ const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
 const PsqlContaBancariaDAO = require('./PsqlContaBancariaDao');
 
 class PsqlCorretorDAO {
-    static instancia = new PsqlCorretorDAO();
 
     async obterPorId(id, pgClient = null) {
         const client = pgClient ? pgClient : await pool.connect();

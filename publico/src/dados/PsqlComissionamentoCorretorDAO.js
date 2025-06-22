@@ -9,20 +9,6 @@ const PsqlProdutoDAO = require('./PsqlProdutoDAO');
 
 class PsqlComissionamentoCorretorDAO{
 
-    #construtor(){
-        this.instancia = new PsqlComissionamentoCorretorDAO();
-    }
-
-    static getInstancia(){
-        if(!this.instancia){
-            this.instancia = new PsqlComissionamentoCorretorDAO();
-            return this.instancia;
-        }
-        else{
-            return this.instancia;
-        }
-    }
-
     async obter(corretorId, bancoId, produtoId){
         try{
             const query = "select * from comissionamentos_corretor where corretor_id=$1 and banco_id=$2 and produto_id=$3";

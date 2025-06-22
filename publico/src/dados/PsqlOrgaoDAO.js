@@ -6,8 +6,6 @@ const Produto = require('../entidades/Produto');
 
 class PsqlOrgaoDAO {
 
-    static instancia = new PsqlOrgaoDAO();
-
     async obterPorId(id, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {

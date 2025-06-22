@@ -17,191 +17,168 @@ const PsqlComissionamentoCorretorDAO = require('./PsqlComissionamentoCorretorDAO
 const PsqlContratoDAO = require('./PsqlContratoDAO');
 const PsqlPagamentoComissaoDAO = require('./PsqlPagamentoComissaoDAO');
 const PsqlUsuarioDAO = require('./PsqlUsuarioDAO');
+const DAOFactoryException = require('../excessoes/DAOFactoryException');
 
 class DAOFactory{
 
-    constructor(){
-        
-    }
-    static  async getUsuarioDAO(){
+    static getUsuarioDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                const dao =  new PsqlUsuarioDAO();
-                return   dao;
-
+                return  new PsqlUsuarioDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static  async getUsuarioSuperDAO(){
+    static getUsuarioSuperDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao =  PsqlUsuarioSuperDAO.instancia;
-                return   dao;
-
+                return new  PsqlUsuarioSuperDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static  async getUsuarioAdmDAO(){
+    static getUsuarioAdmDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao =  await PsqlUsuarioAdmDAO.instancia;
-                return   dao;
-
+                return new PsqlUsuarioAdmDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getUsuarioFinanceiroDAO(){
+    static getUsuarioFinanceiroDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlUsuarioFinanceiroDAO.instancia;
-                return dao;
+                return new PsqlUsuarioFinanceiroDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getUsuarioCadastroDAO(){
+    static getUsuarioCadastroDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlUsuarioCadastroDAO.instancia;
-                return dao;
+                return new PsqlUsuarioCadastroDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getBancoDAO(){
+    static getBancoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = new PsqlBancoDAO();
-                return dao;
+                return new PsqlBancoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getOrgaoDAO(){
+    static getOrgaoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlOrgaoDAO.instancia;
-                return dao;
+                return new PsqlOrgaoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getEstadoDAO(){
+    static getEstadoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlEstadoDAO.instancia;
-                return dao;
+                return new PsqlEstadoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getCidadeDao(){
+    static getCidadeDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlCidadeDao.instancia;
-                return dao;
+                return new PsqlCidadeDao();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getEnderecoDao(){
+    static getEnderecoDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = new PsqlEnderecoDAO();
-                return dao;
+                return new PsqlEnderecoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
-    static async getContaBancariaDao(){
+    static getContaBancariaDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlContaBancariaDAO.instancia;
-                return dao;
+                return new PsqlContaBancariaDAO();
             default:
-                return null;
-        }
-    }
-
-    static async getCorretorDao(){
-        switch(conf.BANCO_ATUAL){
-            case conf.banco.PSQL:
-                let dao = await PsqlCorretorDAO.instancia;
-                return dao;
-            default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getClienteDao(){
+    static getCorretorDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = new PsqlClienteDao();
-                return dao;
+                return new PsqlCorretorDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getProdutoDAO(){
+    static getClienteDao(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlProdutoDAO.instancia;
-                return dao;
+                return new PsqlClienteDao();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getComissionamentoPromotoraDAO(){
+    static getProdutoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlComissionamentoPromotoraDAO.instancia;
-                return dao;
+                return new PsqlProdutoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getComissionamentoCorretorDAO(){
+    static getComissionamentoPromotoraDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlComissionamentoCorretorDAO.getInstancia();
-                return dao;
+                return new PsqlComissionamentoPromotoraDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
-    static async getContratoDAO(){
+    static getComissionamentoCorretorDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = await PsqlContratoDAO.getInstancia();
-                return dao;
+                return new PsqlComissionamentoCorretorDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
+        }
+    }
+
+    static getContratoDAO(){
+        switch(conf.BANCO_ATUAL){
+            case conf.banco.PSQL:
+                return new PsqlContratoDAO();
+            default:
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 
     static getPagamentoComissaoDAO(){
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
-                let dao = new PsqlPagamentoComissaoDAO();
-                return dao;
+                return new PsqlPagamentoComissaoDAO();
             default:
-                return null;
+                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }
     }
 }

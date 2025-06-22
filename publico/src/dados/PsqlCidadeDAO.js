@@ -6,8 +6,6 @@ const PsqlEstadoDAO = require('./PsqlEstadoDAO');
 
 class PsqlCidadeDao {
 
-    static instancia = new PsqlCidadeDao();
-
     async obterPorId(id, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {

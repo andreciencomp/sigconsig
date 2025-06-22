@@ -5,8 +5,6 @@ const PgUtil = require('./PgUtil');
 
 class PsqlUsuarioAdmDAO {
 
-    static instancia = new PsqlUsuarioAdmDAO();
-
     async obter(id) {
         const client = await pool.connect();
         try {

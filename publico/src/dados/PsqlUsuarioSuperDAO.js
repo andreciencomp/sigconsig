@@ -5,8 +5,6 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 
 class PsqlUsuarioSuperDAO {
 
-    static instancia = new PsqlUsuarioSuperDAO();
-
     async obter(id) {
         const client = await pool.connect();
         try {

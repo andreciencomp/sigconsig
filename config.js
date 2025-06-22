@@ -11,8 +11,8 @@ module.exports.POOL_CONFIG = {
     database: process.env.DATABASE_NOME,
     user: process.env.DATABASE_USUARIO,
     password: process.env.DATABASE_SENHA,
-    host: 'localhost',
-    port: '5432',
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
 };
 
 

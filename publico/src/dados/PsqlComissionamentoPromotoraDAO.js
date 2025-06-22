@@ -8,8 +8,6 @@ const PgUtil = require('./PgUtil');
 
 class PsqlComissionamentoPromotoraDAO{
 
-    static instancia = new PsqlComissionamentoPromotoraDAO();
-
     async obterPorId(id){
         try{
             const queryComissionamento = "select * from comissionamentos_promotora where id=$1";
