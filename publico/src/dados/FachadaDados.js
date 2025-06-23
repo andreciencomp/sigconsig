@@ -315,7 +315,7 @@ class FachadaDados {
     }
 
     async obterComissionamentoPromotoraPorId(id) {
-        let dao = await DAOFactory.getComissionamentoPromotoraDAO();
+        const dao = DAOFactory.getComissionamentoPromotoraDAO();
         return await dao.obterPorId(id);
     }
 

@@ -263,7 +263,11 @@ class FachadaNegocio{
 
     async deletarContrato(id){
         const gerenciaContratos = new GerenciaContratos();
-        return gerenciaContratos.deletarContrato(id);
+        return await gerenciaContratos.deletarContrato(id);
+    }
+    async obterComissionamentoPromotoraPorId(id){
+        const gerenciaComissionamento = new GerenciaComissionamento();
+        return await gerenciaComissionamento.obterComissionamentoPromotoraPorId(id);
     }
 
     async gerarPagamentoDeComissao(contratoID, usuarioID){

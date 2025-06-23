@@ -9,6 +9,12 @@ const DadosNulosException = require("../excessoes/DadosNulosException");
 const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 
 class GerenciaComissionamento {
+
+    async obterComissionamentoPromotoraPorId(id){
+        const fachada = new FachadaDados();
+        return fachada.obterComissionamentoPromotoraPorId(id);
+    }
+
     async cadastrarComissionamentoPromotora(comissionamento) {
         const fachada = new FachadaDados();
         if (await fachada.existeComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id)) {

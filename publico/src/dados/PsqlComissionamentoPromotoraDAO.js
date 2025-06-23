@@ -134,12 +134,15 @@ class PsqlComissionamentoPromotoraDAO {
         banco.id = row.banco_id;
         banco.codigo = row.codigo;
         banco.nome = row.banco_nome;
+        comissionamento.banco = banco;
         let produto = new Produto();
         produto.id = row.produto_id;
         produto.qtdParcelas = row.qtd_parcelas;
         produto.carencia = row.carencia;
-        produto.orgao = row.orgao_id;
-        comissionamento.banco = banco;
+        produto.orgao = new Orgao();
+        produto.orgao.id = row.orgao_id;
+        produto.orgao.sigla = row.orgao_sigla;
+        produto.orgao.nome = row.orgao_nome;
         comissionamento.produto = produto;
         return comissionamento;
     }

@@ -6,6 +6,17 @@ const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 const ComissionamentoPromotoraValidator = require('../publico/validators/ComissionamentoPromotoraValidator');
 const ComissionamentoCorretorValidator = require('../publico/validators/ComissionamentoCorretorValidator');
 
+router.get('/comissionamentos/promotora/:id', authService.usuarioFinanceiroFiltro, async(req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const comissionamento = await fachada.obterComissionamentoPromotoraPorId(req.params.id);
+        return res.status(200).send(comissionamento);
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+});
+
 router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFiltro, async(req, res)=>{
     try{
         ComissionamentoPromotoraValidator.validarCadastro(req.body);
