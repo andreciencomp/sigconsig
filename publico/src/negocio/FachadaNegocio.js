@@ -256,9 +256,9 @@ class FachadaNegocio{
         return await gerenciaContratos.liberarVarios(arrayContratoId, dtLiberacao);
     }
 
-    async listarContratosPorCriterios(criterios){
+    async listarContratos(criterios=null){
         const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.listarPorCriterios(criterios);
+        return await gerenciaContratos.listarContratos(criterios);
     }
 
     async deletarContrato(id){

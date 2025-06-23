@@ -87,61 +87,9 @@ class GerenciaContratos {
 
     }
 
-    async listarPorCriterios(criterios) {
-
+    async listarContratos(criterios=null) {
         const fachada = new FachadaDados();
-        return await fachada.listarContratosPorCriterios(this.filtrarCriterios(criterios));
-    }
-
-    filtrarCriterios(criterios) {
-        if (!criterios) {
-            return {}
-        }
-        let novosCriterios = {};
-        if (criterios['numero']) {
-            novosCriterios.numero = criterios.numero;
-        }
-        if (criterios['cpf']) {
-            novosCriterios.cpf = criterios.cpf;
-        }
-        if (criterios.clienteId) {
-            novosCriterios.clienteId = criterios.clienteId;
-        }
-        if (criterios['clienteNome']) {
-            novosCriterios.clienteNome = criterios.clienteNome;
-        }
-        if (criterios['dataInicial']) {
-            novosCriterios.dataInicial = criterios.dataInicial;
-        }
-        if (criterios['dataFinal']) {
-            novosCriterios.dataFinal = criterios.dataFinal;
-        }
-        if (criterios['dtLiberacaoInicial']) {
-            novosCriterios.dtLiberacaoInicial = criterios.dtLiberacaoInicial;
-        }
-        if (criterios['dtLiberacaoFinal']) {
-            novosCriterios.dtLiberacaoFinal = criterios.dtLiberacaoFinal;
-        }
-        if (criterios['valorMinimo']) {
-            novosCriterios.valorMinimo = criterios.valorMinimo;
-        }
-        if (criterios['valorMaximo']) {
-            novosCriterios.valorMaximo = criterios.valorMaximo;
-        }
-        if (criterios['corretorId']) {
-            novosCriterios.corretorId = criterios.corretorId;
-        }
-        if (criterios['bancoId']) {
-            novosCriterios.bancoId = criterios.bancoId;
-        }
-        if (criterios['orgaoId']) {
-            novosCriterios.orgaoId = criterios.orgaoId;
-        }
-        if (criterios['status']) {
-            novosCriterios.status = criterios.status;
-        }
-
-        return novosCriterios;
+        return await fachada.listarContratos(criterios);
     }
 
     async deletarContrato(id) {

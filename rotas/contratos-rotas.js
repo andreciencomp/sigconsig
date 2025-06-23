@@ -61,10 +61,10 @@ router.post('/contratos/liberar', authService.usuarioFinanceiroFiltro, async (re
 
 });
 
-router.post('/contratos', authService.usuarioCadastroFiltro, async (req, res) => {
+router.get('/contratos', authService.usuarioCadastroFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
-        const contratos = await fachada.listarContratosPorCriterios(req.body);
+        const contratos = await fachada.listarContratos(req.query);
         return res.status(200).send({ dados: contratos });
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);

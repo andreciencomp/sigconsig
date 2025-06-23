@@ -62,7 +62,7 @@ class PsqlContratoDAO {
         }
     }
 
-    async salvar(contrato, rollback = false, dbClient=null) {
+    async salvar(contrato, rollback = false, dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
@@ -107,10 +107,10 @@ class PsqlContratoDAO {
             }
             PgUtil.checkError(e);
         } finally {
-            if(!dbClient){
+            if (!dbClient) {
                 client.release();
             }
-            
+
         }
     }
 
@@ -130,7 +130,7 @@ class PsqlContratoDAO {
                     clienteId = clienteAtualizado.id;
                 }
                 else if (contrato.cliente) {
-                    const novoCliente = await clienteDAO.salvar(contrato.cliente,false, client);
+                    const novoCliente = await clienteDAO.salvar(contrato.cliente, false, client);
                     clienteId = novoCliente.id;
                 }
             } else {
@@ -175,37 +175,35 @@ class PsqlContratoDAO {
             }
             PgUtil.checkError(e);
         } finally {
-            if(!dbClient){
+            if (!dbClient) {
                 client.release();
             }
-            
+
         }
     }
     //"corretorId", "cpf", "clienteNome", "bancoId", "orgaoId", "dataInicial","dataFinal",
     //  "dtLiberacaoInicial","dtLiberacaoFinal", "status", "valorMinimo", "valorMaximo", "clienteId"
-    async listarPorCriterios(criterios) {
-
-        let atributos = Object.keys(criterios);
-        let numCriterios = atributos.length;
-        let valoresQuery = [];
-        let contratos = [];
-
-        let query = "select contratos.id,numero,produto_id, data, cliente_id, " +
-            "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id , comissao_paga from contratos ";
-
-        if (criterios["orgaoId"]) {
-            query += " left join produtos on produtos.id = contratos.produto_id "
-        }
-
-        if (criterios["cpf"] || criterios["clienteNome"]) {
-            query += " left join clientes on clientes.id = contratos.cliente_id "
-        }
-
-        if (numCriterios > 0) {
-            query += " where ";
-        }
-        const client = await pool.connect();
+    async listar(criterios = null) {
         try {
+            let atributos = Object.keys(criterios);
+            let numCriterios = criterios && this.temCriteriosValidos(criterios) ? atributos.length : 0;
+            let valoresQuery = [];
+            let contratos = [];
+
+            let query = "select contratos.id,numero,produto_id, data, cliente_id, " +
+                "dt_liberacao,contratos.endereco_id,status, corretor_id, valor, banco_id , comissao_paga from contratos ";
+
+            if (criterios["orgaoId"]) {
+                query += " left join produtos on produtos.id = contratos.produto_id "
+            }
+
+            if (criterios["cpf"] || criterios["clienteNome"]) {
+                query += " left join clientes on clientes.id = contratos.cliente_id "
+            }
+
+            if (numCriterios > 0) {
+                query += " where ";
+            }
             for (let i = 0; i < numCriterios; i++) {
                 switch (atributos[i]) {
                     case 'corretorId':
@@ -317,8 +315,9 @@ class PsqlContratoDAO {
                         break;
                 }
             }
-            const res = await client.query(query, valoresQuery);
+            const res = await pool.query(query, valoresQuery);
             const rowsContrato = res.rows;
+
             for (let i = 0; i < rowsContrato.length; i++) {
                 let contrato = await this.criarObjetoContrato(rowsContrato[i]);
                 contratos.push(contrato);
@@ -327,8 +326,6 @@ class PsqlContratoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
-        } finally {
-            client.release();
         }
     }
 
@@ -393,6 +390,13 @@ class PsqlContratoDAO {
             contrato.corretor = corretor;
         }
         return contrato;
+    }
+
+    temCriteriosValidos(criterios) {
+        return criterios.corretorId || criterios.numero || criterios.cpf || criterios.clienteNome ||
+            criterios.bancoId || criterios.orgaoId || criterios.dataInicial || criterios.dataFinal ||
+            criterios.dtLiberacaoInicial || criterios.dtLiberacaoFinal || criterios.status || criterios.valorMinimo ||
+            criterios.valorMaximo || criterios.clienteId || criterios.comissaoPaga;
     }
 }
 

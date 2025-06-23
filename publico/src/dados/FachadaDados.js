@@ -369,9 +369,9 @@ class FachadaDados {
         return await dao.atualizar(contrato, rollback);
     }
 
-    async listarContratosPorCriterios(criterios) {
-        const dao = await DAOFactory.getContratoDAO();
-        return await dao.listarPorCriterios(criterios);
+    async listarContratos(criterios=null) {
+        const dao = DAOFactory.getContratoDAO();
+        return await dao.listar(criterios);
     }
 
     async deletarContrato(id) {
