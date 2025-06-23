@@ -309,8 +309,8 @@ class FachadaDados {
         return await dao.existe(produto);
     }
 
-    async listarProdutosPorCriterios(criterios) {
-        const dao = await DAOFactory.getProdutoDAO();
+    async listarProdutos(criterios=null) {
+        const dao = DAOFactory.getProdutoDAO();
         return await dao.listarProdutosPorCriterios(criterios);
     }
 

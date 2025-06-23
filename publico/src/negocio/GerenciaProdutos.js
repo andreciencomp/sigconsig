@@ -29,6 +29,11 @@ class GerenciaProdutos{
         return await fachada.atualizarProduto(produto);
     }
 
+    async listarProdutos(criterios=null){
+        const fachada = new FachadaDados();
+        return await fachada.listarProdutos(criterios);
+    }
+
     async deletar(id){
         const fachada = new FachadaDados();
         return await fachada.deletarProduto(id);

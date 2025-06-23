@@ -3,15 +3,13 @@ const { pool } = require('../../../servicos/database_service');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const Produto = require('../entidades/Produto');
 const PsqlOrgaoDAO = require('./PsqlOrgaoDAO');
-const paraSnakeCase = require('../../../servicos/util');
 
 class PsqlProdutoDAO {
 
-    async obterPorId(id, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async obterPorId(id) {
         try {
             const produtoQuery = "select * from produtos where id=$1";
-            const result = await client.query(produtoQuery, [id]);
+            const result = await pool.query(produtoQuery, [id]);
             if (result.rowCount == 0) {
                 throw new EntidadeNaoEncontradaException("O produto não existe.");
             }
@@ -19,11 +17,6 @@ class PsqlProdutoDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
@@ -47,33 +40,42 @@ class PsqlProdutoDAO {
         }
     }
 
-    async listarProdutosPorCriterios(criterios) {
+    async listarProdutosPorCriterios(criterios = null) {
         try {
-            let colunas = [];
-            let indice = 1;
             let strQuery = "select * from produtos where ";
-            if (criterios.orgao) {
-                strQuery += " orgao_id=$" + indice;
-                colunas.push(criterios.orgao.id);
-                indice++;
-                if (criterios.carencia || criterios.qtdParcelas) {
-                    strQuery += " and ";
+            const colunas = [];
+            let criterioEncontrato = false;
+            if (criterios) {
+                let indice = 1;
+                if (criterios.orgaoId) {
+                    criterioEncontrato = true
+                    strQuery += " orgao_id=$" + indice;
+                    colunas.push(criterios.orgaoId);
+                    indice++;
+                    if (criterios.carencia || criterios.qtdParcelas) {
+                        strQuery += " and ";
+                    }
                 }
-            }
-            if (criterios.carencia) {
-                strQuery += " carencia=$" + indice;
-                colunas.push(criterios.carencia);
-                indice++;
+                if (criterios.carencia) {
+                    criterioEncontrato = true;
+                    strQuery += " carencia=$" + indice;
+                    colunas.push(criterios.carencia);
+                    indice++;
+                    if (criterios.qtdParcelas) {
+                        strQuery += " and ";
+                    }
+                }
                 if (criterios.qtdParcelas) {
-                    strQuery += " and ";
-                }
+                    criterioEncontrato = true;
+                    strQuery += " qtd_parcelas=$" + indice;
+                    colunas.push(criterios.qtdParcelas);
+                }  
             }
-            if (criterios.qtdParcelas) {
-                strQuery += " qtd_parcelas=$" + indice;
-                colunas.push(criterios.qtdParcelas);
+            if(!criterioEncontrato){
+                strQuery += " true"
             }
-            let result = await pool.query(strQuery, colunas);
-            let produtos = [];
+            const result = await pool.query(strQuery, colunas);
+            const produtos = [];
             for (let i = 0; i < result.rows.length; i++) {
                 produtos.push(await this.criarObjetoProduto(result.rows[i]));
             }

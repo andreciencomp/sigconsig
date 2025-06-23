@@ -39,6 +39,18 @@ router.put('/produtos/atualizar',authService.usuarioAdminFiltro, async (req, res
     }
 });
 
+router.get('/produtos',authService.usuarioCadastroFiltro, async (req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const produtos = await fachada.listarProdutos(req.query);
+        return res.status(200).send({dados: produtos});
+        
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+    return res.status(200).send("OK");
+})
+
 router.delete('/produtos/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
