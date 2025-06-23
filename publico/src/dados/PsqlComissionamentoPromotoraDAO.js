@@ -116,17 +116,13 @@ class PsqlComissionamentoPromotoraDAO {
     }
 
     async existe(produtoId, bancoId) {
-        const client = await pool.connect();
         try {
             const query = "select id from comissionamentos_promotora where produto_id=$1 and banco_id=$2";
-            const res = await client.query(query, [produtoId, bancoId]);
+            const res = await pool.query(query, [produtoId, bancoId]);
             return res.rowCount > 0;
 
         } catch (e) {
-            console.log(e);
             PgUtil.checkError(e);
-        } finally {
-            client.release();
         }
     }
 
