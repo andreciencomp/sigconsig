@@ -16,4 +16,15 @@ router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFilt
     }
 })
 
+router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+    try{
+        const fachadaNegocio = new FachadaNegocio();
+        const pagamentos = await fachadaNegocio.listarTodosPagamentos();
+        return res.status(200).send({pagamentos});
+
+    }catch(e){  
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
 module.exports = router;

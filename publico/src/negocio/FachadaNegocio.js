@@ -1,4 +1,3 @@
-
 const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
 const GerenciaBancos = require('./GerenciaBancos');
 const GerenciaOrgaos = require('./GerenciaOrgaos');
@@ -8,6 +7,7 @@ const GerenciaClientes = require('./GerenciaClientes');
 const GerenciaProdutos = require('./GerenciaProdutos');
 const GerenciaComissionamento = require('./GerenciaComissionamento');
 const GerenciaContratos = require('./GerenciaContratos');
+const GerenciaPagamentos = require('./GerenciaPagamentos');
 
 class FachadaNegocio{
 
@@ -274,6 +274,12 @@ class FachadaNegocio{
         const gerenciaPagamentoComissao = new GerenciaComissionamento();
         return await gerenciaPagamentoComissao.gerarPagamentoComissao(contratoID, usuarioID);
     }
+    
+    async listarTodosPagamentos(){
+        const gerenciaPagamentos = new GerenciaPagamentos();
+        return await gerenciaPagamentos.listarTodosPagamentos();
+    }
+
 }
 
 module.exports = FachadaNegocio;

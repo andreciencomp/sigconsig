@@ -388,6 +388,11 @@ class FachadaDados {
         const dao = await DAOFactory.getPagamentoComissaoDAO();
         return await dao.existePorContratoId(contratoId);
     }
+
+    async listarTodosPagamentos(){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.listarTodos();
+    }
 }
 
 module.exports = FachadaDados;

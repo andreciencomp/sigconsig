@@ -6,7 +6,7 @@ const PgUtil = require("./PgUtil");
 class PsqlPagamentoComissaoDAO{
 
     constructor(){
-        this.queryObter = "select pagamentos_comissoes.id, contratos.id as contrato_id, contratos.valor, valor_corretor, valor_promotora, " +
+        this.querySelect = "select pagamentos_comissoes.id, contratos.id as contrato_id, contratos.valor, valor_corretor, valor_promotora, " +
                 "percentagem_promotora, percentagem_corretor, efetivado, cadastrado_por, efetivado_por, dt_pagamento, corretores.id as corretor_id " +
                 "from pagamentos_comissoes left join contratos on contratos.id = pagamentos_comissoes.contrato_id " + 
                 "left join corretores on corretores.id = pagamentos_comissoes.corretor_id where ";
@@ -14,7 +14,7 @@ class PsqlPagamentoComissaoDAO{
 
     async obterPorId(id){
         try{
-            const strQuery = this.queryObter + " pagamentos_comissoes.id=$1";
+            const strQuery = this.querySelect + " pagamentos_comissoes.id=$1";
             const result = await pool.query(strQuery,[id]);
             if(result.rowCount == 0 ){
                 throw new EntidadeNaoEncontradaException("Pagamento inexistente.");
@@ -59,6 +59,22 @@ class PsqlPagamentoComissaoDAO{
             PgUtil.checkError(e);
         }finally{
             cli.release();
+        }
+    }
+
+    async listarTodos(){
+        try{
+            const pagamentos = [];
+            const strQuery = this.querySelect + "true order by efetivado desc";
+            const result = await pool.query(strQuery)
+            for(let i=0; i < result.rowCount; i++){
+                const pagamento = this.criarObjeto(result.rows[i]);
+                pagamentos.push(pagamento);
+            }
+            return pagamentos;
+
+        }catch(e){
+            PgUtil.checkError(e);
         }
     }
 
