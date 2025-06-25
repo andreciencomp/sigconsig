@@ -3,26 +3,26 @@ const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontra
 const PgUtil = require('./PgUtil');
 const Cidade = require('../entidades/Cidade');
 const PsqlEstadoDAO = require('./PsqlEstadoDAO');
+const Estado = require('../entidades/Estado');
 
 class PsqlCidadeDao {
+    constructor() {
+        this.queryObter = 'select cidades.id, cidades.nome as cidade_nome,  estados.id as estado_id, estados.sigla, '
+            + ' estados.nome as estado_nome from cidades left join estados on cidades.estado_id = estados.id  where ';
+    }
 
-    async obterPorId(id, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async obterPorId(id) {
         try {
-            const strQuery = 'select * from cidades where id = $1';
-            const { rows } = await client.query(strQuery, [id]);
+            const strQuery = this.queryObter + "cidades.id=$1";
+            const { rows } = await pool.query(strQuery, [id]);
             if (rows.length == 0) {
                 throw new EntidadeNaoEncontradaException("Cidade não encontrada.");
             }
-            return await this.criarObjetoCidade(rows[0]);
+            return this.criarObjetoCidade(rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
         }
     }
 
@@ -96,11 +96,11 @@ class PsqlCidadeDao {
     async listarTodos(dbClient = null) {
         const client = dbClient ? dbClient : await pool.connect();
         try {
-            const strQuery = 'select * from cidades';
+            const strQuery =  'select * from cidades';
             let cidades = [];
             const { rows } = await client.query(strQuery);
             for (var i = 0; i < rows.length; i++) {
-                const cidade = await this.criarObjetoCidade(rows[i]);
+                const cidade = this.criarObjetoCidade(rows[i]);
                 cidades.push(cidade);
             }
             return cidades;
@@ -156,12 +156,14 @@ class PsqlCidadeDao {
         }
     }
 
-    async criarObjetoCidade(row, pgClient = null) {
+    criarObjetoCidade(row) {
         const cidade = new Cidade();
         cidade.id = row.id;
-        cidade.nome = row.nome;
-        const estadoDAO = new PsqlEstadoDAO();
-        const estado = await estadoDAO.obter(row.estado_id, pgClient);
+        cidade.nome = row.cidade_nome;
+        const estado = new Estado();
+        estado.id = row.estado_id;
+        estado.sigla = row.sigla;
+        estado.nome = row.estado_nome;
         cidade.estado = estado;
         return cidade;
     }

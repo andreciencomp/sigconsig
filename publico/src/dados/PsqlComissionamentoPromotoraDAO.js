@@ -48,7 +48,7 @@ class PsqlComissionamentoPromotoraDAO {
         try {
             const query = "insert into comissionamentos_promotora( produto_id, percentagem, banco_id) values($1, $2, $3) returning id";
             let { rows } = await pool.query(query, [comissionamento.produto.id, comissionamento.percentagem, comissionamento.banco.id]);
-            return rows[0].id;
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
