@@ -2,6 +2,7 @@ const FachadaDados = require("../dados/FachadaDados");
 const ComissionamentoCorretor = require("../entidades/ComissionamentoCorretor");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
+const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
 const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 
 class GerenciaPagamentos {
@@ -45,6 +46,15 @@ class GerenciaPagamentos {
         pagamentoComissao.efetivado = false;
         const retorno = await fachada.salvarPagamentoComissao(pagamentoComissao);
         return retorno;
+    }
+
+    async deletarPagamentoComissao(id){
+        const fachada = new FachadaDados();
+        const pagamentoComissao = await fachada.obterPagamentoComissaoPorId(id);
+        if(pagamentoComissao.efetivado){
+            throw new OperacaoNaoPermitidaException("Este pagamento já foi efetivado.");
+        }
+        return await fachada.deletarPagamentoComissao(id);
     }
 
     validarContratoParaPagamento(contrato) {

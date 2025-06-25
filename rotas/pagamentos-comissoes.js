@@ -27,4 +27,15 @@ router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (
     }
 })
 
+router.delete('/pagamentos_comissoes/deletar/:id', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const id = await fachada.deletarPagamentoComissao(req.params.id);
+        return res.status(200).send(id);
+
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
 module.exports = router;

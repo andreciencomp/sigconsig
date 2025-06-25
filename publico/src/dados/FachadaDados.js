@@ -1,4 +1,3 @@
-const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const DAOFactory = require('./DAOFactory');
 
 class FachadaDados {
@@ -379,10 +378,16 @@ class FachadaDados {
         return await dao.deletar(id);
     }
 
+    async obterPagamentoComissaoPorId(id){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.obterPorId(id);
+    }
+
     async salvarPagamentoComissao(pagamentoComissao) {
         const dao = DAOFactory.getPagamentoComissaoDAO();
         return await dao.salvar(pagamentoComissao);
     }
+   
 
     async existePagamentoPorContratoId(contratoId) {
         const dao = DAOFactory.getPagamentoComissaoDAO();
@@ -392,6 +397,11 @@ class FachadaDados {
     async listarTodosPagamentos(){
         const dao = DAOFactory.getPagamentoComissaoDAO();
         return await dao.listarTodos();
+    }
+
+    async deletarPagamentoComissao(id){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.deletar(id);
     }
 }
 

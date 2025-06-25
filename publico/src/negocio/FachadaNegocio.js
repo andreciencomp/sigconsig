@@ -280,6 +280,11 @@ class FachadaNegocio{
         return await gerenciaPagamentos.listarTodosPagamentos();
     }
 
+    async deletarPagamentoComissao(id){
+        const gerenciaPagamentos = new GerenciaPagamentos();
+        return await gerenciaPagamentos.deletarPagamentoComissao(id);
+    }
+
 }
 
 module.exports = FachadaNegocio;
