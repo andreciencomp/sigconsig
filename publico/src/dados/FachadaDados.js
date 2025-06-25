@@ -321,7 +321,7 @@ class FachadaDados {
 
     async obterComissionamentoPromotora(produtoId, bancoId) {
         let dao = await DAOFactory.getComissionamentoPromotoraDAO();
-        return await dao.obterPorProdutoEBanco(produtoId, bancoId);
+        return await dao.obterPorBancoIdEProdutoId(produtoId, bancoId);
     }
 
     async salvarComissionamentoPromotora(comissionamento) {
