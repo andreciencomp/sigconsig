@@ -271,8 +271,8 @@ class FachadaNegocio{
     }
 
     async gerarPagamentoDeComissao(contratoID, usuarioID){
-        const gerenciaPagamentoComissao = new GerenciaComissionamento();
-        return await gerenciaPagamentoComissao.gerarPagamentoComissao(contratoID, usuarioID);
+        const gerenciaPagamento = new GerenciaPagamentos();
+        return await gerenciaPagamento.gerarPagamentoComissao(contratoID, usuarioID);
     }
     
     async listarTodosPagamentos(){
