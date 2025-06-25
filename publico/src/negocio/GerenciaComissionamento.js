@@ -1,12 +1,8 @@
 const FachadaDados = require("../dados/FachadaDados");
-const ComissionamentoCorretor = require("../entidades/ComissionamentoCorretor");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const ChaveRepetidaException = require("../excessoes/ChaveRepetidaException");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
 const ComissionamentoInvalidoException = require("../excessoes/ComissionamentoInvalidoException");
-const ContratoNaoLiberadoException = require("../excessoes/ContratoNaoLiberadoException");
-const DadosNulosException = require("../excessoes/DadosNulosException");
-const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 
 class GerenciaComissionamento {
 

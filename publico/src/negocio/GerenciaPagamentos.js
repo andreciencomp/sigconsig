@@ -13,7 +13,8 @@ class GerenciaPagamentos {
     async gerarPagamentoComissao(contratoID, usuarioID) {
         const fachada = new FachadaDados();
         let contrato = await fachada.obterContratoPorId(contratoID);
-        if (contrato.comissaoPaga) {
+
+        if (await fachada.existePagamentoPorContratoId(contratoID)) {
             throw new PagamentoJaCadastradoException("O pagamento de comissão para este contrato já foi gerado.");
         }
         this.validarContratoParaPagamento(contrato);
@@ -43,7 +44,6 @@ class GerenciaPagamentos {
         pagamentoComissao.valorPromotora = ((comissionamentoPromotora.percentagem - comissionamentoCorretor.percentagem) / 100) * contrato.valor;
         pagamentoComissao.efetivado = false;
         const retorno = await fachada.salvarPagamentoComissao(pagamentoComissao);
-        await fachada.atualizarContrato({ id: contrato.id, comissaoPaga: true });
         return retorno;
     }
 
