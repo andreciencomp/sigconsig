@@ -10,7 +10,7 @@ router.get('/clientes/:id', authService.usuarioCadastroFiltro, async (req, res)=
     try{
         const fachada = new FachadaNegocio();
         const cliente = await fachada.obterClientePorId(req.params.id);
-        return res.status(200).send({dados:cliente});
+        return res.status(200).send(cliente);
     }catch(e){  
         ExceptionService.enviarExcessao(e,res);
     }
@@ -20,7 +20,7 @@ router.get('/clientes/cpf/:cpf', authService.usuarioCadastroFiltro, async (req, 
     try{
         const fachada = new FachadaNegocio();
         const cliente = await fachada.obterClientePorCpf(req.params.cpf);
-        return res.status(200).send({dados:cliente});
+        return res.status(200).send(cliente);
 
     }catch(e){  
         ExceptionService.enviarExcessao(e,res);
@@ -31,7 +31,7 @@ router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async 
     try{
         const fachada = new FachadaNegocio();
         const clientes = await fachada.listarClientesPorNomeLike(req.params.nomeLike);
-        return res.status(200).send({dados:clientes});
+        return res.status(200).send(clientes);
 
     }catch(e){  
         ExceptionService.enviarExcessao(e,res);
@@ -40,10 +40,10 @@ router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async 
 
 router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req, res)=>{
     try{
-        let fachada = new FachadaNegocio();
+        const fachada = new FachadaNegocio();
         ClienteValidator.validarCadastro(req.body);
-        const retorno = await fachada.cadastrarCliente(req.body);
-        return res.status(201).send({dados:{id:retorno}});
+        const clienteId = await fachada.cadastrarCliente(req.body);
+        return res.status(201).send(clienteId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e,res);
@@ -55,8 +55,8 @@ router.put('/clientes/atualizar',authService.usuarioCadastroFiltro, async (req, 
     try{
         ClienteValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
-        const clienteAtualizado = await fachada.atualizarCliente(req.body);
-        return res.status(200).send({dados: clienteAtualizado});
+        const clienteId = await fachada.atualizarCliente(req.body);
+        return res.status(200).send(clienteId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -66,8 +66,8 @@ router.put('/clientes/atualizar',authService.usuarioCadastroFiltro, async (req, 
 router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
-        const id = await fachada.deletarCliente(req.params.id);
-        return res.status(200).send({dados: {id: id}});
+        const clienteId = await fachada.deletarCliente(req.params.id);
+        return res.status(200).send(clienteId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e,res)
@@ -78,7 +78,7 @@ router.get('/clientes',authService.usuarioAutenticadoFiltro, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const clientes = await fachada.listarClientes();
-        return res.status(200).send({dados: clientes});
+        return res.status(200).send(clientes);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
