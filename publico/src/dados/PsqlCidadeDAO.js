@@ -15,7 +15,7 @@ class PsqlCidadeDao {
             const strQuery = this.querySelect + "cidades.id=$1";
             const { rows } = await pool.query(strQuery, [id]);
             if (rows.length == 0) {
-                throw new EntidadeNaoEncontradaException("Cidade não encontrada.");
+                throw new EntidadeNaoEncontradaException("Cidade inexistente.");
             }
             return this.criarObjetoCidade(rows[0]);
 
@@ -28,7 +28,7 @@ class PsqlCidadeDao {
     async existePorID(id) {
         try {
             const result = await pool.query("select id from cidades where id=$1", [id]);
-            return result.rowCount > 0;
+            return result.rows.length > 0;
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -40,7 +40,7 @@ class PsqlCidadeDao {
         try {
             const strQuery = "select * from cidades where nome=$1 and estado_id=$2";
             const result = await pool.query(strQuery, [nome, estadoID]);
-            return (result.rowCount > 0);
+            return (result.rows.length > 0);
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -109,7 +109,7 @@ class PsqlCidadeDao {
     async deletar(id) {
         try {
             const result = await pool.query("delete from cidades where id=$1 returning id ", [id]);
-            if (result.rowCount == 0) {
+            if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Cidade inexistente.");
             }
             return await result.rows[0];
