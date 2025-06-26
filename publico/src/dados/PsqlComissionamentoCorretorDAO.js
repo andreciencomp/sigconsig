@@ -13,7 +13,7 @@ class PsqlComissionamentoCorretorDAO{
         try{
             const query = "select * from comissionamentos_corretor where corretor_id=$1 and banco_id=$2 and produto_id=$3";
             const resComissionamento = await pool.query(query, [corretorId, bancoId, produtoId]);
-            if(resComissionamento.rowCount == 0){
+            if(resComissionamento.rows.length === 0){
                 throw new EntidadeNaoEncontradaException("Comissionamento do corretor não encontrado.");
             }
             const rowComissionamento = resComissionamento.rows[0];
@@ -32,8 +32,8 @@ class PsqlComissionamentoCorretorDAO{
             const bancoDAO = new PsqlBancoDAO();
             const banco = await bancoDAO.obterPorId(bancoId);
             comissionamento.banco = banco;
-
             return comissionamento;
+
         }catch(e){
             PgUtil.checkError(e);
         }
@@ -54,8 +54,8 @@ class PsqlComissionamentoCorretorDAO{
     async existe(comissionamento){
         try{
             const query = "select id from comissionamentos_corretor where produto_id=$1 and banco_id=$2 and corretor_id=$3";
-            const res = await pool.query(query,[comissionamento.produto.id, comissionamento.banco.id, comissionamento.corretor.id]);
-            return res.rowCount > 0;
+            const result = await pool.query(query,[comissionamento.produto.id, comissionamento.banco.id, comissionamento.corretor.id]);
+            return result.rows.length > 0;
             
         }catch(e){
             PgUtil.checkError(e);

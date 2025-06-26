@@ -21,7 +21,7 @@ class PsqlComissionamentoPromotoraDAO {
         try {
             const strQuery = this.strObterQuery + " comissionamentos_promotora.id=$1";
             const result = await pool.query(strQuery, [id]);
-            if (result.rowCount == 0) {
+            if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Comissionamento da promotora não encontrado.");
             }
             return this.criarObjeto(result.rows[0]);
@@ -35,7 +35,7 @@ class PsqlComissionamentoPromotoraDAO {
         try {
             const strQuery =  this.strObterQuery + "comissionamentos_promotora.banco_id=$1 and comissionamentos_promotora.produto_id=$2";
             const result = await pool.query(strQuery, [bancoId, produtoId]);
-            if (result.rowCount == 0) {
+            if (result.rows.length == 0) {
                 throw new EntidadeNaoEncontradaException("Comissionamento da promotora não encontrato");
             }
             return this.criarObjeto(result.rows[0]);
@@ -59,7 +59,7 @@ class PsqlComissionamentoPromotoraDAO {
         try {
             const query = "select id from comissionamentos_promotora where produto_id=$1 and banco_id=$2";
             const res = await pool.query(query, [produtoId, bancoId]);
-            return res.rowCount > 0;
+            return res.rows.length > 0;
 
         } catch (e) {
             PgUtil.checkError(e);

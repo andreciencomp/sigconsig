@@ -22,7 +22,7 @@ router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFilt
         ComissionamentoPromotoraValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
         const idComissionamento = await fachada.cadastrarComissionamentoPromotora(req.body);
-        return res.status(201).send({dados:idComissionamento});
+        return res.status(201).send(idComissionamento);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -34,7 +34,8 @@ router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
         ComissionamentoCorretorValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
         const idComissionamento = await fachada.cadastrarComissionamentoCorretor(req.body);
-        return res.status(201).send({dados:idComissionamento});
+        return res.status(201).send(idComissionamento);
+        
     }catch(e){
         ExceptionService.enviarExcessao(e,res);
     }
