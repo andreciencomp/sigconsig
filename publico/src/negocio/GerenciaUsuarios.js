@@ -4,7 +4,6 @@ const UsuarioFinanceiro = require('../entidades/UsuarioFinanceiro');
 const UsuarioCadastro = require('../entidades/UsuarioCadastro');
 const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
 const SenhaIncorretaException = require('../excessoes/SenhaIncorretaException');
-const UsuarioInexistenteException = require('../excessoes/UsuarioInexistenteException');
 const bcrypt = require('bcryptjs');
 
 class GerenciaUsuarios {

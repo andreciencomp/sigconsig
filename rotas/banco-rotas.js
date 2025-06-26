@@ -9,7 +9,7 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     try{
         const fachada = new FachadaNegocio();
         const banco = await fachada.obterBancoPorCodigo(req.params.codigo);
-        return res.status(200).send({dados:banco});
+        return res.status(200).send(banco);
         
     }catch(e){
         ExceptionService.enviarExcessao(e,res);
@@ -20,8 +20,8 @@ roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(re
         try{
             BancoValidator.validarCadastro(req.body);
             const fachada = new FachadaNegocio();
-            const resultado = await fachada.cadastrarBanco(req.body);
-            res.status(201).send({dados:resultado});
+            const bancoId = await fachada.cadastrarBanco(req.body);
+            res.status(201).send(bancoId);
             
         }catch(e){
             ExceptionService.enviarExcessao(e,res);
@@ -30,11 +30,11 @@ roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(re
 
 roteadorBancos.put('/bancos/atualizar',authService.usuarioAdminFiltro,async(req, res)=>{
     try{
-        let atributos = req.body;
-        BancoValidator.validarAtualizacao (atributos);
+        BancoValidator.validarAtualizacao (req.body);
         const fachada = new FachadaNegocio();
-        const resultado = await fachada.atualizarBanco(atributos);
-        return res.status(200).send({dados: resultado});
+        const bancoId = await fachada.atualizarBanco(req.body);
+        return res.status(200).send(bancoId);
+
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
@@ -44,7 +44,7 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
     try{
         const fachada = new FachadaNegocio();
         const bancos = await fachada.listarBancos();
-        return res.status(200).send({dados: bancos});
+        return res.status(200).send(bancos);
 
     }catch(e){
         ExceptionService.enviarExcessao(e,res);
@@ -55,8 +55,8 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
 roteadorBancos.delete('/bancos/deletar/:id', authService.usuarioAdminFiltro, async(req, res)=>{
     try{
         const fachadaNegocio = new FachadaNegocio();
-        const idDeletado  = await fachadaNegocio.deletarBanco(req.params.id);
-        return res.status(200).send({id: idDeletado});
+        const bancoId  = await fachadaNegocio.deletarBanco(req.params.id);
+        return res.status(200).send(bancoId);
         
     }catch(e){
         ExceptionService.enviarExcessao(e,res);

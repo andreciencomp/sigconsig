@@ -57,9 +57,9 @@ class PsqlBancoDAO {
 
     async salvar(banco) {
         try {
-            const strQuery = "insert into bancos(codigo,nome) values ($1, $2) returning * ";
+            const strQuery = "insert into bancos(codigo,nome) values ($1, $2) returning id ";
             const { rows } = await pool.query(strQuery, [banco.codigo, banco.nome]);
-            return this.criarObjetoBanco(rows[0]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
@@ -93,7 +93,7 @@ class PsqlBancoDAO {
                 banco.nome = atributos.nome
             }
             const result = await pool
-                .query('update bancos set codigo=$1, nome=$2 where id=$3 returning *', [banco.codigo, banco.nome, banco.id]);
+                .query('update bancos set codigo=$1, nome=$2 where id=$3 returning id', [banco.codigo, banco.nome, banco.id]);
             return result.rows[0];
 
         } catch (e) {
@@ -104,11 +104,11 @@ class PsqlBancoDAO {
 
     async deletar(id) {
         try {
-            const result = await pool.query("delete from bancos where id=$1 returning * ", [id]);
+            const result = await pool.query("delete from bancos where id=$1 returning id ", [id]);
             if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Banco inexistente.");
             }
-            return this.criarObjetoBanco(result.rows[0]);
+            return result.rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
