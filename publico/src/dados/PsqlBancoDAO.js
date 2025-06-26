@@ -5,65 +5,10 @@ const PgUtil = require('./PgUtil');
 
 class PsqlBancoDAO {
 
-    async obterPorId(id, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async obterPorId(id) {
         try {
-            const query = "select * from bancos where id=$1";
-            const res = await client.query(query, [id]);
-            if (res.rowCount == 0) {
-                throw new EntidadeNaoEncontradaException("Banco inexistente.");
-            }
-            return this.criarObjetoBanco(res.rows[0]);
-
-        } catch (e) {
-            PgUtil.checkError(e);
-
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
-        }
-    }
-
-    async existeCodigo(codigo, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
-        try {
-            const result = await client.query("select id from bancos where codigo=$1", [codigo]);
-            return result.rowCount > 0;
-
-        } catch (e) {
-            PgUtil.checkError(e);
-
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
-        }
-    }
-
-    async existeNome(nome, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
-        try {
-            const result = await client.query("select id from bancos where nome=$1", [nome]);
-            return result.rowCount > 0;
-
-        } catch (e) {
-            PgUtil.checkError(e);
-
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
-        }
-    }
-
-
-
-    async obterPorCodigo(codigo, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
-        try {
-            const result = await client.query('select * from bancos where codigo = $1', [codigo]);
-            if (result.rowCount == 0) {
+            const result = await pool.query("select * from bancos where id=$1", [id]);
+            if (result.rows.length == 0) {
                 throw new EntidadeNaoEncontradaException("Banco inexistente.");
             }
             return this.criarObjetoBanco(result.rows[0]);
@@ -71,81 +16,96 @@ class PsqlBancoDAO {
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
-    async salvar(banco, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async existeCodigo(codigo) {
+        try {
+            const result = await pool.query("select id from bancos where codigo=$1", [codigo]);
+            return result.rows.length > 0;
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        }
+    }
+
+    async existeNome(nome) {
+        try {
+            const result = await pool.query("select id from bancos where nome=$1", [nome]);
+            return result.rows.length > 0;
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        }
+    }
+
+    async obterPorCodigo(codigo) {
+        try {
+            const result = await pool.query('select * from bancos where codigo = $1', [codigo]);
+            if (result.rows.length === 0) {
+                throw new EntidadeNaoEncontradaException("Banco inexistente.");
+            }
+            return this.criarObjetoBanco(result.rows[0]);
+
+        } catch (e) {
+            PgUtil.checkError(e);
+
+        }
+    }
+
+    async salvar(banco) {
         try {
             const strQuery = "insert into bancos(codigo,nome) values ($1, $2) returning * ";
-            const { rows } = await client.query(strQuery, [banco.codigo, banco.nome]);
+            const { rows } = await pool.query(strQuery, [banco.codigo, banco.nome]);
             return this.criarObjetoBanco(rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
-    async listar(dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async listar() {
         try {
-            const strQuery = "select * from bancos";
-            const { rows } = await client.query(strQuery);
-            const lista = [];
-            for (var i = 0; i < rows.length; i++) {
+            const { rows } = await pool.query("select * from bancos");
+            const bancos = [];
+            for (let i = 0; i < rows.length; i++) {
                 const banco = this.criarObjetoBanco(rows[i]);
-                lista.push(banco);
+                bancos.push(banco);
             }
-            return lista
+            return bancos;
+
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
         }
     }
 
-    async atualizar(campos, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async atualizar(atributos) {
         try {
-            let banco = await this.obterPorId(campos.id);
-            if (typeof (campos.codigo) != 'undefined') {
-                banco.codigo = campos.codigo;
+            let banco = await this.obterPorId(atributos.id);
+            if (typeof (atributos.codigo) != 'undefined') {
+                banco.codigo = atributos.codigo;
             }
-            if (typeof (campos.nome) != 'undefined') {
-                banco.nome = campos.nome
+            if (typeof (atributos.nome) != 'undefined') {
+                banco.nome = atributos.nome
             }
-            const result = await client
+            const result = await pool
                 .query('update bancos set codigo=$1, nome=$2 where id=$3 returning *', [banco.codigo, banco.nome, banco.id]);
             return result.rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
-
         }
     }
 
-    async deletar(id, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async deletar(id) {
         try {
-            const result = await client.query("delete from bancos where id=$1 returning * ", [id]);
-            if (result.rowCount == 0) {
+            const result = await pool.query("delete from bancos where id=$1 returning * ", [id]);
+            if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Banco inexistente.");
             }
             return this.criarObjetoBanco(result.rows[0]);
@@ -153,10 +113,6 @@ class PsqlBancoDAO {
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
