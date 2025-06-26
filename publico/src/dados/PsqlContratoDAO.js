@@ -110,18 +110,14 @@ class PsqlContratoDAO {
             if (!dbClient) {
                 client.release();
             }
-
         }
     }
 
-    async atualizar(contrato, rollback = false, dbClient) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async atualizar(contrato) {
+        const client = await pool.connect();
         try {
-            if (rollback) {
-                client.query('BEGIN');
-            }
+            client.query('BEGIN');
             let contratoSalvo = await this.obterPorId(contrato.id);
-
             let clienteId = null;
             if (typeof (contrato.cliente) != 'undefined') {
                 const clienteDAO = new PsqlClienteDao();
@@ -142,7 +138,7 @@ class PsqlContratoDAO {
                 let enderecoDAO = new PsqlEnderecoDAO();
                 if (contrato.endereco && contratoSalvo.endereco) {
                     contrato.endereco.id = contratoSalvo.endereco.id;
-                    const enderecoAtualizado = await enderecoDAO.atualizar(contrato.endereco);
+                    await enderecoDAO.atualizar(contrato.endereco);
                     enderecoId = contratoAtualizado.id;
                 } else if (!contrato.endereco && contratoSalvo.endereco) {
                     await this.deletar(contratoSalvo.endereco.id);
@@ -164,20 +160,16 @@ class PsqlContratoDAO {
             const result = await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
                 data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, comissaoPaga, contrato.id]);
 
-            if (rollback) {
-                client.query('COMMIT');
-            }
+            client.query('COMMIT');
+
             return await this.criarObjetoContrato(result.rows[0]);
 
         } catch (e) {
-            if (rollback) {
-                client.query('ROLLBACK');
-            }
+            client.query('ROLLBACK');
             PgUtil.checkError(e);
+
         } finally {
-            if (!dbClient) {
-                client.release();
-            }
+            client.release();
 
         }
     }

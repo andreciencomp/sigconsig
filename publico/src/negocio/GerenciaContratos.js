@@ -49,7 +49,7 @@ class GerenciaContratos {
             contrato.produto = novoProduto;
         }
 
-        return await fachada.atualizarContrato(contrato, true);
+        return await fachada.atualizarContrato(contrato);
     }
 
     async liberar(contratoId, dtLiberacao) {

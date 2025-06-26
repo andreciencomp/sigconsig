@@ -363,9 +363,9 @@ class FachadaDados {
         return await dao.salvar(contrato,true,null);
     }
 
-    async atualizarContrato(contrato, rollback) {
+    async atualizarContrato(contrato) {
         let dao = DAOFactory.getContratoDAO();
-        return await dao.atualizar(contrato, rollback);
+        return await dao.atualizar(contrato);
     }
 
     async listarContratos(criterios=null) {

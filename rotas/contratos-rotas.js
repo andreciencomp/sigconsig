@@ -28,7 +28,7 @@ router.post('/contratos/cadastrar', authService.usuarioCadastroFiltro, async (re
 
 });
 
-router.post('/contratos/atualizar',authService.usuarioCadastroFiltro,async (req,res)=>{
+router.put('/contratos/atualizar',authService.usuarioCadastroFiltro,async (req,res)=>{
     try {
         let fachada = new FachadaNegocio();
         const resposta = await fachada.atualizarContrato(req.body);
