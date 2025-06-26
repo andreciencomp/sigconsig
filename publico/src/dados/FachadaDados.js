@@ -360,7 +360,7 @@ class FachadaDados {
 
     async salvarContrato(contrato) {
         let dao = DAOFactory.getContratoDAO();
-        return await dao.salvar(contrato,true,null);
+        return await dao.salvar(contrato);
     }
 
     async atualizarContrato(contrato) {

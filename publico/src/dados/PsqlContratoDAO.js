@@ -62,14 +62,13 @@ class PsqlContratoDAO {
         }
     }
 
-    async salvar(contrato, rollback = false, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async salvar(contrato) {
+        const client =  await pool.connect();
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
-            if (rollback) {
-                await client.query('BEGIN');
-            }
+            await client.query('BEGIN');
+            
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id, comissao_paga) " +
                 "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
@@ -81,11 +80,8 @@ class PsqlContratoDAO {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco, client)).id;
                 }
                 let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
-                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
-                if (rollback) {
-                    await client.query('COMMIT');
-                }
-
+                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]); 
+                await client.query('COMMIT');
                 return await this.criarObjetoContrato(resContrato.rows[0]);
 
             } else {
@@ -95,21 +91,18 @@ class PsqlContratoDAO {
                 }
                 let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
-                if (rollback) {
-                    await client.query('COMMIT');
-                }
+                await client.query('COMMIT');
+                
                 return await this.criarObjetoContrato(resContrato.rows[0]);
             }
 
         } catch (e) {
-            if (rollback) {
-                await client.query('ROLLBACK');
-            }
+            await client.query('ROLLBACK');
             PgUtil.checkError(e);
+
         } finally {
-            if (!dbClient) {
-                client.release();
-            }
+            client.release();
+            
         }
     }
 
