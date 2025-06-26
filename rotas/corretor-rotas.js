@@ -9,7 +9,7 @@ router.get('/corretores/:id',authService.usuarioCadastroFiltro, async (req,res)=
     try{
         const fachada = new FachadaNegocio();
         const corretor = await fachada.obterCorretorPorID(req.params.id);
-        return res.status(200).send({dados: corretor});
+        return res.status(200).send(corretor);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -20,8 +20,8 @@ router.post('/corretores/cadastrar', authService.usuarioAdminFiltro, async (req,
     const fachada = new FachadaNegocio();
     try {
         CorretorValidator.validarCadastro(req.body);
-        const resposta = await fachada.cadastrarCorretor(req.body);
-        return res.status(201).send({ dados: resposta });
+        const corretorId = await fachada.cadastrarCorretor(req.body);
+        return res.status(201).send(corretorId);
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
@@ -32,8 +32,8 @@ router.put('/corretores/atualizar', authService.usuarioAdminFiltro, async (req, 
     const fachada = new FachadaNegocio();
     try{
         CorretorValidator.validarAtualizacao(req.body);
-        const corretorAtualizado = await fachada.atualizarCorretor(req.body);
-        return res.status(200).send({dados: corretorAtualizado});
+        const corretorId = await fachada.atualizarCorretor(req.body);
+        return res.status(200).send(corretorId);
         
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -44,7 +44,8 @@ router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res)
     const fachada = new FachadaNegocio();
     try {
         const corretores = await fachada.listarTodosCorretores();
-        return res.status(200).send({ dados: corretores });
+        return res.status(200).send(corretores);
+
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
@@ -54,8 +55,8 @@ router.get('/corretores', authService.usuarioAutenticadoFiltro, async (req, res)
 router.delete('/corretores/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
     const fachada = new FachadaNegocio();
     try{
-        const corretorDeletado = await fachada.deletarCorretor(req.params.id);
-        return res.status(200).send({dados: corretorDeletado});
+        const corretorId = await fachada.deletarCorretor(req.params.id);
+        return res.status(200).send(corretorId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);

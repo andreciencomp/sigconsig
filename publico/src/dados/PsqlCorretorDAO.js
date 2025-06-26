@@ -58,7 +58,6 @@ class PsqlCorretorDAO {
         const client = await pool.connect();
         try {
             await client.query("BEGIN");
-
             let enderecoId = null;
             const corretorSalvo = await this.obterPorId(corretor.id, client);
             if (typeof (corretor.endereco) != 'undefined' && corretor.endereco == null) {
@@ -124,10 +123,9 @@ class PsqlCorretorDAO {
     }
 
     async listarTodos() {
-        const client = await pool.connect();
         try {
             let corretores = [];
-            const { rows } = await client.query("select * from corretores");
+            const { rows } = await pool.query("select * from corretores");
             for (let i = 0; i < rows.length; i++) {
                 const corretor = await this.criarObjetoCorretor(rows[i]);
                 corretores.push(corretor);
@@ -136,10 +134,6 @@ class PsqlCorretorDAO {
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            client.release();
-
         }
     }
 
@@ -150,7 +144,7 @@ class PsqlCorretorDAO {
             const corretor = await this.obterPorId(id);
             if (corretor.endereco) {
                 const enderecoDAO = new PsqlEnderecoDAO();
-                await enderecoDAO.deletar(corretor.endereco.id);
+                await enderecoDAO.deletar(corretor.endereco.id, client);
             }
             if (corretor.contaBancaria) {
                 const contaBancariaDAO = new PsqlContaBancariaDAO();
