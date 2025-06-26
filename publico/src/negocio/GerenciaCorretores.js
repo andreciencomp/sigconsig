@@ -11,12 +11,12 @@ class GerenciaCorretores{
     async cadastrar(corretor){
         const fachada = new FachadaDados();
         corretor.cpf = CPFService.formatarParaApenasNumeros(corretor.cpf);
-        return await fachada.salvarCorretor(corretor, true);
+        return await fachada.salvarCorretor(corretor);
     }
 
     async atualizarCorretor(corretor){
         const fachada = new FachadaDados();
-        return await fachada.atualizarCorretor(corretor,true);
+        return await fachada.atualizarCorretor(corretor);
     }
 
     async listarTodos(){
@@ -26,7 +26,7 @@ class GerenciaCorretores{
 
     async deletarCorretor(id){
         const fachada = new FachadaDados();
-        return await fachada.deletarCorretor(id, true);
+        return await fachada.deletarCorretor(id);
     }
     
 }

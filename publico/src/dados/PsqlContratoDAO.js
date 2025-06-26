@@ -52,25 +52,24 @@ class PsqlContratoDAO {
                 const cliente = await clienteDAO.obterPorId(rowContrato.cliente_id);
                 contrato.cliente = cliente;
             }
-
             return contrato;
 
         } catch (e) {
             PgUtil.checkError(e);
+
         } finally {
             client.release();
         }
     }
 
     async salvar(contrato) {
-        const client =  await pool.connect();
+        const client = await pool.connect();
         try {
             let enderecoDAO = new PsqlEnderecoDAO();
             let clienteDAO = new PsqlClienteDao();
             await client.query('BEGIN');
-            
             const queryContrato = "insert into contratos(numero, produto_id, banco_id, data, valor, cliente_id, dt_liberacao, endereco_id, status, corretor_id, comissao_paga) " +
-                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *";
+                "values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id";
             let clienteId = contrato.cliente != null && contrato.cliente.id != null ? contrato.cliente.id : null;
             if (clienteId == null) {
                 contrato.cliente.endereco = contrato.endereco;
@@ -80,9 +79,9 @@ class PsqlContratoDAO {
                     endereco_contrato_id = (await enderecoDAO.salvar(contrato.endereco, client)).id;
                 }
                 let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
-                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]); 
+                contrato.valor, clienteId, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
                 await client.query('COMMIT');
-                return await this.criarObjetoContrato(resContrato.rows[0]);
+                return await resContrato.rows[0];
 
             } else {
                 let endereco_contrato_id = null;
@@ -92,8 +91,8 @@ class PsqlContratoDAO {
                 let resContrato = await client.query(queryContrato, [contrato.numero, contrato.produto.id, contrato.banco.id, contrato.data,
                 contrato.valor, contrato.cliente.id, contrato.dtLiberacao, endereco_contrato_id, contrato.status, contrato.corretor.id, contrato.comissaoPaga]);
                 await client.query('COMMIT');
-                
-                return await this.criarObjetoContrato(resContrato.rows[0]);
+
+                return await resContrato.rows[0];
             }
 
         } catch (e) {
@@ -102,7 +101,7 @@ class PsqlContratoDAO {
 
         } finally {
             client.release();
-            
+
         }
     }
 
@@ -137,7 +136,6 @@ class PsqlContratoDAO {
                     await this.deletar(contratoSalvo.endereco.id);
                 }
             }
-
             const numero = typeof (contrato.numero) != 'undefined' ? contrato.numero : contratoSalvo.numero;
             const produtoId = typeof (contrato.produto) != 'undefined' && contrato.produto.id ? contrato.produto.id : contratoSalvo.produto.id;
             const bancoId = typeof (contrato.banco) != 'undefined' && contrato.banco.id ? contrato.banco.id : (contratoSalvo.banco ? contratoSalvo.banco.id : null);
@@ -148,14 +146,14 @@ class PsqlContratoDAO {
             const dtLiberacao = typeof (contrato.dtLiberacao) != 'undefined' ? contrato.dtLiberacao : contratoSalvo.dtLiberacao;
             const comissaoPaga = typeof (contrato.comissaoPaga) != 'undefined' ? contrato.comissaoPaga : contratoSalvo.comissaoPaga;
 
-            let queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
-                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10, comissao_paga=$11 where id=$12 returning *";
+            const queryAtualizarContrato = "update contratos set numero=$1, produto_id=$2, banco_id=$3, " +
+                "data=$4, valor=$5, cliente_id=$6, endereco_id=$7, status=$8, corretor_id=$9, dt_liberacao=$10, comissao_paga=$11 where id=$12 returning id";
             const result = await client.query(queryAtualizarContrato, [numero, produtoId, bancoId,
                 data, valor, clienteId, enderecoId, status, corretorId, dtLiberacao, comissaoPaga, contrato.id]);
 
             client.query('COMMIT');
 
-            return await this.criarObjetoContrato(result.rows[0]);
+            return await result.rows[0];
 
         } catch (e) {
             client.query('ROLLBACK');
@@ -300,11 +298,9 @@ class PsqlContratoDAO {
                         break;
                 }
             }
-            const res = await pool.query(query, valoresQuery);
-            const rowsContrato = res.rows;
-
-            for (let i = 0; i < rowsContrato.length; i++) {
-                let contrato = await this.criarObjetoContrato(rowsContrato[i]);
+            const result = await pool.query(query, valoresQuery);
+            for (let i = 0; i < result.rows.length; i++) {
+                const contrato = await this.criarObjetoContrato(result.rows[i]);
                 contratos.push(contrato);
             }
             return contratos;
@@ -314,39 +310,39 @@ class PsqlContratoDAO {
         }
     }
 
-    async deletar(id, rollback = false) {
+    async deletar(id) {
         const client = await pool.connect();
         try {
             const contrato = await this.obterPorId(id);
-            const enderecoID = contrato.endereco ? contrato.endereco.id : null;
-            if (rollback) {
-                await client.query("BEGIN");
-            }
+            const enderecoId = contrato.endereco ? contrato.endereco.id : null;
+            await client.query("BEGIN");
 
-            await client.query("delete from contratos where id=$1", [id]);
-            if (enderecoID) {
-                await client.query("delete from enderecos where id=$1", [enderecoID]);
+            const result = await client.query("delete from contratos where id=$1 returning id", [id]);
+            if (result.rows.length === 0) {
+                throw new EntidadeNaoEncontradaException("Contrato inexistente.");
             }
-            if (rollback) {
-                client.query("COMMIT");
+            if (enderecoId) {
+                await client.query("delete from enderecos where id=$1", [enderecoId]);
             }
-            return id;
+            client.query("COMMIT");
+            return result.rows[0];
 
         } catch (e) {
             await client.query("ROLLBACK");
             PgUtil.checkError(e);
+
         } finally {
             client.release();
         }
     }
 
     async criarObjetoContrato(row) {
-        let bancoDAO = new PsqlBancoDAO();
-        let produtoDAO = new PsqlProdutoDAO();
-        let clienteDAO = new PsqlClienteDao();
-        let enderecoDAO = new PsqlEnderecoDAO();
-        let corretorDAO = new PsqlCorretorDAO();
-        let contrato = new Contrato();
+        const bancoDAO = new PsqlBancoDAO();
+        const produtoDAO = new PsqlProdutoDAO();
+        const clienteDAO = new PsqlClienteDao();
+        const enderecoDAO = new PsqlEnderecoDAO();
+        const corretorDAO = new PsqlCorretorDAO();
+        const contrato = new Contrato();
         contrato.id = row.id;
         contrato.numero = row.numero;
         contrato.data = row.data ? row.data.toISOString().slice(0, 10) : row.data;
@@ -355,23 +351,23 @@ class PsqlContratoDAO {
         contrato.valor = row.valor;
         contrato.comissaoPaga = row.comissao_paga ? true : false;
         if (row.banco_id) {
-            let banco = await bancoDAO.obterPorId(row.banco_id);
+            const banco = await bancoDAO.obterPorId(row.banco_id);
             contrato.banco = banco;
         }
         if (row.produto_id) {
-            let produto = await produtoDAO.obterPorId(row.produto_id);
+            const produto = await produtoDAO.obterPorId(row.produto_id);
             contrato.produto = produto;
         }
         if (row.cliente_id) {
-            let cliente = await clienteDAO.obterPorId(row.cliente_id);
+            const cliente = await clienteDAO.obterPorId(row.cliente_id);
             contrato.cliente = cliente;
         }
         if (row.endereco_id) {
-            let endereco = await enderecoDAO.obterPorId(row.endereco_id);
+            const endereco = await enderecoDAO.obterPorId(row.endereco_id);
             contrato.endereco = endereco;
         }
         if (row.corretor_id) {
-            let corretor = await corretorDAO.obterPorId(row.corretor_id);
+            const corretor = await corretorDAO.obterPorId(row.corretor_id);
             contrato.corretor = corretor;
         }
         return contrato;
