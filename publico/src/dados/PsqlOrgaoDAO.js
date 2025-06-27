@@ -6,143 +6,100 @@ const Produto = require('../entidades/Produto');
 
 class PsqlOrgaoDAO {
 
-    async obterPorId(id, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async obterPorId(id) {
         try {
-            const res = await client.query("select * from orgaos where id=$1", [id]);
-            if (res.rowCount == 0) {
+            const res = await pool.query("select * from orgaos where id=$1", [id]);
+            if (res.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("O orgão não existe.");
             }
             return this.criarObjetoOrgao(res.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
         }
     }
 
-    async existePorID(id, pgClient){
-        const client = pgClient ? pgClient : await pool.connect();
+    async existePorID(id){
         try{
-            const result = await client.query('select id from orgaos where id=$1',[id]);
-            return result.rowCount > 0;
+            const result = await pool.query('select id from orgaos where id=$1',[id]);
+            return result.rows.length > 0;
 
         }catch(e){
             PgUtil.checkError(e);
 
-        }finally{
-            if(!pgClient){
-                client.release();
-            }
         }
     }
 
-    async existePorSigla(sigla, pgClient=null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async existePorSigla(sigla) {
         try {
-            const query = "select sigla from orgaos where sigla = $1";
-            const { rows } = await client.query(query, [sigla]);
+            const { rows } = await pool.query("select sigla from orgaos where sigla = $1", [sigla]);
             return rows.length > 0;
+
         } catch (e) {
             PgUtil.checkError(e);
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
-    async existePorNome(nome, pgClient=null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async existePorNome(nome) {
         try {
-            const query = "select nome from orgaos where nome = $1";
-            const { rows } = await client.query(query, [nome]);
+            const { rows } = await pool.query("select nome from orgaos where nome = $1", [nome]);
             return rows.length > 0;
 
         } catch (e) {
             PgUtil.checkError(e);
 
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
-    async salvar(orgao, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async salvar(orgao) {
         try {
-            let strQuery = 'insert into orgaos (sigla, nome) values ($1, $2) returning *';
-            const { rows } = await client.query(strQuery, [orgao.sigla, orgao.nome]);
-            return this.criarObjetoOrgao(rows[0]);
+            let strQuery = "insert into orgaos (sigla, nome) values ($1, $2) returning id";
+            const { rows } = await pool.query(strQuery, [orgao.sigla, orgao.nome]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
-    async atualizar(orgao, pgClient = null) {
-        const client = pgClient ? pgClient : await pool.connect();
+    async atualizar(orgao) {
         try {
             const orgaoCadastrado = await this.obterPorId(orgao.id);
             const novaSigla = typeof (orgao.sigla) != 'undefined' ? orgao.sigla : orgaoCadastrado.sigla;
             const novoNome = typeof (orgao.nome) != 'undefined' ? orgao.nome : orgaoCadastrado.nome;
-            const result = await client.query("update orgaos set sigla=$1, nome=$2 where id=$3 returning * ", [novaSigla, novoNome, orgao.id]);
-            return this.criarObjetoOrgao(result.rows[0]);
+            const result = await pool.query("update orgaos set sigla=$1, nome=$2 where id=$3 returning id", [novaSigla, novoNome, orgao.id]);
+            return result.rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            if (!pgClient) {
-                client.release();
-            }
         }
     }
 
     async listar() {
-        let orgaos = [];
+        const orgaos = [];
         try {
-            let { rows } = await pool.query('select * from orgaos');
-            for (var i = 0; i < rows.length; i++) {
-                let orgao = new Orgao();
-                orgao.id = rows[i].id;
-                orgao.sigla = rows[i].sigla;
-                orgao.nome = rows[i].nome;
+            const { rows } = await pool.query('select * from orgaos');
+            for (let i = 0; i < rows.length; i++) {
+                const orgao = this.criarObjetoOrgao(rows[i]);
                 orgaos.push(orgao);
             }
             return orgaos;
 
         } catch (e) {
-
             PgUtil.checkError(e);
         }
     }
 
-    async deletar(id, dbClient = null) {
-        const client = dbClient ? dbClient : await pool.connect();
+    async deletar(id) {
         try {
-            const result = await client.query("delete from orgaos where id=$1 returning * ", [id]);
-            if (result.rowCount == 0) {
+            const result = await pool.query("delete from orgaos where id=$1 returning id ", [id]);
+            if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Orgão não encontrato.");
             }
             return this.criarObjetoOrgao(result.rows[0]);
 
         } catch (e) {
             PgUtil.checkError(e);
-        } finally {
-            if (!dbClient) {
-                client.release();
-            }
         }
     }
 

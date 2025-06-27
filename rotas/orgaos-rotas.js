@@ -9,8 +9,9 @@ const roteador = express.Router();
 roteador.get('/orgaos/:id', authService.usuarioAutenticadoFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
-        const result = await fachada.obterOrgaoPorID(req.params.id);
-        return res.status(200).send({ dados: result });
+        const orgao = await fachada.obterOrgaoPorID(req.params.id);
+        return res.status(200).send(orgao);
+
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
@@ -20,11 +21,10 @@ roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     try {
         OrgaoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
-        const orgaoCadastrado = await fachada.cadastrarOrgao(req.body);
-        return res.status(201).send({ dados: orgaoCadastrado });
+        const orgaoId = await fachada.cadastrarOrgao(req.body);
+        return res.status(201).send(orgaoId);
 
     } catch (e) {
-
         ExceptionService.enviarExcessao(e, res);
     }
 });
@@ -33,8 +33,8 @@ roteador.put('/orgaos/atualizar',authService.usuarioAdminFiltro, async (req, res
     try{
         OrgaoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
-        const orgaoAtualizado = await fachada.atualizarOrgao(req.body);
-        return res.status(201).send({dados: orgaoAtualizado});
+        const orgaoId = await fachada.atualizarOrgao(req.body);
+        return res.status(201).send(orgaoId);
         
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -45,7 +45,7 @@ roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) =
     try {
         const fachada = new FachadaNegocio();
         const orgaos = await fachada.listarOrgaos();
-        return res.status(200).send({ dados: orgaos });
+        return res.status(200).send(orgaos);
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
@@ -55,8 +55,8 @@ roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) =
 roteador.delete('/orgaos/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
-        const resultado = await fachada.deletarOrgao(req.params.id);
-        return res.status(200).send({ dados: resultado });
+        const orgaoId = await fachada.deletarOrgao(req.params.id);
+        return res.status(200).send(orgaoId);
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
