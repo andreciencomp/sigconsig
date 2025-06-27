@@ -9,8 +9,8 @@ const router = express.Router();
 router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFiltro, async (req, res) => {
     try {
         const fachadaNegocio = new FachadaNegocio();
-        const resultado = await fachadaNegocio.gerarPagamentoDeComissao(req.params.id, req.dadosUsuario.id);
-        return res.status(201).send({ dados: resultado });
+        const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.id, req.dadosUsuario.id);
+        return res.status(201).send(pagamentoId);
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
     }
@@ -20,7 +20,7 @@ router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (
     try{
         const fachadaNegocio = new FachadaNegocio();
         const pagamentos = await fachadaNegocio.listarTodosPagamentos();
-        return res.status(200).send({pagamentos});
+        return res.status(200).send(pagamentos);
 
     }catch(e){  
         ExceptionService.enviarExcessao(e, res);
@@ -30,8 +30,8 @@ router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (
 router.delete('/pagamentos_comissoes/deletar/:id', authService.usuarioFinanceiroFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
-        const id = await fachada.deletarPagamentoComissao(req.params.id);
-        return res.status(200).send(id);
+        const pagamentoId = await fachada.deletarPagamentoComissao(req.params.id);
+        return res.status(200).send(pagamentoId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);

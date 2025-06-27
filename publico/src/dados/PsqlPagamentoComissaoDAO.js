@@ -16,7 +16,7 @@ class PsqlPagamentoComissaoDAO {
         try {
             const strQuery = this.querySelect + " pagamentos_comissoes.id=$1";
             const result = await pool.query(strQuery, [id]);
-            if (result.rowCount == 0) {
+            if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Pagamento inexistente.");
             }
             return this.criarObjeto(result.rows[0]);
@@ -27,7 +27,6 @@ class PsqlPagamentoComissaoDAO {
     }
 
     async salvar(pagamentoComissao) {
-        const client = await pool.connect();
         try {
             const dtPagamento = new Date();
             const strQuery = "insert into pagamentos_comissoes(corretor_id, contrato_id, percentagem_corretor, percentagem_promotora, valor_corretor, valor_promotora, " +
@@ -35,7 +34,7 @@ class PsqlPagamentoComissaoDAO {
                 "($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id ";
             const cadastradoPor = pagamentoComissao.cadastradoPor && pagamentoComissao.cadastradoPor.id ? pagamentoComissao.cadastradoPor.id : null;
             const efetivadoPor = pagamentoComissao.efetivadoPor && pagamentoComissao.efetivadoPor.id ? pagamentoComissao.efetivadoPor.id : null;
-            const { rows } = await client.query(strQuery, [pagamentoComissao.corretor.id, pagamentoComissao.contrato.id, pagamentoComissao.percentagemCorretor,
+            const { rows } = await pool.query(strQuery, [pagamentoComissao.corretor.id, pagamentoComissao.contrato.id, pagamentoComissao.percentagemCorretor,
             pagamentoComissao.percentagemPromotora, pagamentoComissao.valorCorretor, pagamentoComissao.valorPromotora, pagamentoComissao.efetivado,
                 cadastradoPor, efetivadoPor, dtPagamento]);
             return rows[0];
@@ -43,8 +42,6 @@ class PsqlPagamentoComissaoDAO {
         } catch (e) {
             throw PgUtil.checkError(e);
 
-        } finally {
-            client.release();
         }
     }
 
@@ -52,20 +49,19 @@ class PsqlPagamentoComissaoDAO {
         try {
             const query = "select id from pagamentos_comissoes where contrato_id=$1";
             const result = await pool.query(query, [contratoId]);
-            return result.rowCount > 0;
+            return result.rows.length > 0;
 
         } catch (e) {
             PgUtil.checkError(e);
-
         }
     }
 
     async listarTodos() {
         try {
             const pagamentos = [];
-            const strQuery = this.querySelect + "true order by efetivado desc";
+            const strQuery = this.querySelect + "true order by efetivado desc, dt_pagamento desc";
             const result = await pool.query(strQuery)
-            for (let i = 0; i < result.rowCount; i++) {
+            for (let i = 0; i < result.rows.length; i++) {
                 const pagamento = this.criarObjeto(result.rows[i]);
                 pagamentos.push(pagamento);
             }
@@ -103,9 +99,6 @@ class PsqlPagamentoComissaoDAO {
         pagamentoComissao.efetivadoPor = row.efetivado_por ? { id: row.efetivado_por } : null;
         pagamentoComissao.corretor = { id: row.corretor_id };
         return pagamentoComissao;
-
-
-
     }
 }
 
