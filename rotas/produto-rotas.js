@@ -9,7 +9,8 @@ router.get('/produtos/:id', authService.usuarioAutenticadoFiltro, async (req, re
     try{
         const fachada = new FachadaNegocio();
         const produto = await fachada.obterProdutoPorID(req.params.id);
-        return res.status(200).send({dados: produto});
+        return res.status(200).send(produto);
+
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
@@ -19,8 +20,8 @@ router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     try {
         ProdutoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
-        const objetoComId = await fachada.cadastrarProduto(req.body);
-        return res.status(201).send({dados:objetoComId});
+        const produtoId = await fachada.cadastrarProduto(req.body);
+        return res.status(201).send(produtoId);
 
     } catch (e) {
         ExceptionService.enviarExcessao(e, res);
@@ -31,8 +32,8 @@ router.put('/produtos/atualizar',authService.usuarioAdminFiltro, async (req, res
     try{
         ProdutoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
-        const produtoAtualizado = await fachada.atualizarProduto(req.body);
-        return res.status(200).send({dados: produtoAtualizado});
+        const produtoId = await fachada.atualizarProduto(req.body);
+        return res.status(200).send(produtoId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -43,19 +44,18 @@ router.get('/produtos',authService.usuarioCadastroFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const produtos = await fachada.listarProdutos(req.query);
-        return res.status(200).send({dados: produtos});
+        return res.status(200).send(produtos);
         
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
-    return res.status(200).send("OK");
-})
+});
 
 router.delete('/produtos/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
-        const result = await fachada.deletarProduto(req.params.id);
-        return res.status(200).send({dados: result});
+        const produtoId = await fachada.deletarProduto(req.params.id);
+        return res.status(200).send(produtoId);
         
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
