@@ -20,6 +20,11 @@ class FachadaDados {
         return await dao.obterPorNome(nomeUsuario);
     }
 
+    async salvarUsuario(usuario){
+        const dao = DAOFactory.getUsuarioDAO();
+        return await dao.salvar(usuario);
+    }
+
     async obterUsuarioSuperPorNome(nomeUsuario) {
         const dao = DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
@@ -43,6 +48,8 @@ class FachadaDados {
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
     }
+
+
 
     async salvarUsuarioSuper(usuario) {
         const dao = DAOFactory.getUsuarioSuperDAO();

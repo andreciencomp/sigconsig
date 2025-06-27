@@ -20,8 +20,8 @@ roteador.post('/usuarios/cadastrar',
                 throw new UsuarioNaoAutorizadoException("Apenas o usuário SUPER pode realizar esta operação.");
             }
             const fachada = new FachadaNegocio();
-            const novoUsuarioID = await fachada.cadastrarUsuario(usuario);
-            res.status(201).send({ dados: {id : novoUsuarioID} });
+            const usuarioId = await fachada.cadastrarUsuario(usuario);
+            return res.status(201).send(usuarioId);
 
         } catch (e) {
             ExceptionService.enviarExcessao(e, res);

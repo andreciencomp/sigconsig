@@ -1,8 +1,5 @@
 const conf = require('../../../config');
-const PsqlUsuarioSuperDAO = require('./PsqlUsuarioSuperDAO');
-const PsqlUsuarioAdmDAO = require('./PsqlUsuarioAdmDAO');
-const PsqlUsuarioFinanceiroDAO = require('./PsqlUsuarioFinanceiroDAO');
-const PsqlUsuarioCadastroDAO = require('./PsqlUsuarioCadastroDAO');
+const PsqlUsuarioDAO = require('./PsqlUsuarioDAO');
 const PsqlBancoDAO = require('./PsqlBancoDAO');
 const PsqlOrgaoDAO = require('./PsqlOrgaoDAO');
 const PsqlEstadoDAO = require('./PsqlEstadoDAO');
@@ -16,7 +13,6 @@ const PsqlComissionamentoPromotoraDAO = require('./PsqlComissionamentoPromotoraD
 const PsqlComissionamentoCorretorDAO = require('./PsqlComissionamentoCorretorDAO');
 const PsqlContratoDAO = require('./PsqlContratoDAO');
 const PsqlPagamentoComissaoDAO = require('./PsqlPagamentoComissaoDAO');
-const PsqlUsuarioDAO = require('./PsqlUsuarioDAO');
 const DAOFactoryException = require('../excessoes/DAOFactoryException');
 
 class DAOFactory{
@@ -25,42 +21,6 @@ class DAOFactory{
         switch(conf.BANCO_ATUAL){
             case conf.banco.PSQL:
                 return  new PsqlUsuarioDAO();
-            default:
-                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
-        }
-    }
-
-    static getUsuarioSuperDAO(){
-        switch(conf.BANCO_ATUAL){
-            case conf.banco.PSQL:
-                return new  PsqlUsuarioSuperDAO();
-            default:
-                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
-        }
-    }
-
-    static getUsuarioAdmDAO(){
-        switch(conf.BANCO_ATUAL){
-            case conf.banco.PSQL:
-                return new PsqlUsuarioAdmDAO();
-            default:
-                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
-        }
-    }
-
-    static getUsuarioFinanceiroDAO(){
-        switch(conf.BANCO_ATUAL){
-            case conf.banco.PSQL:
-                return new PsqlUsuarioFinanceiroDAO();
-            default:
-                throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
-        }
-    }
-
-    static getUsuarioCadastroDAO(){
-        switch(conf.BANCO_ATUAL){
-            case conf.banco.PSQL:
-                return new PsqlUsuarioCadastroDAO();
             default:
                 throw new DAOFactoryException("Banco " + conf.BANCO_ATUAL + " não encontrado");
         }

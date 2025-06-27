@@ -9,87 +9,76 @@ const PgUtil = require("./PgUtil");
 class PsqlUsuarioDAO {
 
     async obter(id) {
-        const client = await pool.connect();
         try {
-            let strQuery = 'select * from usuarios where id=$1';
-            const { rows } = await client.query(strQuery, [id]);
-            let data = await rows[0];
-            if (data) {
-                let usuario = null;
-                switch (data.tipo) {
-                    case "USUARIO_SUPER":
-                        usuario = new UsuarioSuper();
-                        break;
-                    case "USUARIO_ADMIN":
-                        usuario = new UsuarioAdm();
-                        break;
-                    case "USUARIO_FINANCEIRO":
-                        usuario = new UsuarioFinanceiro();
-                        break;
-                    default:
-                        usuario = new UsuarioCadastro();
-                }
-                usuario.id = await data.id;
-                usuario.nomeUsuario = await data.nome_usuario;
-                usuario.senha = await data.senha;
-                return usuario;
+            const { rows } = await pool.query('select * from usuarios where id=$1', [id]);
+            if (rows.length === 0) {
+                throw new EntidadeNaoEncontradaException("Usuário inexistente.");
             }
-            throw new EntidadeNaoEncontradaException("Super usuário inexistente.");
+            let usuario = null;
+            const data = rows[0];
+            switch (data.tipo) {
+                case "USUARIO_SUPER":
+                    usuario = new UsuarioSuper();
+                    break;
+                case "USUARIO_ADMIN":
+                    usuario = new UsuarioAdm();
+                    break;
+                case "USUARIO_FINANCEIRO":
+                    usuario = new UsuarioFinanceiro();
+                    break;
+                default:
+                    usuario = new UsuarioCadastro();
+            }
+            usuario.id = data.id;
+            usuario.nomeUsuario = data.nome_usuario;
+            usuario.senha = data.senha;
+            return usuario;
+
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            client.release();
         }
     }
 
     async obterPorNome(nomeUsuario) {
-        const client = await pool.connect();
         try {
-            const strQuery = 'select * from usuarios where nome_usuario=$1';
-            const { rows } = await client.query(strQuery, [nomeUsuario]);
-            let data = await rows[0];
-            if (data) {
-                let usuario = null;
-                switch (data.tipo) {
-                    case "USUARIO_SUPER":
-                        usuario = new UsuarioSuper();
-                        break;
-                    case "USUARIO_ADMIN":
-                        usuario = new UsuarioAdm();
-                        break;
-                    case "USUARIO_FINANCEIRO":
-                        usuario = new UsuarioFinanceiro();
-                        break;
-                    default:
-                        usuario = new UsuarioCadastro();
-                }
-                usuario.id = data.id;
-                usuario.nomeUsuario = data.nome_usuario;
-                usuario.senha = data.senha;
-                return usuario;
+            const { rows } = await pool.query("select * from usuarios where nome_usuario=$1", [nomeUsuario]);
+            if (rows.length === 0) {
+                throw new EntidadeNaoEncontradaException("Usuário inexistente.");
             }
-            throw new EntidadeNaoEncontradaException("Usuário não encontrado.");
+            let usuario = null;
+            const data = rows[0];
+            switch (data.tipo) {
+                case "USUARIO_SUPER":
+                    usuario = new UsuarioSuper();
+                    break;
+                case "USUARIO_ADMIN":
+                    usuario = new UsuarioAdm();
+                    break;
+                case "USUARIO_FINANCEIRO":
+                    usuario = new UsuarioFinanceiro();
+                    break;
+                default:
+                    usuario = new UsuarioCadastro();
+            }
+            usuario.id = data.id;
+            usuario.nomeUsuario = data.nome_usuario;
+            usuario.senha = data.senha;
+            return usuario;
+
         } catch (e) {
             PgUtil.checkError(e);
-        } finally {
-            client.release();
         }
     }
 
     async salvar(usuario) {
-        const client = await pool.connect();
         try {
             let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3) returning id";
-            const { rows } = await client.query(strQuery,
-                [usuario.nomeUsuario, usuario.senha, UsuarioSuper.USUARIO_SUPER]);
-            return rows[0].id;
+            const { rows } = await pool.query(strQuery,
+                [usuario.nomeUsuario, usuario.senha, usuario.tipo]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);
-
-        } finally {
-            client.release();
         }
 
     }
