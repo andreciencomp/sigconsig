@@ -10,7 +10,7 @@ estadoRouter.get('/estados/:id',async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const estado = await fachada.obterEstadoPorID(req.params.id);
-        return res.status(200).send({dados:estado});
+        return res.status(200).send(estado);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -22,7 +22,7 @@ estadoRouter.get('/estados',async function(req, res){
     try{
         const fachada = new FachadaNegocio();
         const estados = await fachada.listarEstados();
-        return res.status(200).send({dados: estados});
+        return res.status(200).send(estados);
         
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -33,10 +33,9 @@ estadoRouter.get('/estados',async function(req, res){
 estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         EstadoValidator.validarCadastro(req.body);
-        console.log(req.body);
         const fachada = new FachadaNegocio();
-        const estadoCadastrado = await fachada.cadastrarEstado(req.body);
-        return res.status(201).send({dados:estadoCadastrado});
+        const estadoId = await fachada.cadastrarEstado(req.body);
+        return res.status(201).send(estadoId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
@@ -47,8 +46,9 @@ estadoRouter.put('/estados/atualizar', authService.usuarioAdminFiltro, async (re
     try{
         EstadoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
-        const estadoAtualizado = await fachada.atualizarEstado(req.body);
-        return res.status(200).send({dados: estadoAtualizado});
+        const estadoId = await fachada.atualizarEstado(req.body);
+        return res.status(200).send(estadoId);
+
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
     }
@@ -57,8 +57,8 @@ estadoRouter.put('/estados/atualizar', authService.usuarioAdminFiltro, async (re
 estadoRouter.delete('/estados/deletar/:id',authService.usuarioAdminFiltro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
-        const estadoDeletado = await fachada.deletarEstado(req.params.id);
-        return res.status(200).send({dados:estadoDeletado});
+        const estadoId = await fachada.deletarEstado(req.params.id);
+        return res.status(200).send(estadoId);
 
     }catch(e){
         ExceptionService.enviarExcessao(e, res);
