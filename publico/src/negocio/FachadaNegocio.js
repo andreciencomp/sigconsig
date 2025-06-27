@@ -8,6 +8,7 @@ const GerenciaProdutos = require('./GerenciaProdutos');
 const GerenciaComissionamento = require('./GerenciaComissionamento');
 const GerenciaContratos = require('./GerenciaContratos');
 const GerenciaPagamentos = require('./GerenciaPagamentos');
+const AuthService = require('./AuthService');
 
 class FachadaNegocio{
 
@@ -17,8 +18,8 @@ class FachadaNegocio{
     }
 
     async login(nomeUsuario, senha){
-        const gerenciaUsuarios = new GerenciaUsuarios();
-        return await gerenciaUsuarios.login(nomeUsuario, senha);
+        const authService = new AuthService();
+        return await authService.login(nomeUsuario, senha);
     }
 
     async cadastrarUsuario(usuario){

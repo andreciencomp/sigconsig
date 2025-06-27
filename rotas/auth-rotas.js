@@ -6,19 +6,15 @@ const FachadaNegocio = require('../publico/src/negocio/FachadaNegocio');
 
 router.get('/login', async (req, res)=>{
     try{
-        let infoLogin =  await authService.obterBasicLoginInfo(req);
-        fachada =  new FachadaNegocio();
+        const infoLogin = authService.obterBasicLoginInfo(req);
+        const fachada =  new FachadaNegocio();
         
-        let usuario =   await fachada.login(infoLogin.nomeUsuario, infoLogin.senha);
-        let jwtPayload = {
-            id:usuario.id,
-            tipo:usuario.tipo
-        };
-        let token = authService.gerarToken(jwtPayload);
-        res.status(200).send({token: token, dados: usuario});
+        const usuario =   await fachada.login(infoLogin.nomeUsuario, infoLogin.senha);
+        const jwtPayload = { id:usuario.id,tipo:usuario.tipo};
+        const token = authService.gerarToken(jwtPayload);
+        res.status(200).send({token: token, usuario: usuario});
 
     }catch(e){
-        
         ExceptionService.enviarExcessao(e,res);
     }
 });
