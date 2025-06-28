@@ -1,4 +1,4 @@
-class CPFService {
+class CPFUtil {
     static formatarParaApenasNumeros(strCPF) {
         let novoCPF = strCPF.replaceAll(" ","");
         novoCPF = novoCPF.replaceAll(".", "");
@@ -7,4 +7,4 @@ class CPFService {
     }
 }
 
-module.exports = CPFService;
+module.exports = CPFUtil;

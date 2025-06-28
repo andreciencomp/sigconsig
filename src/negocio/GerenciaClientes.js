@@ -1,5 +1,5 @@
 const FachadaDados = require("../dados/FachadaDados");
-const CPFService = require("./CPFService");
+const CPFUtil = require("../utils/CPFUtil");
 
 class GerenciaClientes{
 
@@ -15,13 +15,13 @@ class GerenciaClientes{
 
     async cadastrar(cliente){
         const fachadaDados = new FachadaDados();
-        cliente.cpf = CPFService.formatarParaApenasNumeros(cliente.cpf);
+        cliente.cpf = CPFUtil.formatarParaApenasNumeros(cliente.cpf);
         return await fachadaDados.salvarCliente(cliente);
     }
 
     async atualizarCliente(cliente){
         const fachada = new FachadaDados();
-        cliente.cpf = typeof(cliente.cpf)!= 'undefined' ? CPFService.formatarParaApenasNumeros(cliente.cpf) : cliente.cpf;
+        cliente.cpf = typeof(cliente.cpf)!= 'undefined' ? CPFUtil.formatarParaApenasNumeros(cliente.cpf) : cliente.cpf;
         return await fachada.atualizarCliente(cliente,true);
     }
 

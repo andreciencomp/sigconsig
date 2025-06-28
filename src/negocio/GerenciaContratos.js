@@ -4,7 +4,7 @@ const DadosInvalidosException = require("../excessoes/DadosInvalidosException");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivelException");
 const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
-const CPFService = require("./CPFService");
+const CPFUtil = require("../utils/CPFUtil");
 
 class GerenciaContratos {
 
@@ -28,7 +28,7 @@ class GerenciaContratos {
         }
 
         if (contrato.cliente && contrato.cliente.cpf) {
-            contrato.cliente.cpf = CPFService.formatarParaApenasNumeros(contrato.cliente.cpf);
+            contrato.cliente.cpf = CPFUtil.formatarParaApenasNumeros(contrato.cliente.cpf);
         }
         contrato.status = 'CADASTRADO';
         return await fachada.salvarContrato(contrato);
@@ -37,7 +37,7 @@ class GerenciaContratos {
     async atualizar(contrato) {
         const fachada = new FachadaDados();
         if(contrato.cliente && contrato.cliente.cpf){
-            contrato.cliente.cpf = CPFService.formatarParaApenasNumeros(contrato.cliente.cpf);
+            contrato.cliente.cpf = CPFUtil.formatarParaApenasNumeros(contrato.cliente.cpf);
         }
         if (contrato.produto) {
             const existeProduto = await fachada.existeProduto(contrato.produto);
