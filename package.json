@@ -4,7 +4,7 @@
   "description": "Sistema para empresas consignadas para auxílio de pagamento de comissões.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --env-file=.env ./bin/servidor.js",
+    "start": "nodemon --env-file=.env ./src/servidor.js",
     "test": "jest --detectOpenHandles --passWithNoTests"
   },
   "keywords": [],

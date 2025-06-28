@@ -1,0 +1,41 @@
+const express = require('express');
+const authService = require('../servicos/auth_service');
+const FachadaNegocio = require('../negocio/FachadaNegocio');
+const ExceptionService = require('../servicos/ExceptionService');
+
+const router = express.Router();
+
+
+router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFiltro, async (req, res) => {
+    try {
+        const fachadaNegocio = new FachadaNegocio();
+        const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.id, req.dadosUsuario.id);
+        return res.status(201).send(pagamentoId);
+    } catch (e) {
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
+router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+    try{
+        const fachadaNegocio = new FachadaNegocio();
+        const pagamentos = await fachadaNegocio.listarTodosPagamentos();
+        return res.status(200).send(pagamentos);
+
+    }catch(e){  
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
+router.delete('/pagamentos_comissoes/deletar/:id', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+    try{
+        const fachada = new FachadaNegocio();
+        const pagamentoId = await fachada.deletarPagamentoComissao(req.params.id);
+        return res.status(200).send(pagamentoId);
+
+    }catch(e){
+        ExceptionService.enviarExcessao(e, res);
+    }
+})
+
+module.exports = router;
