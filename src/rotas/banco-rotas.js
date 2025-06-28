@@ -1,7 +1,7 @@
 const express = require('express');
 const roteadorBancos = express.Router();
 const FachadaNegocio = require('../negocio/FachadaNegocio');
-const ExceptionService = require('../servicos/ExceptionService');
+const ExceptionService = require('../excessoes/ExceptionService');
 const BancoValidator = require('../validators/BancoValidator');
 const AuthMiddleware = require('../Middleware/AuthMiddleware');
 

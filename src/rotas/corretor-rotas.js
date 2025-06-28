@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const FachadaNegocio = require('../negocio/FachadaNegocio');
-const ExceptionService = require('../servicos/ExceptionService');
+const ExceptionService = require('../excessoes/ExceptionService');
 const CorretorValidator = require('../validators/CorretorValidator');
 const AuthMiddleware = require('../Middleware/AuthMiddleware');
 

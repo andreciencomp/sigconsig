@@ -1,5 +1,5 @@
 const UsuarioNaoAutorizadoException = require("../excessoes/UsuarioNaoAutorizadoException");
-const ExceptionService = require("../servicos/ExceptionService");
+const ExceptionService = require("../excessoes/ExceptionService");
 const HeadersUtil = require("../utils/HeadersUtil");
 const JwtUtil = require("../utils/JwtUtil");
 

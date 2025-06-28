@@ -1,5 +1,5 @@
 const express = require('express');
-const ExceptionService = require('../servicos/ExceptionService');
+const ExceptionService = require('../excessoes/ExceptionService');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const CidadeValidator = require('../validators/CidadeValidator');
 const AuthMiddleware = require('../Middleware/AuthMiddleware');

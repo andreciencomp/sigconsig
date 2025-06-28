@@ -1,4 +1,4 @@
-const ExceptionService =  require('../servicos/ExceptionService');
+const ExceptionService =  require('../excessoes/ExceptionService');
 const express = require('express');
 const router = express.Router();
 const FachadaNegocio = require('../negocio/FachadaNegocio');

@@ -1,4 +1,4 @@
-const { pool } = require('../servicos/database_service')
+const { pool } = require('../helpers/pg_helper')
 const PgUtil = require('../dados/PgUtil');
 const ContaBancaria = require('../entidades/ContaBancaria');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');

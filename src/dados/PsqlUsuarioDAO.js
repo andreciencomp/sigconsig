@@ -1,4 +1,4 @@
-const { pool } = require("../servicos/database_service");
+const { pool } = require("../helpers/pg_helper");
 const UsuarioAdm = require("../entidades/UsuarioAdm");
 const UsuarioCadastro = require("../entidades/UsuarioCadastro");
 const UsuarioFinanceiro = require("../entidades/UsuarioFinanceiro");
