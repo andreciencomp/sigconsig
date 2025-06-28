@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
 const ProdutoValidator = require('../validators/ProdutoValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
-router.get('/produtos/:id', authService.usuarioAutenticadoFiltro, async (req, res)=>{
+router.get('/produtos/:id', AuthMiddleware.nivelAutenticado, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const produto = await fachada.obterProdutoPorID(req.params.id);
@@ -16,7 +16,7 @@ router.get('/produtos/:id', authService.usuarioAutenticadoFiltro, async (req, re
     }
 })
 
-router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
+router.post('/produtos/cadastrar', AuthMiddleware.nivelAdmin, async (req, res) => {
     try {
         ProdutoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -28,7 +28,7 @@ router.post('/produtos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     }
 });
 
-router.put('/produtos/atualizar',authService.usuarioAdminFiltro, async (req, res)=>{
+router.put('/produtos/atualizar', AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         ProdutoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
@@ -40,7 +40,7 @@ router.put('/produtos/atualizar',authService.usuarioAdminFiltro, async (req, res
     }
 });
 
-router.get('/produtos',authService.usuarioCadastroFiltro, async (req, res)=>{
+router.get('/produtos', AuthMiddleware.nivelAutenticado, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const produtos = await fachada.listarProdutos(req.query);
@@ -51,7 +51,7 @@ router.get('/produtos',authService.usuarioCadastroFiltro, async (req, res)=>{
     }
 });
 
-router.delete('/produtos/deletar/:id', authService.usuarioAdminFiltro, async (req, res)=>{
+router.delete('/produtos/deletar/:id',  AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const produtoId = await fachada.deletarProduto(req.params.id);

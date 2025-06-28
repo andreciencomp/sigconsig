@@ -1,8 +1,8 @@
 const express = require('express');
 const ExceptionService = require('../servicos/ExceptionService');
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const EstadoValidator = require('../validators/EstadoValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 const estadoRouter = express.Router();
 
@@ -30,7 +30,7 @@ estadoRouter.get('/estados',async function(req, res){
     
 });
 
-estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (req, res)=>{
+estadoRouter.post('/estados/cadastrar', AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         EstadoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -42,7 +42,7 @@ estadoRouter.post('/estados/cadastrar', authService.usuarioAdminFiltro, async (r
     }
 });
 
-estadoRouter.put('/estados/atualizar', authService.usuarioAdminFiltro, async (req, res)=>{
+estadoRouter.put('/estados/atualizar', AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         EstadoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
@@ -54,7 +54,7 @@ estadoRouter.put('/estados/atualizar', authService.usuarioAdminFiltro, async (re
     }
 });
 
-estadoRouter.delete('/estados/deletar/:id',authService.usuarioAdminFiltro, async (req, res)=>{
+estadoRouter.delete('/estados/deletar/:id', AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const estadoId = await fachada.deletarEstado(req.params.id);

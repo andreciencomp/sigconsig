@@ -1,15 +1,15 @@
 const express = require('express');
 const roteador = express.Router();
 const FachadaNegocio = require('../negocio/FachadaNegocio');
-const authService = require('../servicos/auth_service');
 const ExceptionService = require('../servicos/ExceptionService');
 const Usuario = require('../entidades/Usuario');
 const UsuarioNaoAutorizadoException = require('../excessoes/UsuarioNaoAutorizadoException');
 const DadosInvalidosException = require('../excessoes/DadosInvalidosException');
 const UsuarioValidator = require('../validators/UsuarioValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 roteador.post('/usuarios/cadastrar',
-    authService.usuarioAdminFiltro, async (req, res) => {
+    AuthMiddleware.nivelAdmin, async (req, res) => {
         try {
             const usuario = req.body;
             UsuarioValidator.validarCadastro(usuario);

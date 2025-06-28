@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const ExceptionService =  require('../servicos/ExceptionService');
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const ComissionamentoPromotoraValidator = require('../validators/ComissionamentoPromotoraValidator');
 const ComissionamentoCorretorValidator = require('../validators/ComissionamentoCorretorValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
-router.get('/comissionamentos/promotora/:id', authService.usuarioFinanceiroFiltro, async(req, res)=>{
+router.get('/comissionamentos/promotora/:id', AuthMiddleware.nivelFinanceiro, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const comissionamento = await fachada.obterComissionamentoPromotoraPorId(req.params.id);
@@ -17,7 +17,7 @@ router.get('/comissionamentos/promotora/:id', authService.usuarioFinanceiroFiltr
     }
 });
 
-router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFiltro, async(req, res)=>{
+router.post('/comissionamentos/promotora/cadastrar', AuthMiddleware.nivelAdmin, async(req, res)=>{
     try{
         ComissionamentoPromotoraValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -29,7 +29,7 @@ router.post('/comissionamentos/promotora/cadastrar',authService.usuarioAdminFilt
     }
 });
 
-router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
+router.post('/comissionamentos/corretor/cadastrar',AuthMiddleware.nivelAdmin,async(req, res)=>{
     try{
         ComissionamentoCorretorValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -40,6 +40,5 @@ router.post('/comissionamentos/corretor/cadastrar',async(req, res)=>{
         ExceptionService.enviarExcessao(e,res);
     }
 });
-
 
 module.exports = router;

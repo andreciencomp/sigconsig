@@ -1,8 +1,8 @@
 const express = require('express');
 const ExceptionService = require('../servicos/ExceptionService');
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const CidadeValidator = require('../validators/CidadeValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 const router = express.Router();
 
 router.get('/cidades', async function (req, res) {
@@ -27,7 +27,7 @@ router.get('/cidades/:id', async function (req, res) {
     }
 });
 
-router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
+router.post('/cidades/cadastrar', AuthMiddleware.nivelAdmin, async (req, res) => {
     try {
         CidadeValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -39,7 +39,7 @@ router.post('/cidades/cadastrar', authService.usuarioAdminFiltro, async (req, re
     }
 });
 
-router.put('/cidades/atualizar',authService.usuarioAdminFiltro, async(req, res)=>{
+router.put('/cidades/atualizar', AuthMiddleware.nivelAdmin, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const cidadeId = await fachada.atualizarCidade(req.body);
@@ -60,7 +60,7 @@ router.get('/cidades/estado/:estado_id', async function (req, res) {
     }
 });
 
-router.delete('/cidades/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
+router.delete('/cidades/deletar/:id', AuthMiddleware.nivelAdmin, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
         const cidadeId = await fachada.deletarCidade(req.params.id);

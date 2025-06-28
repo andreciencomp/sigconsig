@@ -1,12 +1,12 @@
 const express = require('express');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
-const authService = require('../servicos/auth_service');
 const ClienteValidator = require('../validators/ClienteValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 const router = express.Router();
 
-router.get('/clientes/:id', authService.usuarioCadastroFiltro, async (req, res)=>{
+router.get('/clientes/:id', AuthMiddleware.nivelCadastro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const cliente = await fachada.obterClientePorId(req.params.id);
@@ -16,7 +16,7 @@ router.get('/clientes/:id', authService.usuarioCadastroFiltro, async (req, res)=
     }
 });
 
-router.get('/clientes/cpf/:cpf', authService.usuarioCadastroFiltro, async (req, res)=>{
+router.get('/clientes/cpf/:cpf',  AuthMiddleware.nivelCadastro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const cliente = await fachada.obterClientePorCpf(req.params.cpf);
@@ -27,7 +27,7 @@ router.get('/clientes/cpf/:cpf', authService.usuarioCadastroFiltro, async (req, 
     }
 });
 
-router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async (req, res)=>{
+router.get('/clientes/nome/:nomeLike',  AuthMiddleware.nivelCadastro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const clientes = await fachada.listarClientesPorNomeLike(req.params.nomeLike);
@@ -38,7 +38,7 @@ router.get('/clientes/nome/:nomeLike', authService.usuarioCadastroFiltro, async 
     } 
 });
 
-router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req, res)=>{
+router.post('/clientes/cadastrar',  AuthMiddleware.nivelCadastro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         ClienteValidator.validarCadastro(req.body);
@@ -51,7 +51,7 @@ router.post('/clientes/cadastrar', authService.usuarioCadastroFiltro, async (req
     }
 });
 
-router.put('/clientes/atualizar',authService.usuarioCadastroFiltro, async (req, res)=>{
+router.put('/clientes/atualizar', AuthMiddleware.nivelCadastro, async (req, res)=>{
     try{
         ClienteValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
@@ -63,7 +63,7 @@ router.put('/clientes/atualizar',authService.usuarioCadastroFiltro, async (req, 
     }
 });
 
-router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(req, res)=>{
+router.delete('/clientes/deletar/:id',  AuthMiddleware.nivelCadastro, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const clienteId = await fachada.deletarCliente(req.params.id);
@@ -74,7 +74,7 @@ router.delete('/clientes/deletar/:id', authService.usuarioCadastroFiltro, async(
     }
 })
 
-router.get('/clientes',authService.usuarioAutenticadoFiltro, async(req, res)=>{
+router.get('/clientes', AuthMiddleware.nivelAutenticado, async(req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const clientes = await fachada.listarClientes();

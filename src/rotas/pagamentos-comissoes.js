@@ -1,12 +1,11 @@
 const express = require('express');
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 const router = express.Router();
 
-
-router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFiltro, async (req, res) => {
+router.post('/pagamentos_comissoes/pagar/:id', AuthMiddleware.nivelFinanceiro, async (req, res) => {
     try {
         const fachadaNegocio = new FachadaNegocio();
         const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.id, req.dadosUsuario.id);
@@ -16,7 +15,7 @@ router.post('/pagamentos_comissoes/pagar/:id', authService.usuarioFinanceiroFilt
     }
 })
 
-router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+router.get('/pagamentos_comissoes', AuthMiddleware.nivelFinanceiro, async (req, res)=>{
     try{
         const fachadaNegocio = new FachadaNegocio();
         const pagamentos = await fachadaNegocio.listarTodosPagamentos();
@@ -27,7 +26,7 @@ router.get('/pagamentos_comissoes', authService.usuarioFinanceiroFiltro, async (
     }
 })
 
-router.delete('/pagamentos_comissoes/deletar/:id', authService.usuarioFinanceiroFiltro, async (req, res)=>{
+router.delete('/pagamentos_comissoes/deletar/:id', AuthMiddleware.nivelFinanceiro, async (req, res)=>{
     try{
         const fachada = new FachadaNegocio();
         const pagamentoId = await fachada.deletarPagamentoComissao(req.params.id);

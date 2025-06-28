@@ -1,9 +1,9 @@
 const express = require('express');
 const roteadorBancos = express.Router();
-const authService = require('../servicos/auth_service');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
 const ExceptionService = require('../servicos/ExceptionService');
 const BancoValidator = require('../validators/BancoValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     try{
@@ -16,7 +16,7 @@ roteadorBancos.get('/bancos/codigo/:codigo',async (req, res, next)=>{
     }
 });
 
-roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(req, res, next)=>{
+roteadorBancos.post('/bancos/cadastrar',AuthMiddleware.nivelAdmin, async(req, res, next)=>{
         try{
             BancoValidator.validarCadastro(req.body);
             const fachada = new FachadaNegocio();
@@ -28,7 +28,7 @@ roteadorBancos.post('/bancos/cadastrar',authService.usuarioAdminFiltro, async(re
         }
 });
 
-roteadorBancos.put('/bancos/atualizar',authService.usuarioAdminFiltro,async(req, res)=>{
+roteadorBancos.put('/bancos/atualizar',AuthMiddleware.nivelAdmin,async(req, res)=>{
     try{
         BancoValidator.validarAtualizacao (req.body);
         const fachada = new FachadaNegocio();
@@ -52,7 +52,7 @@ roteadorBancos.get('/bancos', async(req, res, next)=>{
     }
 });
 
-roteadorBancos.delete('/bancos/deletar/:id', authService.usuarioAdminFiltro, async(req, res)=>{
+roteadorBancos.delete('/bancos/deletar/:id', AuthMiddleware.nivelAdmin, async(req, res)=>{
     try{
         const fachadaNegocio = new FachadaNegocio();
         const bancoId  = await fachadaNegocio.deletarBanco(req.params.id);

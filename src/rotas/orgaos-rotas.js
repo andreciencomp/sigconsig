@@ -1,12 +1,12 @@
 const express = require('express');
 const FachadaNegocio = require('../negocio/FachadaNegocio');
-const authService = require('../servicos/auth_service');
 const ExceptionService = require('../servicos/ExceptionService');
 const OrgaoValidator = require('../validators/OrgaoValidator');
+const AuthMiddleware = require('../Middleware/AuthMiddleware');
 
 const roteador = express.Router();
 
-roteador.get('/orgaos/:id', authService.usuarioAutenticadoFiltro, async (req, res) => {
+roteador.get('/orgaos/:id', AuthMiddleware.nivelAutenticado, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
         const orgao = await fachada.obterOrgaoPorID(req.params.id);
@@ -17,7 +17,7 @@ roteador.get('/orgaos/:id', authService.usuarioAutenticadoFiltro, async (req, re
     }
 });
 
-roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, res) => {
+roteador.post('/orgaos/cadastrar', AuthMiddleware.nivelAdmin, async (req, res) => {
     try {
         OrgaoValidator.validarCadastro(req.body);
         const fachada = new FachadaNegocio();
@@ -29,7 +29,7 @@ roteador.post('/orgaos/cadastrar', authService.usuarioAdminFiltro, async (req, r
     }
 });
 
-roteador.put('/orgaos/atualizar',authService.usuarioAdminFiltro, async (req, res)=>{
+roteador.put('/orgaos/atualizar', AuthMiddleware.nivelAdmin, async (req, res)=>{
     try{
         OrgaoValidator.validarAtualizacao(req.body);
         const fachada = new FachadaNegocio();
@@ -41,7 +41,7 @@ roteador.put('/orgaos/atualizar',authService.usuarioAdminFiltro, async (req, res
     }
 });
 
-roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) => {
+roteador.get('/orgaos', AuthMiddleware.nivelAutenticado, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
         const orgaos = await fachada.listarOrgaos();
@@ -52,7 +52,7 @@ roteador.get('/orgaos', authService.usuarioAutenticadoFiltro, async (req, res) =
     }
 });
 
-roteador.delete('/orgaos/deletar/:id', authService.usuarioAdminFiltro, async (req, res) => {
+roteador.delete('/orgaos/deletar/:id', AuthMiddleware.nivelAdmin, async (req, res) => {
     try {
         const fachada = new FachadaNegocio();
         const orgaoId = await fachada.deletarOrgao(req.params.id);
