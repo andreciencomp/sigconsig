@@ -28,8 +28,7 @@ class ComissionamentoService {
         if(existeComissionamentoCorretor){
             throw new ChaveRepetidaException("Esta comissão já está cadastrada para este corretor.");
         }
-        
-        let comissionamentoPromotora = await fachada.obterComissionamentoPromotora(comissionamento.produto.id, comissionamento.banco.id);
+        let comissionamentoPromotora = await fachada.obterComissionamentoPromotora(comissionamento.banco.id, comissionamento.produto.id);
         if(comissionamento.percentagem > comissionamentoPromotora.percentagem){
             throw new ComissionamentoInvalidoException("A percetagem do corretor está maior que o da promotora");
         }

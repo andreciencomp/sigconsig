@@ -36,7 +36,7 @@ class PsqlComissionamentoPromotoraDAO {
             const strQuery =  this.strObterQuery + "comissionamentos_promotora.banco_id=$1 and comissionamentos_promotora.produto_id=$2";
             const result = await pool.query(strQuery, [bancoId, produtoId]);
             if (result.rows.length == 0) {
-                throw new EntidadeNaoEncontradaException("Comissionamento da promotora não encontrato");
+                throw new EntidadeNaoEncontradaException("Comissionamento da promotora inexistente.");
             }
             return this.criarObjeto(result.rows[0]);
         } catch (e) {
