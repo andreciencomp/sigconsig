@@ -221,6 +221,11 @@ class FachadaNegocio{
         const produtoService = new ProdutoService();
         return await produtoService.existe(produto);
     }
+    
+    async obterComissionamentoPromotoraPorId(id){
+        const comissionamentoService = new ComissionamentoService();
+        return await comissionamentoService.obterComissionamentoPromotoraPorId(id);
+    }
 
     async cadastrarComissionamentoPromotora(comissionamento){
         const comissionamentoService = new ComissionamentoService();
@@ -265,10 +270,6 @@ class FachadaNegocio{
     async deletarContrato(id){
         const contratoService = new ContratoService();
         return await contratoService.deletarContrato(id);
-    }
-    async obterComissionamentoPromotoraPorId(id){
-        const comissionamentoService = new comissionamentoService();
-        return await comissionamentoService.obterComissionamentoPromotoraPorId(id);
     }
 
     async gerarPagamentoDeComissao(contratoID, usuarioID){
