@@ -1,7 +1,7 @@
 const FachadaDados = require("../dados/FachadaDados");
 const CPFUtil = require("../utils/CPFUtil");
 
-class GerenciaClientes{
+class ClienteService{
 
     async obterPorId(id){
         const fachada = new FachadaDados();
@@ -41,4 +41,4 @@ class GerenciaClientes{
     }
 }
 
-module.exports = GerenciaClientes;
+module.exports = ClienteService;

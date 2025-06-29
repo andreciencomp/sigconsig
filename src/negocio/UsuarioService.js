@@ -1,6 +1,6 @@
 const FachadaDados = require('../dados/FachadaDados');
 
-class GerenciaUsuarios {
+class UsuarioService {
     
     async obterUsuarioPorId(id) {
         let fachada = new FachadaDados();
@@ -16,4 +16,4 @@ class GerenciaUsuarios {
     }
 }
 
-module.exports = GerenciaUsuarios;
+module.exports = UsuarioService;

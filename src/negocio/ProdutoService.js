@@ -1,7 +1,8 @@
 const FachadaDados = require('../dados/FachadaDados');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
-class GerenciaProdutos{
+
+class ProdutoService{
 
     async obterProdutoPorID(id){
         const fachada = new FachadaDados();
@@ -45,4 +46,4 @@ class GerenciaProdutos{
     }
 }
 
-module.exports = GerenciaProdutos;
+module.exports = ProdutoService;

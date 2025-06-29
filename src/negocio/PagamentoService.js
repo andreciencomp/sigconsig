@@ -5,7 +5,7 @@ const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastra
 const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
 const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
 
-class GerenciaPagamentos {
+class PagamentoService {
     async listarTodosPagamentos() {
         const fachada = new FachadaDados();
         return await fachada.listarTodosPagamentos();
@@ -73,4 +73,4 @@ class GerenciaPagamentos {
     }
 }
 
-module.exports = GerenciaPagamentos;
+module.exports = PagamentoService;

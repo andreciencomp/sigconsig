@@ -6,7 +6,7 @@ const LiberacaoNaoPossivelException = require("../excessoes/LiberacaoNaoPossivel
 const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
 const CPFUtil = require("../utils/CPFUtil");
 
-class GerenciaContratos {
+class ContratoService {
 
     async obterPorID(id) {
         const fachada = new FachadaDados();
@@ -102,4 +102,4 @@ class GerenciaContratos {
     }
 }
 
-module.exports = GerenciaContratos;
+module.exports = ContratoService;

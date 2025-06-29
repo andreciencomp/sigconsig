@@ -3,7 +3,7 @@ const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const RestricaoChaveEstrangeiraException = require('../excessoes/RestricaoChaveEstrangeiraException');
 
-class GerenciaEstadosCidades{
+class EstadosCidadesService{
 
     async obterEstadoPorId(id){
         const fachada = new FachadaDados();
@@ -98,4 +98,4 @@ class GerenciaEstadosCidades{
     }
 }
 
-module.exports = GerenciaEstadosCidades;
+module.exports = EstadosCidadesService;

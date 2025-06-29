@@ -1,7 +1,7 @@
 const FachadaDados = require("../dados/FachadaDados");
 const CPFUtil = require("../utils/CPFUtil");
 
-class GerenciaCorretores{
+class CorretorService{
 
     async obterCorretorPorID(id){
         const fachada = new FachadaDados();
@@ -31,4 +31,4 @@ class GerenciaCorretores{
     
 }
 
-module.exports = GerenciaCorretores;
+module.exports = CorretorService;

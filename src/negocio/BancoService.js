@@ -1,7 +1,7 @@
 const FachadaDados = require('../dados/FachadaDados');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 
-class GerenciaBancos{
+class BancoService{
     async obterBancoPorCodigo(codigo){
         const fachada = new FachadaDados();
         return await fachada.obterBancoPorCodigo(codigo);
@@ -42,4 +42,4 @@ class GerenciaBancos{
     }
 }
 
-module.exports = GerenciaBancos;
+module.exports = BancoService;

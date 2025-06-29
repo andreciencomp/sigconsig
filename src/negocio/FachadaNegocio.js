@@ -1,20 +1,20 @@
-const GerenciaUsuarios = require('../negocio/GerenciaUsuarios');
-const GerenciaBancos = require('./GerenciaBancos');
-const GerenciaOrgaos = require('./GerenciaOrgaos');
-const GerenciaEstadosCidades = require('../negocio/GerenciaEstadosCidades');
-const GerenciaCorretores = require('./GerenciaCorretores');
-const GerenciaClientes = require('./GerenciaClientes');
-const GerenciaProdutos = require('./GerenciaProdutos');
-const GerenciaComissionamento = require('./GerenciaComissionamento');
-const GerenciaContratos = require('./GerenciaContratos');
-const GerenciaPagamentos = require('./GerenciaPagamentos');
+const UsuarioService = require('./UsuarioService');
+const BancoService = require('./BancoService');
+const OrgaoService = require('./OrgaoService');
+const EstadosCidadesService = require('./EstadoCidadesService');
+const CorretorService = require('./CorretorService');
+const ClienteService = require('./ClienteService');
+const ProdutoService = require('./ProdutoService');
+const ComissionamentoService = require('./ComissionamentoService');
+const ContratoService = require('./ContratoService');
+const PagamentoService = require('./PagamentoService');
 const AuthService = require('./AuthService');
 
 class FachadaNegocio{
 
     async obterUsuarioPorId(id){
-        const gerenciaUsuarios = new GerenciaUsuarios();
-        return await gerenciaUsuarios.obterUsuarioPorId(id);
+        const usuarioService = new UsuarioService();
+        return await usuarioService.obterUsuarioPorId(id);
     }
 
     async login(nomeUsuario, senha){
@@ -23,267 +23,267 @@ class FachadaNegocio{
     }
 
     async cadastrarUsuario(usuario){
-        const gerenciaUsuarios = new GerenciaUsuarios();
-        return await gerenciaUsuarios.cadastrarUsuario(usuario);
+        const usuarioService = new UsuarioService();
+        return await usuarioService.cadastrarUsuario(usuario);
     }
 
     async obterBancoPorCodigo(codigo){
 
-        const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.obterBancoPorCodigo(codigo);
+        const bancoService = new BancoService();
+        return await bancoService.obterBancoPorCodigo(codigo);
     }
 
     async cadastrarBanco(banco){
-        const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.cadastrarBanco(banco);
+        const bancoService = new BancoService();
+        return await bancoService.cadastrarBanco(banco);
 
     }
 
     async atualizarBanco(campos){
-        const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.atualizarBanco(campos);
+        const BancoService = new BancoService();
+        return await bancoService.atualizarBanco(campos);
     }
 
     async listarBancos(){
-        const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.listarBancos();
+        const bancoService = new BancoService();
+        return await bancoService.listarBancos();
     }
 
     async deletarBanco(id){
-        const gerenciaBancos = new GerenciaBancos();
-        return await gerenciaBancos.deletarBanco(id);
+        const bancoService = new BancoService();
+        return await bancoService.deletarBanco(id);
     }
 
     async obterOrgaoPorID(id){
-        const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.obterOrgaoPorID(id);
+        const orgaoService = new OrgaoService();
+        return await orgaoService.obterOrgaoPorID(id);
     }
 
     async cadastrarOrgao(orgao){
-        const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.cadastrarOrgao(orgao);
+        const orgaoService = new OrgaoService();
+        return await orgaoService.cadastrarOrgao(orgao);
     }
 
     async atualizarOrgao(orgao){
-        const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.atualizarOrgao(orgao);
+        const orgaoService = new OrgaoService();
+        return await orgaoService.atualizarOrgao(orgao);
     }
 
     async listarOrgaos(){
-        const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.listarOrgaos();
+        const orgaoService = new OrgaoService();
+        return await orgaoService.listarOrgaos();
     }
 
     async deletarOrgao(id){
-        const gerenciaOrgaos = new GerenciaOrgaos();
-        return await gerenciaOrgaos.deletarOrgao(id);
+        const orgaoService = new OrgaoService();
+        return await orgaoService.deletarOrgao(id);
     }
 
     async obterEstadoPorID(id){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.obterEstadoPorId(id);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.obterEstadoPorId(id);
     }
 
     async cadastrarEstado(estado){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.cadastrarEstado(estado);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.cadastrarEstado(estado);
     }
 
     async atualizarEstado(estado){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.atualizarEstado(estado);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.atualizarEstado(estado);
     }
 
     async listarEstados(){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.listarEstados();
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.listarEstados();
     }
 
     async deletarEstado(id){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.deletarEstado(id);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.deletarEstado(id);
     }
 
     async obterCidadePorId(id){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return gerenciaEstadosCidades.obterCidadePorId(id); 
+        const estadosCidadesService = new EstadosCidadesService();
+        return estadosCidadesService.obterCidadePorId(id); 
     }
 
     async cadastrarCidade(cidade){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.cadastrarCidade(cidade);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.cadastrarCidade(cidade);
     }
 
     async atualizarCidade(cidade){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.atualizarCidade(cidade);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.atualizarCidade(cidade);
     }
 
     async listarCidades(){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.listarCidades();
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.listarCidades();
     }
 
     async listarCidadesPorEstado(estado_id){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.listarCidadesPorEstado(estado_id);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.listarCidadesPorEstado(estado_id);
     }
 
     async deletarCidade(id){
-        const gerenciaEstadosCidades = new GerenciaEstadosCidades();
-        return await gerenciaEstadosCidades.deletarCidade(id);
+        const estadosCidadesService = new EstadosCidadesService();
+        return await estadosCidadesService.deletarCidade(id);
     }
 
     async obterCorretorPorID(id){
-        const gerenciaCorretores = new GerenciaCorretores();
-        return await gerenciaCorretores.obterCorretorPorID(id);
+        const corretorService = new CorretorService();
+        return await corretorService.obterCorretorPorID(id);
     }
 
     async cadastrarCorretor(corretor){
-        const gerenciaCorretores = new GerenciaCorretores();
-        return await gerenciaCorretores.cadastrar(corretor);
+        const corretorService = new CorretorService();
+        return await corretorService.cadastrar(corretor);
     }
 
     async atualizarCorretor(corretor){
-        const gerenciaCorretores = new GerenciaCorretores();
-        return await gerenciaCorretores.atualizarCorretor(corretor);
+        const corretorService = new CorretorService();
+        return await corretorService.atualizarCorretor(corretor);
     }
 
     async listarTodosCorretores(){
-        const gerenciaCorretores = new GerenciaCorretores();
-        return await gerenciaCorretores.listarTodos();
+        const corretorService = new CorretorService();
+        return await corretorService.listarTodos();
     }
 
     async deletarCorretor(id){
-        const gerenciaCorretores = new GerenciaCorretores();
-        return await gerenciaCorretores.deletarCorretor(id);
+        const corretorService = new CorretorService();
+        return await corretorService.deletarCorretor(id);
     }
 
     async obterClientePorId(id){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.obterPorId(id);
+        const clienteService = new ClienteService();
+        return await clienteService.obterPorId(id);
     }
 
     async obterClientePorCpf(cpf){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.obterPorCpf(cpf);
+        const clienteService = new ClienteService();
+        return await clienteService.obterPorCpf(cpf);
     }
 
     async cadastrarCliente(cliente){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.cadastrar(cliente);
+        const clienteService = new ClienteService();
+        return await clienteService.cadastrar(cliente);
     }
 
     async atualizarCliente(cliente){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.atualizarCliente(cliente);
+        const clienteService = new ClienteService();
+        return await clienteService.atualizarCliente(cliente);
     }
 
     async listarClientes(){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.listarClientes();
+        const clienteService = new ClienteService();
+        return await clienteService.listarClientes();
     }
 
     async listarClientesPorNomeLike(nome){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.listarClientesPorNomeLike(nome);
+        const clienteService = new ClienteService();
+        return await clienteService.listarClientesPorNomeLike(nome);
     }
 
     async deletarCliente(id){
-        const gerenciaClientes = new GerenciaClientes();
-        return await gerenciaClientes.deletarCliente(id);
+        const clienteService = new ClienteService();
+        return await clienteService.deletarCliente(id);
     }
 
     async obterProdutoPorID(id){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.obterProdutoPorID(id);
+        const produtoService = new ProdutoService();
+        return await produtoService.obterProdutoPorID(id);
     }
 
     async cadastrarProduto(produto){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.cadastrar(produto);
+        const produtoService = new ProdutoService();
+        return await produtoService.cadastrar(produto);
     }
 
     async atualizarProduto(produto){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.atualizarProduto(produto);
+        const produtoService = new ProdutoService();
+        return await produtoService.atualizarProduto(produto);
     }
     async listarProdutos(criterios=null){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.listarProdutos(criterios);
+        const produtoService = new ProdutoService();
+        return await produtoService.listarProdutos(criterios);
     }
     async deletarProduto(id){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.deletar(id);
+        const produtoService = new ProdutoService();
+        return await produtoService.deletar(id);
     }
 
     async existeProduto(produto){
-        const gerenciaProdutos = new GerenciaProdutos();
-        return await gerenciaProdutos.existe(produto);
+        const produtoService = new ProdutoService();
+        return await produtoService.existe(produto);
     }
 
     async cadastrarComissionamentoPromotora(comissionamento){
-        const gerenciaComissionamento = new GerenciaComissionamento();
-        return await gerenciaComissionamento.cadastrarComissionamentoPromotora(comissionamento);
+        const comissionamentoService = new ComissionamentoService();
+        return await comissionamentoService.cadastrarComissionamentoPromotora(comissionamento);
     }
 
     async cadastrarComissionamentoCorretor(comissionamento){
-        const gerenciaComissionamento = new GerenciaComissionamento();
-        return await gerenciaComissionamento.cadastrarComissionamentoCorretor(comissionamento);
+        const comissionamentoService = new ComissionamentoService();
+        return await comissionamentoService.cadastrarComissionamentoCorretor(comissionamento);
     }
 
     async obterContratoPorID(id){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.obterPorID(id);
+        const contratoService = new ContratoService();
+        return await contratoService.obterPorID(id);
     }
 
     async cadastrarContrato(contrato){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.cadastrar(contrato);
+        const contratoService = new ContratoService();
+        return await contratoService.cadastrar(contrato);
     }
 
     async atualizarContrato(contrato){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.atualizar(contrato);
+        const contratoService = new ContratoService();
+        return await contratoService.atualizar(contrato);
     }
 
     async liberarContrato(contratoId, dtLiberacao){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.liberar(contratoId, dtLiberacao);
+        const contratoService = new ContratoService();
+        return await contratoService.liberar(contratoId, dtLiberacao);
     }
 
     async liberarVariosContratos(arrayContratoId, dtLiberacao){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.liberarVarios(arrayContratoId, dtLiberacao);
+        const contratoService = new ContratoService();
+        return await contratoService.liberarVarios(arrayContratoId, dtLiberacao);
     }
 
     async listarContratos(criterios=null){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.listarContratos(criterios);
+        const contratoService = new ContratoService();
+        return await contratoService.listarContratos(criterios);
     }
 
     async deletarContrato(id){
-        const gerenciaContratos = new GerenciaContratos();
-        return await gerenciaContratos.deletarContrato(id);
+        const contratoService = new ContratoService();
+        return await contratoService.deletarContrato(id);
     }
     async obterComissionamentoPromotoraPorId(id){
-        const gerenciaComissionamento = new GerenciaComissionamento();
-        return await gerenciaComissionamento.obterComissionamentoPromotoraPorId(id);
+        const comissionamentoService = new comissionamentoService();
+        return await comissionamentoService.obterComissionamentoPromotoraPorId(id);
     }
 
     async gerarPagamentoDeComissao(contratoID, usuarioID){
-        const gerenciaPagamento = new GerenciaPagamentos();
-        return await gerenciaPagamento.gerarPagamentoComissao(contratoID, usuarioID);
+        const pagamentoService = new PagamentoService();
+        return await pagamentoService.gerarPagamentoComissao(contratoID, usuarioID);
     }
     
     async listarTodosPagamentos(){
-        const gerenciaPagamentos = new GerenciaPagamentos();
-        return await gerenciaPagamentos.listarTodosPagamentos();
+        const pagamentoService = new PagamentoService();
+        return await pagamentoService.listarTodosPagamentos();
     }
 
     async deletarPagamentoComissao(id){
-        const gerenciaPagamentos = new GerenciaPagamentos();
-        return await gerenciaPagamentos.deletarPagamentoComissao(id);
+        const pagamentoService = new PagamentoService();
+        return await pagamentoService.deletarPagamentoComissao(id);
     }
 
 }

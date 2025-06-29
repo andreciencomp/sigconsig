@@ -3,7 +3,7 @@ const ChaveRepetidaException = require("../excessoes/ChaveRepetidaException");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
 const ComissionamentoInvalidoException = require("../excessoes/ComissionamentoInvalidoException");
 
-class GerenciaComissionamento {
+class ComissionamentoService {
 
     async obterComissionamentoPromotoraPorId(id){
         const fachada = new FachadaDados();
@@ -39,4 +39,4 @@ class GerenciaComissionamento {
 
 }
 
-module.exports = GerenciaComissionamento;
+module.exports = ComissionamentoService;

@@ -1,7 +1,7 @@
 const FachadaDados = require('../dados/FachadaDados');
 const ChaveRepetidaException = require('../excessoes/ChaveRepetidaException');
 
-class GerenciaOrgaos{
+class OrgaoService{
 
     async obterOrgaoPorID(id){
         const fachada = new FachadaDados();
@@ -45,4 +45,4 @@ class GerenciaOrgaos{
     }
 }
 
-module.exports = GerenciaOrgaos;
+module.exports = OrgaoService;
