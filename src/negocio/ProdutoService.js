@@ -20,10 +20,10 @@ class ProdutoService{
 
     async atualizarProduto(produto){
         const fachada = new FachadaDados();
-        if(!(await fachada.existeOrgaoPorID(produto.orgao.id))){
+        if(produto.orgao && !(await fachada.existeOrgaoPorID(produto.orgao.id))){
             throw new EntidadeNaoEncontradaException("Orgão não encontrato", "orgao");
         }
-        const produtoCadastrado = await fachada.obterProduto(produto);
+        const produtoCadastrado = await fachada.obterProdutoPorID(produto.id);
         if(produtoCadastrado && produtoCadastrado.id != produto.id && await fachada.existeProduto(produto)){
             throw new ChaveRepetidaException("Já existe esse produto");
         }

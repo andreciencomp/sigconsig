@@ -21,8 +21,11 @@ class PsqlProdutoDAO {
 
     async obter(produto) {
         try {
+            const orgaoId = produto.orgao && produto.orgao.id ? produto.orgao.id : null;
+            const carencia = produto.carencia ? produto.carencia : null;
+            const qtdParcelas = produto.qtdParcelas ? produto.qtdParcelas : null;
             const strQuery = "select * from produtos where orgao_id=$1 and carencia=$2 and qtd_parcelas=$3";
-            const result = await pool.query(strQuery, [produto.orgao.id, produto.carencia, produto.qtdParcelas]);
+            const result = await pool.query(strQuery, [orgaoId, carencia, qtdParcelas]);
             if (result.rows.length === 0) {
                 throw new EntidadeNaoEncontradaException("Produto inexistente.");
             }
@@ -96,7 +99,7 @@ class PsqlProdutoDAO {
             const produtoCadastrado = await this.obterPorId(produto.id);
             const novaCarencia = typeof (produto.carencia) != 'undefined' ? produto.carencia : produtoCadastrado.carencia;
             const novaQtdParcelas = typeof (produto.qtdParcelas) != 'undefined' ? produto.qtdParcelas : produtoCadastrado.qtdParcelas;
-            const novoOrgaoID = typeof (produto.orgao.id) != 'undefined' ? produto.orgao.id : produtoCadastrado.orgao.id;
+            const novoOrgaoID = produto.orgao && typeof (produto.orgao.id) != 'undefined' ? produto.orgao.id : produtoCadastrado.orgao.id;
             const result = await pool.query('update produtos set orgao_id=$1, carencia=$2, qtd_parcelas=$3 where id=$4 returning id ',
                 [novoOrgaoID, novaCarencia, novaQtdParcelas, produto.id]);
             return await result.rows[0];
