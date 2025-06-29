@@ -1,6 +1,6 @@
 const express = require('express');
 const roteadorBancos = express.Router();
-const AuthMiddleware = require('../Middleware/AuthMiddleware');
+const AuthMiddleware = require('../middleware/AuthMiddleware');
 const BancoController = require('../controllers/BancoController');
 
 const bancoController = new BancoController();
