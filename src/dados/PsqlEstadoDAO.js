@@ -87,6 +87,9 @@ class PsqlEstadoDAO {
         try {
             const strQuery = "delete from estados where id=$1 returning id ";
             const result = await pool.query(strQuery, [id]);
+            if(result.rows.length == 0){
+                throw new EntidadeNaoEncontradaException("Estado inexistente.");
+            }
             return result.rows[0];
 
         } catch (e) {
