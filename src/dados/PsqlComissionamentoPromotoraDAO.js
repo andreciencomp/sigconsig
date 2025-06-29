@@ -4,7 +4,7 @@ const ComissionamentoPromotora = require('../entidades/ComissionamentoPromotora'
 const Orgao = require('../entidades/Orgao');
 const Produto = require('../entidades/Produto');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
-const PgUtil = require('./PgUtil');
+const PgUtil = require('../utils/PgUtil');
 
 class PsqlComissionamentoPromotoraDAO {
     constructor(){

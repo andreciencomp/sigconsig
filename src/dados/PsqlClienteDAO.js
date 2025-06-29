@@ -1,4 +1,4 @@
-let PgUtil = require('./PgUtil');
+let PgUtil = require('../utils/PgUtil');
 const { pool } = require('../helpers/pg_helper');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');

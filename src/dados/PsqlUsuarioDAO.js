@@ -4,7 +4,7 @@ const UsuarioCadastro = require("../entidades/UsuarioCadastro");
 const UsuarioFinanceiro = require("../entidades/UsuarioFinanceiro");
 const UsuarioSuper = require("../entidades/UsuarioSuper");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
-const PgUtil = require("./PgUtil");
+const PgUtil = require("../utils/PgUtil");
 
 class PsqlUsuarioDAO {
 

@@ -1,4 +1,4 @@
-const PgUtil = require('./PgUtil');
+const PgUtil = require('../utils/PgUtil');
 const { pool } = require('../helpers/pg_helper');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const Produto = require('../entidades/Produto');

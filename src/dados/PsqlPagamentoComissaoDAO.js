@@ -1,7 +1,7 @@
 const { pool } = require("../helpers/pg_helper");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
-const PgUtil = require("./PgUtil");
+const PgUtil = require("../utils/PgUtil");
 
 class PsqlPagamentoComissaoDAO {
 

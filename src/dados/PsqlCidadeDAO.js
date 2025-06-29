@@ -1,6 +1,6 @@
 const { pool } = require('../helpers/pg_helper');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
-const PgUtil = require('./PgUtil');
+const PgUtil = require('../utils/PgUtil');
 const Cidade = require('../entidades/Cidade');
 const Estado = require('../entidades/Estado');
 

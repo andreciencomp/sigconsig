@@ -1,6 +1,6 @@
 const { pool } = require('../helpers/pg_helper')
 const Estado = require('../entidades/Estado');
-const PgUtil = require('../dados/PgUtil');
+const PgUtil = require('../utils/PgUtil');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 
 class PsqlEstadoDAO {

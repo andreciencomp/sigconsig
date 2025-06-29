@@ -1,7 +1,7 @@
 const { pool } = require('../helpers/pg_helper');
 const Banco = require('../entidades/Banco');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
-const PgUtil = require('./PgUtil');
+const PgUtil = require('../utils/PgUtil');
 
 class PsqlBancoDAO {
 

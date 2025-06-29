@@ -1,5 +1,5 @@
 const { pool } = require('../helpers/pg_helper')
-const PgUtil = require('../dados/PgUtil');
+const PgUtil = require('../utils/PgUtil');
 const Corretor = require('../entidades/Corretor');
 const EntidadeNaoEncontradaException = require('../excessoes/EntidadeNaoEncontrada');
 const PsqlEnderecoDAO = require('./PsqlEnderecoDAO');
