@@ -165,7 +165,7 @@ class PsqlContratoDAO {
         }
     }
     //"corretorId", "cpf", "clienteNome", "bancoId", "orgaoId", "dataInicial","dataFinal",
-    //  "dtLiberacaoInicial","dtLiberacaoFinal", "status", "valorMinimo", "valorMaximo", "clienteId"
+    //"dtLiberacaoInicial","dtLiberacaoFinal", "status", "valorMinimo", "valorMaximo", "clienteId"
     async listar(criterios = null) {
         try {
             let atributos = Object.keys(criterios);
