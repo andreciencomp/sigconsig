@@ -1,9 +1,8 @@
 const express = require('express');
 const roteador = express.Router();
+const DefaultController = require('../controllers/DefaultController');
 
-roteador.get('/', (req, res, next)=>{
-    res.status(200).send('SigConsigAPI');
-
-});
+const defaultController = new DefaultController();
+roteador.get('/', defaultController.index);
 
 module.exports = roteador;
