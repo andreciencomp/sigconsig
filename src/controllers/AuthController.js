@@ -1,0 +1,23 @@
+const ExceptionService = require("../excessoes/ExceptionService");
+const FachadaNegocio = require("../negocio/FachadaNegocio");
+const HeadersUtil = require("../utils/HeadersUtil");
+const JwtUtil = require("../utils/JwtUtil");
+
+class AuthController {
+
+    login = async (req, res) => {
+        try {
+            const infoLogin = HeadersUtil.obterBasicLoginInfo(req);
+            const fachada = new FachadaNegocio();
+            const usuario = await fachada.login(infoLogin.nomeUsuario, infoLogin.senha);
+            const jwtPayload = { id: usuario.id, tipo: usuario.tipo };
+            const token = JwtUtil.gerarToken(jwtPayload);
+            res.status(200).send({ token: token, usuario: usuario });
+
+        } catch (e) {
+            ExceptionService.enviarExcessao(e, res);
+        }
+    }
+}
+
+module.exports = AuthController;

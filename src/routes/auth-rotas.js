@@ -1,22 +1,9 @@
-const ExceptionService =  require('../excessoes/ExceptionService');
 const express = require('express');
 const router = express.Router();
-const FachadaNegocio = require('../negocio/FachadaNegocio');
-const HeadersUtil = require('../utils/HeadersUtil');
-const JwtUtil = require('../utils/JwtUtil');
+const AuthController = require('../controllers/AuthController')
 
-router.get('/login', async (req, res)=>{
-    try{
-        const infoLogin =  HeadersUtil.obterBasicLoginInfo(req);
-        const fachada =  new FachadaNegocio();
-        const usuario =   await fachada.login(infoLogin.nomeUsuario, infoLogin.senha);
-        const jwtPayload = { id:usuario.id,tipo:usuario.tipo};
-        const token = JwtUtil.gerarToken(jwtPayload);
-        res.status(200).send({token: token, usuario: usuario});
+const authController = new AuthController();
 
-    }catch(e){
-        ExceptionService.enviarExcessao(e,res);
-    }
-});
+router.get('/login', authController.login);
 
 module.exports = router;
