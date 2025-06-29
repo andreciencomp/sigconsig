@@ -1,4 +1,5 @@
 const FachadaDados = require('../dados/FachadaDados');
+const bcrypt = require('bcryptjs');
 
 class UsuarioService {
     
