@@ -1,6 +1,4 @@
 const express = require('express');
-const FachadaNegocio = require('../negocio/FachadaNegocio');
-const ExceptionService = require('../excessoes/ExceptionService');
 const AuthMiddleware = require('../Middleware/AuthMiddleware');
 const PagamentoComissaoController = require('../controllers/PagamentoComissaoController');
 const router = express.Router();
