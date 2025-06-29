@@ -40,7 +40,7 @@ class FachadaNegocio{
     }
 
     async atualizarBanco(campos){
-        const BancoService = new BancoService();
+        const bancoService = new BancoService();
         return await bancoService.atualizarBanco(campos);
     }
 
