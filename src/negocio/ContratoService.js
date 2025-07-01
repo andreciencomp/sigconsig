@@ -69,7 +69,7 @@ class ContratoService {
         contrato.status = "LIBERADO";
         contrato.dtLiberacao = dtLiberacao;
         const fachada = new FachadaDados();
-        const contratoLiberado = await fachada.atualizarContrato(contrato, true);
+        const contratoLiberado = await fachada.atualizarContrato(contrato);
         return contratoLiberado;
     }
 
