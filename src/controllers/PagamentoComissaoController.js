@@ -13,6 +13,17 @@ class PagamentosComissaoController {
         }
     }
 
+    efetivar = async (req, res)=>{
+        try{
+            const fachadaNegocio = new FachadaNegocio();
+            const pagamentoId = await fachadaNegocio.efetivarPagamento(req.params.id);
+            return res.status(201).send(pagamentoId);
+            
+        }catch(e){
+            ExceptionService.enviarExcessao(e, res)
+        }
+    }
+
     listar = async (req, res) => {
         try {
             const fachadaNegocio = new FachadaNegocio();

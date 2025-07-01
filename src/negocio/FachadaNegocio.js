@@ -276,6 +276,11 @@ class FachadaNegocio{
         const pagamentoService = new PagamentoService();
         return await pagamentoService.gerarPagamentoComissao(contratoID, usuarioID);
     }
+
+    async efetivarPagamento(id){
+        const pagamentoService = new PagamentoService();
+        return await pagamentoService.efetivarPagamento(id);
+    }
     
     async listarTodosPagamentos(){
         const pagamentoService = new PagamentoService();

@@ -2,6 +2,7 @@ const UsuarioNaoAutorizadoException = require("../excessoes/UsuarioNaoAutorizado
 const ExceptionService = require("../excessoes/ExceptionService");
 const HeadersUtil = require("../utils/HeadersUtil");
 const JwtUtil = require("../utils/JwtUtil");
+const UsuarioUtil = require("../utils/UsuarioUtil");
 
 class AuthMiddleware {
 
@@ -10,6 +11,7 @@ class AuthMiddleware {
             const token = HeadersUtil.obterBearerToken(req);
             const tokenDecodificado = JwtUtil.decodificarToken(token);
             req.dadosUsuario = tokenDecodificado;
+            UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
             next();
             return;
 
@@ -28,6 +30,7 @@ class AuthMiddleware {
                 throw new UsuarioNaoAutorizadoException("É necessário ser usuário super para realizar esta operação.");
             }
             req.dadosUsuario = tokenDecodificado;
+            UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
             next();
             return;
 
@@ -43,6 +46,7 @@ class AuthMiddleware {
             const tokenDecodificado = JwtUtil.decodificarToken(token);
             if (tokenDecodificado.tipo == 'USUARIO_ADMIN' || tokenDecodificado.tipo == 'USUARIO_SUPER') {
                 req.dadosUsuario = tokenDecodificado;
+                UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
                 next();
                 return;
             }
@@ -63,6 +67,7 @@ class AuthMiddleware {
             if (tokenDecodificado.tipo == 'USUARIO_FINANCEIRO' ||
                 tokenDecodificado.tipo == 'USUARIO_SUPER' || tokenDecodificado.tipo == 'USUARIO_ADMIN') {
                 req.dadosUsuario = tokenDecodificado;
+                UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
                 next();
                 return;
             }
@@ -81,6 +86,7 @@ class AuthMiddleware {
 
             if (tokenDecodificado.tipo == 'USUARIO_CADASTRO' || tokenDecodificado.tipo == 'USUARIO_ADMIN' || tokenDecodificado.tipo == 'USUARIO_SUPER') {
                 req.dadosUsuario = tokenDecodificado;
+                UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
                 next();
                 return;
             }

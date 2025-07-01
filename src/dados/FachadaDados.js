@@ -394,7 +394,16 @@ class FachadaDados {
         const dao = DAOFactory.getPagamentoComissaoDAO();
         return await dao.salvar(pagamentoComissao);
     }
+
+    async atualizarPagamentoComissao(pagamentoComissao){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.atualizar(pagamentoComissao);
+    }
    
+    async existePagamento(id){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.existe(id);
+    }
 
     async existePagamentoPorContratoId(contratoId) {
         const dao = DAOFactory.getPagamentoComissaoDAO();

@@ -45,6 +45,41 @@ class PsqlPagamentoComissaoDAO {
         }
     }
 
+    async atualizar(pagamento) {
+        try {
+            const pagamentoCadastrado = await this.obterPorId(pagamento.id);
+            const contratoId = typeof (pagamento.contrato) != 'undefined' && pagamento.contrato.id ? pagamento.contrato.id : pagamentoCadastrado.contrato.id;
+            const corretorId = typeof (pagamento.contrato) != 'undefined' && pagamento.corretor.id ? pagamento.corretor.id : pagamentoCadastrado.corretor.id;
+            const valorPromotora = typeof (pagamento.valorPromotora) != 'undefined' ? pagamento.valorPromotora : pagamentoCadastrado.valorPromotora;
+            const valorCorretor = typeof (pagamento.valorCorretor) != 'undefined' ? pagamento.valorCorretor : pagamentoCadastrado.valorCorretor;
+            const percentagemPromotora = typeof (pagamento.percentagemPromotora) != 'undefined' ? pagamento.percentagemPromotora : pagamentoCadastrado.percentagemPromotora;
+            const percentagemCorretor = typeof (pagamento.percentagemCorretor) != 'undefined' ? pagamento.percentagemCorretor : pagamentoCadastrado.percentagemCorretor;
+            const efetivado = typeof (pagamento.efetivado) != 'undefined' ? pagamento.efetivado : pagamentoCadastrado.efetivado;
+            const efetivadoPorId = typeof(pagamento.efetivadoPor) != 'undefined' ? pagamento.efetivadoPor.id : pagamentoCadastrado.efetivadoPor.id;
+            const dtPagamento = typeof (pagamento.dtPagamento) != 'undefined' ? pagamento.dtPagamento : pagamentoCadastrado.dtPagamento;
+
+            const strQuery = 'update pagamentos_comissoes set contrato_id=$1, corretor_id=$2, valor_promotora=$3, valor_corretor=$4, percentagem_promotora=$5, ' +
+                'percentagem_corretor=$6, efetivado=$7, efetivado_por=$8, dt_pagamento=$9 where id=$10 returning id';
+
+            const result = await pool.query(strQuery,[contratoId, corretorId, valorPromotora,
+                 valorCorretor, percentagemPromotora, percentagemCorretor,efetivado,efetivadoPorId, dtPagamento, pagamento.id]);
+            return result.rows[0];
+
+        } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async existe(id) {
+        try {
+            const result = await pool.query("select id from pagamentos_comissoes where id=$1", [id]);
+            return result.rows.length > 0;
+
+        } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
     async existePorContratoId(contratoId) {
         try {
             const query = "select id from pagamentos_comissoes where contrato_id=$1";
@@ -89,7 +124,7 @@ class PsqlPagamentoComissaoDAO {
         const pagamentoComissao = new PagamentoComissao();
         pagamentoComissao.id = row.id;
         pagamentoComissao.contrato = { id: row.contrato_id, valor: row.valor };
-        pagamentoComissao.dtPagamento = row.dt_pagamento.toISOString().slice(0, 10);
+        pagamentoComissao.dtPagamento = pagamentoComissao.dtPagamento ? row.dt_pagamento.toISOString().slice(0, 10) : null;
         pagamentoComissao.percentagemPromotora = row.percentagem_promotora;
         pagamentoComissao.percentagemCorretor = row.percentagem_corretor;
         pagamentoComissao.valorPromotora = row.valor_promotora;

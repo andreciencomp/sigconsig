@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const TokenInvalidoException = require('../excessoes/TokenInvalidoException');
 
 class JwtUtil {
 
