@@ -6,7 +6,7 @@ class PagamentosComissaoController {
     gerar = async (req, res) => {
         try {
             const fachadaNegocio = new FachadaNegocio();
-            const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.contrato_id, req.dadosUsuario.id);
+            const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.contrato_id);
             return res.status(201).send(pagamentoId);
         } catch (e) {
             ExceptionService.enviarExcessao(e, res);

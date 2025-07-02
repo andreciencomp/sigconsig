@@ -19,7 +19,7 @@ class PagamentoService {
         return await fachada.listarTodosPagamentos();
     }
 
-    async gerarPagamentoComissao(contratoID, usuarioID) {
+    async gerarPagamentoComissao(contratoID) {
         const fachada = new FachadaDados();
         let contrato = await fachada.obterContratoPorId(contratoID);
 
@@ -43,7 +43,7 @@ class PagamentoService {
         const comissionamentoPromotora = await fachada.obterComissionamentoPromotora(contrato.produto.id, contrato.banco.id);
         const comissionamentoCorretor = await fachada.obterComissionamentoCorretor(contrato.corretor.id, contrato.banco.id, contrato.produto.id);
         const pagamentoComissao = new PagamentoComissao();
-        const usuario = await fachada.obterUsuarioPorId(usuarioID);
+        const usuario = await fachada.obterUsuarioPorId(UsuarioUtil.usuarioAutenticadoId);
         pagamentoComissao.cadastradoPor = usuario;
         pagamentoComissao.contrato = contrato;
         pagamentoComissao.corretor = contrato.corretor;

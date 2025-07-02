@@ -272,9 +272,9 @@ class FachadaNegocio{
         return await contratoService.deletarContrato(id);
     }
 
-    async gerarPagamentoDeComissao(contratoID, usuarioID){
+    async gerarPagamentoDeComissao(contratoID){
         const pagamentoService = new PagamentoService();
-        return await pagamentoService.gerarPagamentoComissao(contratoID, usuarioID);
+        return await pagamentoService.gerarPagamentoComissao(contratoID);
     }
 
     async efetivarPagamento(id){
