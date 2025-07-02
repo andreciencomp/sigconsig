@@ -1,29 +1,17 @@
 const FachadaDados = require("../dados/FachadaDados");
-const PsqlContratoDAO = require("../dados/PsqlContratoDAO");
-const PsqlCorretorDAO = require("../dados/PsqlCorretorDAO");
 const ComissionamentoCorretor = require("../entidades/ComissionamentoCorretor");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const ComissaoNaoCadastradaException = require("../excessoes/ComissaoNaoCadastradaException");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const OperacaoNaoPermitidaException = require("../excessoes/OperacaoNaoPermitidaException");
 const PagamentoJaCadastradoException = require("../excessoes/PagamentoJaCadastradoException");
-const { pool } = require("../helpers/pg_helper");
-const PgUtil = require("../utils/PgUtil");
 const UsuarioUtil = require("../utils/UsuarioUtil");
 
 class PagamentoService {
 
     async obterPagamentoPorId(id){
-        try{
-            const result = await pool.query("select * from pagamentos_comissoes where id=$1",[id]);
-            if(result.rows.length === 0){
-                throw new EntidadeNaoEncontradaException("Pagamento inexistente.");
-            }
-            return await this.criarObjetoPagamentoComissao(result.rows[0]);
-
-        }catch(e){
-            PgUtil.checkError(e);
-        }
+        const fachada = new FachadaDados();
+        return await fachada.obterPagamentoComissaoPorId(id);
     }
 
     async listarTodosPagamentos() {
@@ -77,10 +65,13 @@ class PagamentoService {
         if(pagamento.efetivado){
             throw new OperacaoNaoPermitidaException("Este pagamento já foi efetivado.");
         }
-        pagamento.efetivado = true;
-        pagamento.dtPagamento = new Date();
-        pagamento.efetivadoPor = {id: UsuarioUtil.usuarioAutenticadoId}
-        return await fachada.atualizarPagamentoComissao(pagamento);
+        const camposParaAtualizar = {
+            id: id,
+            efetivado: true,
+            dtEfetivacao: new Date(),
+            efetivadoPor: {id: UsuarioUtil.usuarioAutenticadoId}
+        }
+        return await fachada.atualizarPagamentoComissao(camposParaAtualizar);
     }
 
     async deletarPagamentoComissao(id){
@@ -105,21 +96,6 @@ class PagamentoService {
         if (!contrato.banco) {
             throw new DadosNulosException("O contrato está sem o banco.");
         }
-    }
-
-    async criarObjetoPagamentoComissao(row){
-        const pagamento = new PagamentoComissao();
-        pagamento.id = row.id,
-        pagamento.valorPromotora = row.valor_promotora;
-        pagamento.valorCorretor = row.valor_corretor;
-        pagamento.percentagemPromotora = row.percentagem_promotora;
-        pagamento.percentagemCorretor = row.percentagem_corretor;
-        pagamento.efetivado = row.efetivado;
-        pagamento.dtPagamento = row.dt_pagamento;
-        const contratoDAO = new PsqlContratoDAO();
-        pagamento.contrato = await contratoDAO.obterPorId(row.contrato_id);
-        pagamento.corretor = pagamento.contrato.corretor;
-        return pagamento;
     }
 }
 

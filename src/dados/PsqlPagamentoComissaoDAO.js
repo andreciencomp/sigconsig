@@ -2,12 +2,13 @@ const { pool } = require("../helpers/pg_helper");
 const PagamentoComissao = require("../entidades/PagamentoComissao");
 const EntidadeNaoEncontradaException = require("../excessoes/EntidadeNaoEncontrada");
 const PgUtil = require("../utils/PgUtil");
+const Usuario = require("../entidades/Usuario");
 
 class PsqlPagamentoComissaoDAO {
 
     constructor() {
         this.querySelect = "select pagamentos_comissoes.id, contratos.id as contrato_id, contratos.valor, valor_corretor, valor_promotora, " +
-            "percentagem_promotora, percentagem_corretor, efetivado, cadastrado_por, efetivado_por, dt_pagamento, corretores.id as corretor_id " +
+            "percentagem_promotora, percentagem_corretor, efetivado, cadastrado_por, dt_cadastro, efetivado_por, dt_efetivacao, corretores.id as corretor_id " +
             "from pagamentos_comissoes left join contratos on contratos.id = pagamentos_comissoes.contrato_id " +
             "left join corretores on corretores.id = pagamentos_comissoes.corretor_id where ";
     }
@@ -26,17 +27,20 @@ class PsqlPagamentoComissaoDAO {
         }
     }
 
-    async salvar(pagamentoComissao) {
+    async salvar(pagamento) {
         try {
-            const dtPagamento = new Date();
-            const strQuery = "insert into pagamentos_comissoes(corretor_id, contrato_id, percentagem_corretor, percentagem_promotora, valor_corretor, valor_promotora, " +
-                "efetivado, cadastrado_por, efetivado_por, dt_pagamento) values" +
-                "($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id ";
-            const cadastradoPor = pagamentoComissao.cadastradoPor && pagamentoComissao.cadastradoPor.id ? pagamentoComissao.cadastradoPor.id : null;
-            const efetivadoPor = pagamentoComissao.efetivadoPor && pagamentoComissao.efetivadoPor.id ? pagamentoComissao.efetivadoPor.id : null;
-            const { rows } = await pool.query(strQuery, [pagamentoComissao.corretor.id, pagamentoComissao.contrato.id, pagamentoComissao.percentagemCorretor,
-            pagamentoComissao.percentagemPromotora, pagamentoComissao.valorCorretor, pagamentoComissao.valorPromotora, pagamentoComissao.efetivado,
-                cadastradoPor, efetivadoPor, dtPagamento]);
+            const strQuery = "insert into pagamentos_comissoes(corretor_id, contrato_id, percentagem_corretor, " +
+                            "percentagem_promotora, valor_corretor, valor_promotora, efetivado, " +
+                            "cadastrado_por, dt_cadastro, efetivado_por, dt_efetivacao) values" +
+                            "($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id ";
+
+            const cadastradoPorId = pagamento.cadastradoPor && pagamento.cadastradoPor.id ? pagamento.cadastradoPor.id : null;
+            const efetivadoPorId = pagamento.efetivadoPor && pagamento.efetivadoPor.id ? pagamento.efetivadoPor.id : null;
+            const dtCadastro = new Date();
+
+            const { rows } = await pool.query(strQuery, [pagamento.corretor.id, pagamento.contrato.id, pagamento.percentagemCorretor,
+                pagamento.percentagemPromotora, pagamento.valorCorretor, pagamento.valorPromotora, pagamento.efetivado,
+                cadastradoPorId, dtCadastro, efetivadoPorId, pagamento.dtEfetivacao]);
             return rows[0];
 
         } catch (e) {
@@ -54,15 +58,17 @@ class PsqlPagamentoComissaoDAO {
             const valorCorretor = typeof (pagamento.valorCorretor) != 'undefined' ? pagamento.valorCorretor : pagamentoCadastrado.valorCorretor;
             const percentagemPromotora = typeof (pagamento.percentagemPromotora) != 'undefined' ? pagamento.percentagemPromotora : pagamentoCadastrado.percentagemPromotora;
             const percentagemCorretor = typeof (pagamento.percentagemCorretor) != 'undefined' ? pagamento.percentagemCorretor : pagamentoCadastrado.percentagemCorretor;
+            const cadastradoPorId = typeof(pagamento.cadastradoPor) != 'undefined' ? pagamento.cadastradoPor.id : pagamentoCadastrado.cadastradoPor.id;
+            const dtCadastro = typeof(pagamento.dtCadastro) != 'undefined' ? pagamento.dtCadastro : pagamentoCadastrado.dtCadastro;
             const efetivado = typeof (pagamento.efetivado) != 'undefined' ? pagamento.efetivado : pagamentoCadastrado.efetivado;
             const efetivadoPorId = typeof(pagamento.efetivadoPor) != 'undefined' ? pagamento.efetivadoPor.id : pagamentoCadastrado.efetivadoPor.id;
-            const dtPagamento = typeof (pagamento.dtPagamento) != 'undefined' ? pagamento.dtPagamento : pagamentoCadastrado.dtPagamento;
+            const dtEfetivacao = typeof (pagamento.dtEfetivacao) != 'undefined' ? pagamento.dtEfetivacao : pagamentoCadastrado.dtEfetivacao;
 
             const strQuery = 'update pagamentos_comissoes set contrato_id=$1, corretor_id=$2, valor_promotora=$3, valor_corretor=$4, percentagem_promotora=$5, ' +
-                'percentagem_corretor=$6, efetivado=$7, efetivado_por=$8, dt_pagamento=$9 where id=$10 returning id';
+                'percentagem_corretor=$6, efetivado=$7,cadastrado_por=$8, dt_cadastro=$9, efetivado_por=$10, dt_efetivacao=$11 where id=$12 returning id';
 
-            const result = await pool.query(strQuery,[contratoId, corretorId, valorPromotora,
-                 valorCorretor, percentagemPromotora, percentagemCorretor,efetivado,efetivadoPorId, dtPagamento, pagamento.id]);
+            const result = await pool.query(strQuery,[contratoId, corretorId, valorPromotora, valorCorretor, percentagemPromotora,
+                             percentagemCorretor,efetivado, cadastradoPorId, dtCadastro, efetivadoPorId, dtEfetivacao, pagamento.id]);
             return result.rows[0];
 
         } catch (e) {
@@ -94,7 +100,7 @@ class PsqlPagamentoComissaoDAO {
     async listarTodos() {
         try {
             const pagamentos = [];
-            const strQuery = this.querySelect + "true order by efetivado desc, dt_pagamento desc";
+            const strQuery = this.querySelect + "true order by efetivado desc, dt_efetivacao desc";
             const result = await pool.query(strQuery)
             for (let i = 0; i < result.rows.length; i++) {
                 const pagamento = this.criarObjeto(result.rows[i]);
@@ -124,13 +130,14 @@ class PsqlPagamentoComissaoDAO {
         const pagamentoComissao = new PagamentoComissao();
         pagamentoComissao.id = row.id;
         pagamentoComissao.contrato = { id: row.contrato_id, valor: row.valor };
-        pagamentoComissao.dtPagamento = pagamentoComissao.dtPagamento ? row.dt_pagamento.toISOString().slice(0, 10) : null;
+        pagamentoComissao.dtEfetivacao = row.dt_efetivacao;
         pagamentoComissao.percentagemPromotora = row.percentagem_promotora;
         pagamentoComissao.percentagemCorretor = row.percentagem_corretor;
         pagamentoComissao.valorPromotora = row.valor_promotora;
         pagamentoComissao.valorCorretor = row.valor_corretor;
         pagamentoComissao.efetivado = row.efetivado;
-        pagamentoComissao.cadastradoPor = { id: row.cadastrado_por };
+        pagamentoComissao.cadastradoPor = new Usuario(row.cadastrado_por);
+        pagamentoComissao.dtCadastro = row.dt_cadastro;
         pagamentoComissao.efetivadoPor = row.efetivado_por ? { id: row.efetivado_por } : null;
         pagamentoComissao.corretor = { id: row.corretor_id };
         return pagamentoComissao;

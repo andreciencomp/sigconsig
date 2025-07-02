@@ -1,7 +1,7 @@
 class PagamentoComissao{
 
     constructor(id=this.id, contrato=null,corretor=null, valorCorretor=null, valorPromotora=null, percentagemCorretor=null,
-         percentagemPromotora=null, efetivado=false, cadastradoPor=null,efetivadoPor=null,dtPagamento=null){
+         percentagemPromotora=null, efetivado=false, cadastradoPor=null, dtCadastro=null,efetivadoPor=null, efetivadoEm=null, dtEfetivacao=null){
         this.id = id;
         this.contrato = contrato;
         this.corretor = corretor;
@@ -11,8 +11,9 @@ class PagamentoComissao{
         this.percentagemPromotora = percentagemPromotora;
         this.efetivado = efetivado;
         this.cadastradoPor = cadastradoPor;
+        this.dtCadastro = dtCadastro;
         this.efetivadoPor = efetivadoPor;
-        this.dtPagamento = dtPagamento;
+        this.dtEfetivacao = dtEfetivacao;
     }
 }
 
