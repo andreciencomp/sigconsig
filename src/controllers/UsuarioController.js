@@ -1,5 +1,5 @@
 const Usuario = require("../entidades/Usuario");
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const UsuarioValidator = require("../validators/UsuarioValidator");
 
@@ -20,7 +20,7 @@ class UsuarioController{
             return res.status(201).send(usuarioId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

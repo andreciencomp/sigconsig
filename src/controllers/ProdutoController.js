@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const ProdutoValidator = require("../validators/ProdutoValidator");
 
@@ -10,7 +10,7 @@ class ProdutoController {
             return res.status(200).send(produto);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -22,7 +22,7 @@ class ProdutoController {
             return res.status(201).send(produtoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -34,7 +34,7 @@ class ProdutoController {
             return res.status(200).send(produtoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -45,7 +45,7 @@ class ProdutoController {
             return res.status(200).send(produtos);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -56,7 +56,7 @@ class ProdutoController {
             return res.status(200).send(produtoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

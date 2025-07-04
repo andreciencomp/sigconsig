@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const EstadoValidator = require("../validators/EstadoValidator");
 
@@ -11,7 +11,7 @@ class EstadoController {
             return res.status(200).send(estado);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -23,7 +23,7 @@ class EstadoController {
             return res.status(201).send(estadoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -35,7 +35,7 @@ class EstadoController {
             return res.status(200).send(estadoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -46,7 +46,7 @@ class EstadoController {
             return res.status(200).send(estados);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -57,7 +57,7 @@ class EstadoController {
             return res.status(200).send(estadoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

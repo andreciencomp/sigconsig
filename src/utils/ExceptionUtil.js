@@ -1,4 +1,4 @@
-class ExceptionService {
+class ExceptionUtil {
     static enviarExcessao(e1, res) {
         try {
             if(!e1.statusCode){
@@ -12,5 +12,5 @@ class ExceptionService {
     }
 }
 
-module.exports = ExceptionService;
+module.exports = ExceptionUtil;
 

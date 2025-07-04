@@ -1,5 +1,5 @@
 const FachadaNegocio = require("../negocio/FachadaNegocio");
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const CorretorValidator = require("../validators/CorretorValidator");
 
 class CorretorController {
@@ -11,7 +11,7 @@ class CorretorController {
             return res.status(200).send(corretor);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -23,7 +23,7 @@ class CorretorController {
             return res.status(201).send(corretorId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -35,7 +35,7 @@ class CorretorController {
             return res.status(200).send(corretorId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -46,7 +46,7 @@ class CorretorController {
             return res.status(200).send(corretores);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -57,7 +57,7 @@ class CorretorController {
             return res.status(200).send(corretorId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

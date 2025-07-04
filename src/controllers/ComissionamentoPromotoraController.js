@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const ComissionamentoPromotoraValidator = require("../validators/ComissionamentoPromotoraValidator");
 
@@ -10,7 +10,7 @@ class ComissionamentoPromotoraController {
             return res.status(200).send(comissionamento);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -22,7 +22,7 @@ class ComissionamentoPromotoraController {
             return res.status(201).send(idComissionamento);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

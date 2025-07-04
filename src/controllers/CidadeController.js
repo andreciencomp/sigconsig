@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const CidadeValidator = require("../validators/CidadeValidator");
 
@@ -10,7 +10,7 @@ class CidadeController {
             return res.status(200).send(cidadeId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -22,7 +22,7 @@ class CidadeController {
             return res.status(201).send(cidadeId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -32,7 +32,7 @@ class CidadeController {
             const cidadeId = await fachada.atualizarCidade(req.body);
             return res.status(200).send(cidadeId);
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -43,7 +43,7 @@ class CidadeController {
             return res.status(200).send(cidades);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -54,7 +54,7 @@ class CidadeController {
             return res.status(200).send(cidades);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -65,7 +65,7 @@ class CidadeController {
             return res.status(200).send(cidadeId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

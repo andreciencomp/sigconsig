@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 
 class PagamentosComissaoController {
@@ -9,7 +9,7 @@ class PagamentosComissaoController {
             const pagamentoId = await fachadaNegocio.gerarPagamentoDeComissao(req.params.contrato_id);
             return res.status(201).send(pagamentoId);
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -20,7 +20,7 @@ class PagamentosComissaoController {
             return res.status(201).send(pagamentoId);
             
         }catch(e){
-            ExceptionService.enviarExcessao(e, res)
+            ExceptionUtil.enviarExcessao(e, res)
         }
     }
 
@@ -31,7 +31,7 @@ class PagamentosComissaoController {
             return res.status(200).send(pagamentos);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -42,7 +42,7 @@ class PagamentosComissaoController {
             return res.status(200).send(pagamentoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

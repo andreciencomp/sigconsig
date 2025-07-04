@@ -1,5 +1,5 @@
 const UsuarioNaoAutorizadoException = require("../excessoes/UsuarioNaoAutorizadoException");
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const HeadersUtil = require("../utils/HeadersUtil");
 const JwtUtil = require("../utils/JwtUtil");
 const UsuarioUtil = require("../utils/UsuarioUtil");
@@ -15,7 +15,7 @@ class AuthMiddleware {
             return;
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
 
         }
     }
@@ -33,7 +33,7 @@ class AuthMiddleware {
             return;
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
 
         }
     }
@@ -52,7 +52,7 @@ class AuthMiddleware {
             }
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -70,7 +70,7 @@ class AuthMiddleware {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
 
         }
     }
@@ -88,7 +88,7 @@ class AuthMiddleware {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado.");
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
 
         }
     }

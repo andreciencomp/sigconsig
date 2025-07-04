@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const ClienteValidator = require("../validators/ClienteValidator");
 
@@ -11,7 +11,7 @@ class ClienteController {
             return res.status(200).send(cliente);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -22,7 +22,7 @@ class ClienteController {
             return res.status(200).send(cliente);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -33,7 +33,7 @@ class ClienteController {
             return res.status(200).send(clientes);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -45,7 +45,7 @@ class ClienteController {
             return res.status(201).send(clienteId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -57,7 +57,7 @@ class ClienteController {
             return res.status(200).send(clienteId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -68,7 +68,7 @@ class ClienteController {
             return res.status(200).send(clienteId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res)
+            ExceptionUtil.enviarExcessao(e, res)
         }
     }
 
@@ -79,7 +79,7 @@ class ClienteController {
             return res.status(200).send(clientes);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const HeadersUtil = require("../utils/HeadersUtil");
 const JwtUtil = require("../utils/JwtUtil");
@@ -15,7 +15,7 @@ class AuthController {
             res.status(200).send({ token: token, usuario: usuario });
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }

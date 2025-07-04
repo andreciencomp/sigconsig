@@ -1,4 +1,4 @@
-const ExceptionService = require("../excessoes/ExceptionService");
+const ExceptionUtil = require("../utils/ExceptionUtil");
 const FachadaNegocio = require("../negocio/FachadaNegocio");
 const BancoValidator = require("../validators/BancoValidator");
 
@@ -10,7 +10,7 @@ class BancoController {
             return res.status(200).send(banco);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -22,7 +22,7 @@ class BancoController {
             res.status(201).send(bancoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -34,7 +34,7 @@ class BancoController {
             return res.status(200).send(bancoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 
@@ -45,7 +45,7 @@ class BancoController {
             return res.status(200).send(bancos);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
 
         }
     }
@@ -57,7 +57,7 @@ class BancoController {
             return res.status(200).send(bancoId);
 
         } catch (e) {
-            ExceptionService.enviarExcessao(e, res);
+            ExceptionUtil.enviarExcessao(e, res);
         }
     }
 }
