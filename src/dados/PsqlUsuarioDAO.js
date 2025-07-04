@@ -80,7 +80,6 @@ class PsqlUsuarioDAO {
         } catch (e) {
             PgUtil.checkError(e);
         }
-
     }
 }
 
