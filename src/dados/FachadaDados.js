@@ -25,10 +25,20 @@ class FachadaDados {
         return await dao.salvar(usuario);
     }
 
+    async atualizarUsuario(usuario){
+        const dao = DAOFactory.getUsuarioDAO();
+        return await dao.atualizar(usuario);
+    }
+
     async obterUsuarioSuperPorNome(nomeUsuario) {
         const dao = DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
         return usr;
+    }
+
+    async existeUsuarioPorId(id){
+        const dao = DAOFactory.getUsuarioDAO();
+        return await dao.existeUsuarioPorId(id);
     }
 
     async obterUsuarioAdmPorNome(nomeUsuario) {

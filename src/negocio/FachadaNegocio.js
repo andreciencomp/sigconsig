@@ -27,6 +27,11 @@ class FachadaNegocio{
         return await usuarioService.cadastrarUsuario(usuario);
     }
 
+    async atualizarSenha(usuario){
+        const usuarioService = new UsuarioService();
+        return await usuarioService.atualizarSenha(usuario);
+    }
+
     async obterBancoPorCodigo(codigo){
 
         const bancoService = new BancoService();

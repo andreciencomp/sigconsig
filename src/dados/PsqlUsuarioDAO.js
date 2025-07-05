@@ -70,6 +70,16 @@ class PsqlUsuarioDAO {
         }
     }
 
+    async existeUsuarioPorId(id){
+        try{
+            const result = await pool.query("select id from usuarios where id=$1",[id]);
+            return result.rows.length > 0;
+
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
+
     async salvar(usuario) {
         try {
             let strQuery = "insert into usuarios (nome_usuario, senha, tipo) values ($1, $2, $3) returning id";
@@ -78,6 +88,21 @@ class PsqlUsuarioDAO {
             return rows[0];
 
         } catch (e) {
+            PgUtil.checkError(e);
+        }
+    }
+
+    async atualizar(usuario){
+        try{
+            const usuarioCadastrado = await this.obter(usuario.id);
+            const nomeUsuario = typeof(usuario.nomeUsuario) != 'undefined' ? usuario.nomeUsuario : usuarioCadastrado.nomeUsuario;
+            const senha = typeof(usuario.senha) != 'undefined' ? usuario.senha : usuarioCadastrado.senha;
+            const tipo = typeof(usuario.tipo) != 'undefined' ? usuario.tipo : usuarioCadastrado.tipo;
+            const strQuery = "update usuarios set nome_usuario=$1, senha=$2, tipo=$3 where id=$4 returning id"; 
+            const result = await pool.query(strQuery,[nomeUsuario, senha, tipo, usuario.id]);
+            return result.rows[0];
+            
+        }catch(e){
             PgUtil.checkError(e);
         }
     }

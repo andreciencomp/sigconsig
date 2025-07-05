@@ -22,6 +22,19 @@ class UsuarioValidator {
         }
         return true;
     }
+
+    static validarAtualizacaoSenha(usuario){
+        if(!usuario.id){
+            throw new DadosNulosException("O ID do usuário está nulo.", "id");
+        }
+
+        if(!usuario.senha || usuario.senha == ""){
+            throw new DadosNulosException("A senha do usuário está nulo","senha");
+        }
+
+        return true;
+    }
+
 }
 
 
