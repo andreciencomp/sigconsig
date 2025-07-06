@@ -84,6 +84,7 @@ class AuthMiddleware {
             const token = HeadersUtil.obterBearerToken(req);
             const tokenDecodificado = JwtUtil.decodificarToken(token);
 
+
             if (tokenDecodificado.tipo == 'USUARIO_CADASTRO' || tokenDecodificado.tipo == 'USUARIO_ADMIN' || tokenDecodificado.tipo == 'USUARIO_SUPER') {
                 UsuarioUtil.usuarioAutenticadoId = tokenDecodificado.id;
                 UsuarioUtil.usuarioAutenticadoTipo = tokenDecodificado.tipo;

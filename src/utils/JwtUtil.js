@@ -10,12 +10,16 @@ class JwtUtil {
 
     static decodificarToken = (token) => {
         let tokenDecodificado = null;
+        let tokenException = null;
         jwt.verify(token, process.env.SECURE_KEY, async (err, decoded) => {
             if (err) {
-                throw new TokenInvalidoException("Token inválido");
+                tokenException = new TokenInvalidoException("Token inválido");
             }
             tokenDecodificado = decoded;
         });
+        if(tokenException){
+            throw new TokenInvalidoException("Token inválido");
+        }
         return tokenDecodificado;
     }
 }
