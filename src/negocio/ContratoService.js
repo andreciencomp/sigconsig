@@ -18,7 +18,7 @@ class ContratoService {
         const fachada = new FachadaDados();
         if (contrato.produto.id == null) {
             const fachadaDados = new FachadaDados();
-            let produtos = await fachadaDados.listarProdutosPorCriterios(
+            let produtos = await fachadaDados.listarProdutos(
                 { orgaoId: contrato.produto.orgao.id, carencia: contrato.produto.carencia, qtdParcelas: contrato.produto.qtdParcelas }
             );
             if (produtos.length == 0) {
