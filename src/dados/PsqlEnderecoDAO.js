@@ -78,10 +78,10 @@ class PsqlEnderecoDAO {
             let telefone = typeof (endereco.telefone) != 'undefined' ? endereco.telefone : enderecoSalvo.telefone;
 
             const query = "update enderecos set estado_id=$1, cidade_id=$2, cep=$3, rua=$4, numero=$5," +
-                "bairro=$6, telefone=$7 where id=$8 returning * ";
+                "bairro=$6, telefone=$7 where id=$8 returning id ";
             const { rows } = await client.query(query, [estadoId, cidadeId, cep, rua, numero, bairro, telefone, endereco.id]);
 
-            return await this.criarObjetoEndereco(rows[0]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);

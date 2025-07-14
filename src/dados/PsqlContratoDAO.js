@@ -130,8 +130,8 @@ class PsqlContratoDAO {
                 let enderecoDAO = new PsqlEnderecoDAO();
                 if (contrato.endereco && contratoSalvo.endereco) {
                     contrato.endereco.id = contratoSalvo.endereco.id;
-                    await enderecoDAO.atualizar(contrato.endereco);
-                    enderecoId = contratoAtualizado.id;
+                    const retornoAtualizacao = await enderecoDAO.atualizar(contrato.endereco);
+                    enderecoId = retornoAtualizacao.id;
                 } else if (!contrato.endereco && contratoSalvo.endereco) {
                     await this.deletar(contratoSalvo.endereco.id);
                 }
