@@ -44,7 +44,7 @@ class ContratoService {
             if (!existeProduto) {
                 throw new EntidadeNaoEncontradaException("O produto não foi encontrato");
             }
-            const novoProduto = (await fachada.listarProdutosPorCriterios(contrato.produto))[0];
+            const novoProduto = (await fachada.listarProdutos(contrato.produto))[0];
 
             contrato.produto = novoProduto;
         }
