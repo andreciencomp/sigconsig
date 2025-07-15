@@ -34,12 +34,12 @@ class PsqlEnderecoDAO {
         const client = pgClient ? pgClient : await pool.connect();
         try {
             let query = "insert into enderecos (estado_id, cidade_id, cep, rua, numero, bairro, telefone)" +
-                "values ($1, $2, $3, $4, $5, $6, $7) returning * ";
+                "values ($1, $2, $3, $4, $5, $6, $7) returning id ";
             const estadoID = endereco.estado ? endereco.estado.id : null;
             const cidadeID = endereco.cidade ? endereco.cidade.id : null;
             const { rows } = await client.query(query,
                  [estadoID, cidadeID, endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.telefone]);
-            return await this.criarObjetoEndereco(rows[0]);
+            return rows[0];
 
         } catch (e) {
             PgUtil.checkError(e);

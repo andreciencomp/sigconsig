@@ -7,6 +7,7 @@ const PsqlCorretorDAO = require('./PsqlCorretorDAO');
 const Contrato = require('../entidades/Contrato');
 const PsqlProdutoDAO = require('./PsqlProdutoDAO');
 const PsqlBancoDAO = require('./PsqlBancoDAO');
+const Endereco = require('../entidades/Endereco');
 
 class PsqlContratoDAO {
 
@@ -134,6 +135,13 @@ class PsqlContratoDAO {
                     enderecoId = retornoAtualizacao.id;
                 } else if (!contrato.endereco && contratoSalvo.endereco) {
                     await this.deletar(contratoSalvo.endereco.id);
+                } else if(contrato.endereco && !contratoSalvo.endereco){
+                    const novoEndereco = new Endereco();
+                    const keys = Object.keys(novoEndereco);
+                    keys.forEach(key=>{
+                        novoEndereco[key] = contrato.endereco[key]
+                    })
+                    enderecoId = (await enderecoDAO.salvar(novoEndereco)).id;
                 }
             }
             const numero = typeof (contrato.numero) != 'undefined' ? contrato.numero : contratoSalvo.numero;
