@@ -18,6 +18,17 @@ class AuthController {
             ExceptionUtil.enviarExcessao(e, res);
         }
     }
+
+    estaAutenticado = async(req, res)=>{
+        try{
+            const token = HeadersUtil.obterBearerToken(req);
+            JwtUtil.decodificarToken(token);
+            return res.status(200).send({autenticado: true});
+
+        }catch(TokenInvalidoException){
+            return res.status(403).send({autenticado: false})
+        } 
+    }
 }
 
 module.exports = AuthController;
