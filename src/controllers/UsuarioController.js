@@ -38,6 +38,19 @@ class UsuarioController {
         }
 
     }
+
+    listar = async (req, res) =>{
+        try{
+            const criterios = req.query;
+            UsuarioValidator.validarListar(criterios);
+            const fachada = new FachadaNegocio();
+            const usuarios = await fachada.listarUsuarios(criterios);
+            return res.status(200).send(usuarios);
+
+        }catch(e){
+            ExceptionUtil.enviarExcessao(e, res);
+        }
+    }
 }
 
 module.exports = UsuarioController;

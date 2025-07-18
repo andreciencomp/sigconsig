@@ -35,6 +35,18 @@ class UsuarioValidator {
         return true;
     }
 
+    static validarListar(criterios){
+        if(criterios){
+            const keys = Object.keys(criterios);
+            for(let i=0; i < keys.length; i++){
+                if(keys[i] != "tipo"){
+                    throw new DadosInvalidosException("criterio " + keys[i] + " inválido.");
+                }
+            }
+        }
+        return true
+    }
+
 }
 
 

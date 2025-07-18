@@ -41,6 +41,11 @@ class FachadaDados {
         return await dao.existeUsuarioPorId(id);
     }
 
+    async listarUsuarios(criterios){
+        const dao = DAOFactory.getUsuarioDAO();
+        return await dao.listar(criterios);
+    }
+
     async obterUsuarioAdmPorNome(nomeUsuario) {
         const dao = DAOFactory.getUsuarioAdmDAO();
         let usr = await dao.obterPorNome(nomeUsuario);

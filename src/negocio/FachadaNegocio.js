@@ -27,6 +27,11 @@ class FachadaNegocio{
         return await usuarioService.cadastrarUsuario(usuario);
     }
 
+    async listarUsuarios(criterios=null){
+        const usuarioService = new UsuarioService();
+        return await usuarioService.listarUsuarios(criterios);
+    }
+
     async atualizarSenha(usuario){
         const usuarioService = new UsuarioService();
         return await usuarioService.atualizarSenha(usuario);

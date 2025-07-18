@@ -70,12 +70,12 @@ class PsqlUsuarioDAO {
         }
     }
 
-    async existeUsuarioPorId(id){
-        try{
-            const result = await pool.query("select id from usuarios where id=$1",[id]);
+    async existeUsuarioPorId(id) {
+        try {
+            const result = await pool.query("select id from usuarios where id=$1", [id]);
             return result.rows.length > 0;
 
-        }catch(e){
+        } catch (e) {
             PgUtil.checkError(e);
         }
     }
@@ -92,18 +92,43 @@ class PsqlUsuarioDAO {
         }
     }
 
-    async atualizar(usuario){
-        try{
+    async atualizar(usuario) {
+        try {
             const usuarioCadastrado = await this.obter(usuario.id);
-            const nomeUsuario = typeof(usuario.nomeUsuario) != 'undefined' ? usuario.nomeUsuario : usuarioCadastrado.nomeUsuario;
-            const senha = typeof(usuario.senha) != 'undefined' ? usuario.senha : usuarioCadastrado.senha;
-            const tipo = typeof(usuario.tipo) != 'undefined' ? usuario.tipo : usuarioCadastrado.tipo;
-            const strQuery = "update usuarios set nome_usuario=$1, senha=$2, tipo=$3 where id=$4 returning id"; 
-            const result = await pool.query(strQuery,[nomeUsuario, senha, tipo, usuario.id]);
+            const nomeUsuario = typeof (usuario.nomeUsuario) != 'undefined' ? usuario.nomeUsuario : usuarioCadastrado.nomeUsuario;
+            const senha = typeof (usuario.senha) != 'undefined' ? usuario.senha : usuarioCadastrado.senha;
+            const tipo = typeof (usuario.tipo) != 'undefined' ? usuario.tipo : usuarioCadastrado.tipo;
+            const strQuery = "update usuarios set nome_usuario=$1, senha=$2, tipo=$3 where id=$4 returning id";
+            const result = await pool.query(strQuery, [nomeUsuario, senha, tipo, usuario.id]);
             return result.rows[0];
-            
-        }catch(e){
+
+        } catch (e) {
             PgUtil.checkError(e);
+        }
+    }
+    //CriteriosUsuario{tipo?:string}
+    async listar(criterios = null) {
+        try {
+            let strQuery = "select * from usuarios";
+            const values = [];
+            if (criterios) {
+                const keys = Object.keys(criterios);
+                if (keys.length > 0) {
+                    strQuery += " where";
+                }
+                for (let i = 0; i < keys.length; i++) {
+                    strQuery += " " + keys[i] + "=" +"$" + (i +1);
+                    values.push(criterios[keys[i]]);
+                    if (i < keys.length - 1) {
+                        strQuery += " and"
+                    }
+                }
+            }
+            const result = await pool.query(strQuery, values);
+            return result.rows;
+
+        } catch (e) {
+            PgUtil.checkError(e)
         }
     }
 }

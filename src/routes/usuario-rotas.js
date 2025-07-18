@@ -9,4 +9,6 @@ roteador.post('/usuarios/cadastrar', AuthMiddleware.nivelAdmin, usuarioControlle
 
 roteador.put('/usuarios/atualizar/senha/', AuthMiddleware.nivelAutenticado, usuarioController.atualizarSenha);
 
+roteador.get('/usuarios', AuthMiddleware.nivelAdmin, usuarioController.listar);
+
 module.exports = roteador;
