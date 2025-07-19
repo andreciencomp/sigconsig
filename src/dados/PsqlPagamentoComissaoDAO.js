@@ -97,6 +97,34 @@ class PsqlPagamentoComissaoDAO {
         }
     }
 
+    //criterios {corretorId: number, cadastradoPor: number, efetivadoPor: number, efetivado:boolean}
+    async listar(criterios=null){
+        try{
+            let strQuery = "select * from pagamentos_comissoes";
+            const values = [];
+            if(criterios){
+                strQuery+= " where ";
+                const keys = Object.keys(criterios);
+                for(let i = 0; i < keys.length; i++){
+                    strQuery+= " " + keys[i] + "=$" + (i+1);
+                    values.push(criterios[keys[i]]);
+                    if(i < keys.length -1){
+                        strQuery+= " and ";
+                    }
+                }
+            }
+            const result = await pool.query(strQuery, values);
+            const pagamentos = [];
+            result.rows.forEach(row=>{
+                pagamentos.push(this.criarObjeto(row))
+            });
+            return pagamentos;
+            
+        }catch(e){
+            PgUtil.checkError(e);
+        }
+    }
+
     async listarTodos() {
         try {
             const pagamentos = [];

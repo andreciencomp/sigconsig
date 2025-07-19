@@ -51,6 +51,19 @@ class UsuarioController {
             ExceptionUtil.enviarExcessao(e, res);
         }
     }
+
+    deletarUsuario = async (req, res)=>{
+        try{
+            const fachada = new FachadaNegocio();
+            const result = await fachada.deletarUsuario(req.params.id);
+            return res.status(200).send(result);
+
+        }catch(e){
+            ExceptionUtil.enviarExcessao(e, res);
+        }
+    }
 }
+
+
 
 module.exports = UsuarioController;

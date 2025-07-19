@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const UsuarioUtil = require('../utils/UsuarioUtil');
 const Usuario = require('../entidades/Usuario');
 const UsuarioNaoAutorizadoException = require('../excessoes/UsuarioNaoAutorizadoException');
+const OperacaoNaoPermitidaException = require('../excessoes/OperacaoNaoPermitidaException');
 
 class UsuarioService {
 
@@ -42,6 +43,27 @@ class UsuarioService {
 
         }
         return lista;
+    }
+
+    async deletarUsuario(id){
+        const fachada = new FachadaDados();
+        const usuario = await fachada.obterUsuarioPorId(id);
+        if(usuario.id == id){
+            throw new OperacaoNaoPermitidaException("Nâo é possível deletar o próprio usuário");
+        }
+        if(usuario.tipo == Usuario.USUARIO_SUPER){
+            throw new OperacaoNaoPermitidaException("Este usuário não pode ser deletado")
+        }
+        const pagamentosCadastradoPeloUsuario = await fachada.listarPagamentos({cadastrado_por:id});
+        if(pagamentosCadastradoPeloUsuario.length != 0){
+            throw new OperacaoNaoPermitidaException("Há um pagamento cadastrado por este usuário");
+        }
+        const pagamentosEfetivadosPeloUsuario = await fachada.listarPagamentos({efetivado_por: id});
+        if(pagamentosEfetivadosPeloUsuario.length != 0){
+            throw new OperacaoNaoPermitidaException("Há um pagamento efetivado por este usuário");
+        }
+        return await fachada.deletarUsuario(id);
+
     }
 
     async #verificarPermissoes(usuario){

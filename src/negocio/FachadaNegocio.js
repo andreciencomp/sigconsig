@@ -37,6 +37,12 @@ class FachadaNegocio{
         return await usuarioService.atualizarSenha(usuario);
     }
 
+    async deletarUsuario(id){
+        const usuarioService = new UsuarioService();
+        return await usuarioService.deletarUsuario(id);
+
+    }
+
     async obterBancoPorCodigo(codigo){
 
         const bancoService = new BancoService();

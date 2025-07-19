@@ -30,6 +30,11 @@ class FachadaDados {
         return await dao.atualizar(usuario);
     }
 
+    async deletarUsuario(id){
+        const dao = DAOFactory.getUsuarioDAO();
+        return await dao.deletar(id);
+    }
+
     async obterUsuarioSuperPorNome(nomeUsuario) {
         const dao = DAOFactory.getUsuarioSuperDAO();
         let usr = await dao.obterPorNome(nomeUsuario);
@@ -423,6 +428,11 @@ class FachadaDados {
     async existePagamentoPorContratoId(contratoId) {
         const dao = DAOFactory.getPagamentoComissaoDAO();
         return await dao.existePorContratoId(contratoId);
+    }
+
+    async listarPagamentos(criterios=null){
+        const dao = DAOFactory.getPagamentoComissaoDAO();
+        return await dao.listar(criterios)
     }
 
     async listarTodosPagamentos(){

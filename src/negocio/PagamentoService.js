@@ -14,6 +14,11 @@ class PagamentoService {
         return await fachada.obterPagamentoComissaoPorId(id);
     }
 
+    async listarPagamentos(criterios=null){
+        const fachada = new FachadaDados();
+        return await fachada.listarPagamentos(criterios);
+    }
+
     async listarTodosPagamentos() {
         const fachada = new FachadaDados();
         return await fachada.listarTodosPagamentos();

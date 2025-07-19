@@ -131,6 +131,16 @@ class PsqlUsuarioDAO {
             PgUtil.checkError(e)
         }
     }
+
+    async deletar(id){
+        try{
+            const result = await pool.query("delete from usuarios where id=$1 returning id",[id]);
+            return result.rows[0]
+            
+        }catch(e){
+            PgUtil.checkError(e)
+        }
+    }
 }
 
 module.exports = PsqlUsuarioDAO;

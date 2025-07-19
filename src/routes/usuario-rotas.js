@@ -11,4 +11,6 @@ roteador.put('/usuarios/atualizar/senha/', AuthMiddleware.nivelAutenticado, usua
 
 roteador.get('/usuarios', AuthMiddleware.nivelAdmin, usuarioController.listar);
 
+roteador.delete('/usuarios/deletar/:id',AuthMiddleware.nivelSuper, usuarioController.deletarUsuario);
+
 module.exports = roteador;
